@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1049089959950",
+    "project_id": "callname-a98e3",
+    "storage_bucket": "callname-a98e3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1049089959950:android:084ab7fdc9ad97ce2d745f",
+        "android_client_info": {
+          "package_name": "com.example.callernamespeaker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAO_qAHNAVGGP3ZL_65HyMIvo3jGl3DF-s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

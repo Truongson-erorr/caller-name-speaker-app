@@ -12,7 +12,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.example.callernamespeaker.navigation.AppNavGraph
 import com.example.callernamespeaker.ui.theme.CallerNameSpeakerTheme
+import com.example.callernamespeaker.ui.theme.RegisterScreen
 
 class MainActivity : ComponentActivity() {
 
@@ -28,7 +32,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Xin quyền runtime
         requestPermissions.launch(
             arrayOf(
                 Manifest.permission.READ_CONTACTS,
@@ -39,40 +42,11 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             CallerNameSpeakerTheme {
+                val navController = rememberNavController()
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    MainScreen()
+                    AppNavGraph(navController = navController)
                 }
             }
-        }
-    }
-
-    @Composable
-    fun MainScreen() {
-        val prefs = getSharedPreferences("settings", Context.MODE_PRIVATE)
-        var enabled by remember {
-            mutableStateOf(prefs.getBoolean("tts_enabled", true))
-        }
-
-        Column(
-            Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            Spacer(modifier = Modifier.height(50.dp))
-            Text(
-                "Chế độ đọc tên người gọi: ${if (enabled) "Bật" else "Tắt"}",
-                style = MaterialTheme.typography.titleMedium
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Switch(
-                checked = enabled,
-                onCheckedChange = {
-                    enabled = it
-                    prefs.edit().putBoolean("tts_enabled", enabled).apply()
-                }
-            )
         }
     }
 }
