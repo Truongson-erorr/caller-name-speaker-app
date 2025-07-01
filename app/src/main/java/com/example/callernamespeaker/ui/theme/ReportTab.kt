@@ -1,12 +1,16 @@
 package com.example.callernamespeaker.ui.theme
 
 import android.content.Context
+import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Block
+import androidx.compose.material.icons.filled.LocalPrintshop
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,7 +29,6 @@ fun ReportTab(viewModel: BlacklistViewModel = viewModel()) {
     val context = LocalContext.current
     var showUnblockDialog by remember { mutableStateOf<String?>(null) }
 
-    // Lưu số bị chặn vào SharedPreferences sau khi load
     LaunchedEffect(list) {
         if (list.isNotEmpty()) {
             val prefs = context.getSharedPreferences("blocked_numbers", Context.MODE_PRIVATE)
@@ -38,40 +41,14 @@ fun ReportTab(viewModel: BlacklistViewModel = viewModel()) {
         }
     }
 
-    // Load từ Firestore
     LaunchedEffect(Unit) {
         viewModel.loadBlockedNumbers()
     }
-
-    showUnblockDialog?.let { number ->
-        AlertDialog(
-            onDismissRequest = { showUnblockDialog = null },
-            title = { Text("Xác nhận") },
-            text = { Text("Bạn có chắc muốn bỏ chặn số $number?") },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                    }
-                ) {
-                    Text("Đồng ý", color = MaterialTheme.colorScheme.primary)
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { showUnblockDialog = null }
-                ) {
-                    Text("Hủy", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-            }
-        )
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
-        // Header
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -87,13 +64,32 @@ fun ReportTab(viewModel: BlacklistViewModel = viewModel()) {
                 color = MaterialTheme.colorScheme.onSurface
             )
 
-            Badge(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-            ) {
-                Text(text = "Tổng: ${list.size} số")
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Badge(
+                    containerColor = Color(0xFFD0F5D4),
+                    contentColor = Color(0xFF2E7D32)
+                ) {
+                    Text(text = "Tổng: ${list.size} số")
+                }
+                IconButton(onClick = {
+                    if (list.isNotEmpty()) {
+                        val cleanedList =
+                            list.map { "${it.number.formatPhoneNumber()} - ${it.type}" }
+                        shareBlockedList(context, cleanedList)
+                    } else {
+                        Toast.makeText(context, "Không có số nào để chia sẻ", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.LocalPrintshop,
+                        contentDescription = "Chia sẻ danh sách",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
         }
+
 
         if (list.isEmpty()) {
             Box(
@@ -196,6 +192,37 @@ fun ReportTab(viewModel: BlacklistViewModel = viewModel()) {
                 }
             }
         }
+        showUnblockDialog?.let { number ->
+            AlertDialog(
+                onDismissRequest = { showUnblockDialog = null },
+                title = { Text("Xác nhận") },
+                text = { Text("Bạn có chắc muốn bỏ chặn số $number?") },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            showUnblockDialog?.let { number ->
+                                viewModel.removeFromBlacklist(number) {
+                                    val prefs = context.getSharedPreferences("blocked_numbers", Context.MODE_PRIVATE)
+                                    val cleaned = number.replace("+84", "0").replace(" ", "")
+                                    prefs.edit().remove(cleaned).apply()
+                                    Toast.makeText(context, "Bỏ chặn thành công!", Toast.LENGTH_SHORT).show()
+                                    showUnblockDialog = null
+                                }
+                            }
+                        }
+                    ) {
+                        Text("Đồng ý", color = MaterialTheme.colorScheme.primary)
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { showUnblockDialog = null }
+                    ) {
+                        Text("Hủy", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+            )
+        }
     }
 }
 
@@ -204,4 +231,13 @@ fun String.formatPhoneNumber(): String {
         .replace(" ", "")
         .chunked(4)
         .joinToString(" ")
+}
+
+fun shareBlockedList(context: Context, numbers: List<String>) {
+    val shareIntent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, numbers.joinToString("\n"))
+        type = "text/plain"
+    }
+    context.startActivity(Intent.createChooser(shareIntent, "Chia sẻ danh sách chặn qua"))
 }

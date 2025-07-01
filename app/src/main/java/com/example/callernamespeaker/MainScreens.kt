@@ -58,7 +58,7 @@ fun MainScreen(navController: NavController) {
                         label = {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
-                                    "Home",
+                                    "Trang chủ",
                                     fontSize = 12.sp,
                                     color = if (selectedTab == "home") Color.White else Color.LightGray
                                 )
@@ -94,7 +94,7 @@ fun MainScreen(navController: NavController) {
                         label = {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
-                                    "Urgent",
+                                    "Số khẩn cấp",
                                     fontSize = 12.sp,
                                     color = if (selectedTab == "emergency") Color.White else Color.LightGray
                                 )
@@ -130,7 +130,7 @@ fun MainScreen(navController: NavController) {
                         label = {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
-                                    "Black list",
+                                    "Danh sách đen",
                                     fontSize = 12.sp,
                                     color = if (selectedTab == "report") Color.White else Color.LightGray
                                 )
@@ -166,7 +166,7 @@ fun MainScreen(navController: NavController) {
                         label = {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
-                                    "History",
+                                    "Lịch sử",
                                     fontSize = 12.sp,
                                     color = if (selectedTab == "history") Color.White else Color.LightGray
                                 )
