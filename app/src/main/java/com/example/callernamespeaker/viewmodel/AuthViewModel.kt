@@ -13,6 +13,7 @@ class AuthViewModel : ViewModel() {
     private val firestore = FirebaseFirestore.getInstance()
 
     fun registerUser(
+        name: String,
         email: String,
         password: String,
         context: Context,
@@ -22,11 +23,17 @@ class AuthViewModel : ViewModel() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener {
                 val uid = it.user?.uid ?: return@addOnSuccessListener
-                val user = User(uid = uid, email = email)
+
+                val userMap = hashMapOf(
+                    "uid" to uid,
+                    "name" to name,
+                    "email" to email,
+                    "role" to "user"
+                )
 
                 firestore.collection("Users")
                     .document(uid)
-                    .set(user)
+                    .set(userMap)
                     .addOnSuccessListener {
                         Toast.makeText(context, "Đăng ký tài khoản thành công", Toast.LENGTH_SHORT).show()
                         onSuccess()
@@ -39,4 +46,5 @@ class AuthViewModel : ViewModel() {
                 onFailure("Lỗi đăng ký: ${it.message}")
             }
     }
+
 }

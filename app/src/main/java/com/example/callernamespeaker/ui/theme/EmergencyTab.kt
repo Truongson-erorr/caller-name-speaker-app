@@ -122,7 +122,7 @@ fun EmergencyNumberCard(number: EmergencyNumber, onClick: () -> Unit) {
             .clickable(onClick = onClick),
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
-            containerColor = Color.White, // 👉 Đổi màu nền tại đây
+            containerColor = Color.White,
             contentColor = MaterialTheme.colorScheme.onSurfaceVariant
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -150,6 +150,7 @@ fun EmergencyNumberCard(number: EmergencyNumber, onClick: () -> Unit) {
                 )
                 Text(
                     text = "Sẵn sàng hỗ trợ 24/7",
+                    fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.bodySmall.copy(
                         color = Color(0xFF2E7D32)
                     ),

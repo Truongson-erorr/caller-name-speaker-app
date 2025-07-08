@@ -36,7 +36,9 @@ class MainActivity : ComponentActivity() {
             arrayOf(
                 Manifest.permission.READ_CONTACTS,
                 Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.READ_CALL_LOG
+                Manifest.permission.READ_CALL_LOG,
+                Manifest.permission.RECEIVE_SMS,
+                Manifest.permission.READ_SMS
             )
         )
 
