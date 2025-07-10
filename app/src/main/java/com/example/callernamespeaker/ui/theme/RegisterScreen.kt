@@ -51,16 +51,16 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = view
         contentAlignment = Alignment.Center
     ) {
         Card(
-            shape = RoundedCornerShape(24.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 12.dp),
+            shape = RoundedCornerShape(16.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
             modifier = Modifier
-                .padding(horizontal = 24.dp)
-                .fillMaxWidth(0.9f)
+                .padding(horizontal = 12.dp)
+                .fillMaxWidth(0.95f)
         ) {
             Column(
                 modifier = Modifier
-                    .padding(32.dp)
+                    .padding(20.dp)
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -69,128 +69,103 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = view
                     contentDescription = "Biểu tượng bảo mật",
                     tint = Color(0xFF1976D2),
                     modifier = Modifier
-                        .size(100.dp)
-                        .padding(bottom = 16.dp)
+                        .size(54.dp)
+                        .padding(bottom = 10.dp)
                 )
 
                 Text(
-                    text = "Đăng ký an toàn",
-                    fontSize = 26.sp,
+                    text = "Đăng ký",
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF0D47A1),
-                    modifier = Modifier.padding(bottom = 24.dp)
+                    modifier = Modifier.padding(bottom = 16.dp)
                 )
+
+                fun Modifier.formFieldModifier() = this
+                    .fillMaxWidth()
+                    .padding(bottom = 10.dp)
 
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Họ và tên") },
-                    shape = RoundedCornerShape(16.dp),
+                    label = { Text("Họ và tên", fontSize = 13.sp) },
+                    shape = RoundedCornerShape(12.dp),
                     singleLine = true,
                     leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "Person icon",
-                            tint = Color(0xFF1976D2)
-                        )
+                        Icon(Icons.Default.Person, contentDescription = null, tint = Color(0xFF1976D2), modifier = Modifier.size(20.dp))
                     },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color(0xFFF5F5F5), RoundedCornerShape(16.dp))
+                    modifier = Modifier.formFieldModifier()
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
                 OutlinedTextField(
                     value = email,
                     onValueChange = { email = it },
-                    label = { Text("Email") },
-                    shape = RoundedCornerShape(16.dp),
+                    label = { Text("Email", fontSize = 13.sp) },
+                    shape = RoundedCornerShape(12.dp),
                     singleLine = true,
                     leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Email,
-                            contentDescription = "Email icon",
-                            tint = Color(0xFF1976D2)
-                        )
+                        Icon(Icons.Default.Email, contentDescription = null, tint = Color(0xFF1976D2), modifier = Modifier.size(20.dp))
                     },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color(0xFFF5F5F5), RoundedCornerShape(16.dp))
+                    modifier = Modifier.formFieldModifier()
                 )
-
-                Spacer(modifier = Modifier.height(16.dp))
 
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
-                    label = { Text("Mật khẩu") },
+                    label = { Text("Mật khẩu", fontSize = 13.sp) },
                     visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(12.dp),
                     singleLine = true,
                     leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Lock,
-                            contentDescription = "Lock icon",
-                            tint = Color(0xFF1976D2)
-                        )
+                        Icon(Icons.Default.Lock, contentDescription = null, tint = Color(0xFF1976D2), modifier = Modifier.size(20.dp))
                     },
                     trailingIcon = {
                         IconButton(onClick = { showPassword = !showPassword }) {
                             Icon(
                                 imageVector = if (showPassword) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                contentDescription = "Toggle password visibility",
-                                tint = Color(0xFF1976D2)
+                                contentDescription = null,
+                                tint = Color(0xFF1976D2),
+                                modifier = Modifier.size(20.dp)
                             )
                         }
                     },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color(0xFFF5F5F5), RoundedCornerShape(16.dp))
+                    modifier = Modifier.formFieldModifier()
                 )
-
-                Spacer(modifier = Modifier.height(16.dp))
 
                 OutlinedTextField(
                     value = confirmPassword,
                     onValueChange = { confirmPassword = it },
-                    label = { Text("Xác nhận mật khẩu") },
+                    label = { Text("Xác nhận mật khẩu", fontSize = 13.sp) },
                     visualTransformation = if (showConfirmPassword) VisualTransformation.None else PasswordVisualTransformation(),
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(12.dp),
                     singleLine = true,
                     leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Lock,
-                            contentDescription = "Lock icon",
-                            tint = Color(0xFF1976D2)
-                        )
+                        Icon(Icons.Default.Lock, contentDescription = null, tint = Color(0xFF1976D2), modifier = Modifier.size(20.dp))
                     },
                     trailingIcon = {
                         IconButton(onClick = { showConfirmPassword = !showConfirmPassword }) {
                             Icon(
                                 imageVector = if (showConfirmPassword) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                contentDescription = "Toggle confirm password visibility",
-                                tint = Color(0xFF1976D2)
+                                contentDescription = null,
+                                tint = Color(0xFF1976D2),
+                                modifier = Modifier.size(20.dp)
                             )
                         }
                     },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color(0xFFF5F5F5), RoundedCornerShape(16.dp))
+                    modifier = Modifier.formFieldModifier()
                 )
 
-                errorMessage?.let { message ->
+                errorMessage?.let {
                     Text(
-                        text = message,
+                        text = it,
                         color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodySmall,
+                        fontSize = 12.sp,
+                        textAlign = TextAlign.Center,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 8.dp, bottom = 12.dp),
-                        textAlign = TextAlign.Center
+                            .padding(vertical = 4.dp)
                     )
                 }
-
-                Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
                     onClick = {
@@ -202,6 +177,7 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = view
                             errorMessage = "Mật khẩu không khớp"
                             return@Button
                         }
+
                         isLoading = true
                         errorMessage = null
                         viewModel.registerUser(
@@ -222,36 +198,33 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = view
                         )
                     },
                     enabled = !isLoading,
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF1976D2),
                         contentColor = Color.White,
-                        disabledContainerColor = Color(0xFF90CAF9),
-                        disabledContentColor = Color.White
+                        disabledContainerColor = Color(0xFF90CAF9)
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(50.dp)
+                        .height(42.dp)
                 ) {
                     if (isLoading) {
                         CircularProgressIndicator(
                             color = Color.White,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(18.dp)
                         )
                     } else {
-                        Text("Đăng ký", fontWeight = FontWeight.SemiBold)
+                        Text("Đăng ký", fontSize = 14.sp)
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
-                // Nút chuyển sang đăng nhập
                 TextButton(onClick = { navController.navigate("LoginScreen") }) {
                     Text(
                         "Đã có tài khoản? Đăng nhập",
-                        color = Color(0xFF1976D2),
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 14.sp
+                        fontSize = 12.sp,
+                        color = Color(0xFF1976D2)
                     )
                 }
             }

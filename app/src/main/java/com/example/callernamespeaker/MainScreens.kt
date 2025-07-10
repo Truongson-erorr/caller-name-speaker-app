@@ -59,7 +59,7 @@ fun MainScreen(navController: NavController) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
                                     "Trang chủ",
-                                    fontSize = 12.sp,
+                                    fontSize = 8.sp,
                                     color = if (selectedTab == "home") Color.White else Color.LightGray
                                 )
                                 if (selectedTab == "home") {
@@ -95,7 +95,7 @@ fun MainScreen(navController: NavController) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
                                     "Số khẩn cấp",
-                                    fontSize = 12.sp,
+                                    fontSize = 8.sp,
                                     color = if (selectedTab == "emergency") Color.White else Color.LightGray
                                 )
                                 if (selectedTab == "emergency") {
@@ -131,7 +131,7 @@ fun MainScreen(navController: NavController) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
                                     "Danh sách đen",
-                                    fontSize = 12.sp,
+                                    fontSize = 8.sp,
                                     color = if (selectedTab == "report") Color.White else Color.LightGray
                                 )
                                 if (selectedTab == "report") {
@@ -167,7 +167,7 @@ fun MainScreen(navController: NavController) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
                                     "Lịch sử",
-                                    fontSize = 12.sp,
+                                    fontSize = 8.sp,
                                     color = if (selectedTab == "history") Color.White else Color.LightGray
                                 )
                                 if (selectedTab == "history") {

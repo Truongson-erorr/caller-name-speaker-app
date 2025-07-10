@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun EmergencyTab() {
@@ -40,52 +41,52 @@ fun EmergencyTab() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 12.dp)
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(bottom = 24.dp)
+            modifier = Modifier.padding(bottom = 16.dp)
         ) {
             Icon(
                 imageVector = Icons.Default.Warning,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.error,
-                modifier = Modifier.size(28.dp)
+                modifier = Modifier.size(24.dp)
             )
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(6.dp))
             Text(
                 text = "Số khẩn cấp tại Việt Nam",
-                style = MaterialTheme.typography.headlineSmall.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
 
         Surface(
-            shape = MaterialTheme.shapes.medium,
+            shape = MaterialTheme.shapes.small,
             color = MaterialTheme.colorScheme.errorContainer,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp)
+                .padding(bottom = 12.dp)
         ) {
             Row(
-                modifier = Modifier.padding(12.dp),
+                modifier = Modifier.padding(10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     imageVector = Icons.Default.Info,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onErrorContainer
+                    tint = MaterialTheme.colorScheme.onErrorContainer,
+                    modifier = Modifier.size(20.dp)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(6.dp))
                 Text(
                     text = "Chỉ gọi khi thực sự khẩn cấp",
-                    style = MaterialTheme.typography.bodyMedium.copy(
+                    style = MaterialTheme.typography.bodySmall.copy(
                         color = MaterialTheme.colorScheme.onErrorContainer
                     )
                 )
@@ -93,23 +94,21 @@ fun EmergencyTab() {
         }
 
         emergencyNumbers.forEach { number ->
-            EmergencyNumberCard(
-                number = number,
-                onClick = {
-                    val intent = Intent(Intent.ACTION_DIAL)
-                    intent.data = Uri.parse("tel:${number.number}")
-                    context.startActivity(intent)
-                }
-            )
-            Spacer(modifier = Modifier.height(8.dp))
+            EmergencyNumberCard(number = number) {
+                val intent = Intent(Intent.ACTION_DIAL)
+                intent.data = Uri.parse("tel:${number.number}")
+                context.startActivity(intent)
+            }
+            Spacer(modifier = Modifier.height(6.dp))
         }
 
         Text(
             text = "Tất cả cuộc gọi đều miễn phí",
             style = MaterialTheme.typography.bodySmall.copy(
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                fontSize = 12.sp
             ),
-            modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
+            modifier = Modifier.padding(top = 12.dp, bottom = 20.dp)
         )
     }
 }
@@ -120,40 +119,39 @@ fun EmergencyNumberCard(number: EmergencyNumber, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
-        shape = MaterialTheme.shapes.medium,
+        shape = MaterialTheme.shapes.small,
         colors = CardDefaults.cardColors(
             containerColor = Color.White,
             contentColor = MaterialTheme.colorScheme.onSurfaceVariant
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Row(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(12.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Icon(
                 imageVector = number.icon,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier.size(26.dp)
             )
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = number.label,
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        fontWeight = FontWeight.SemiBold
-                    )
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = "Sẵn sàng hỗ trợ 24/7",
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        color = Color(0xFF2E7D32)
-                    ),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(0xFF2E7D32),
                     modifier = Modifier
                         .background(
                             color = Color(0xFFC8E6C9),
@@ -164,9 +162,9 @@ fun EmergencyNumberCard(number: EmergencyNumber, onClick: () -> Unit) {
             }
 
             Surface(
-                shape = MaterialTheme.shapes.small,
+                shape = MaterialTheme.shapes.extraSmall,
                 color = MaterialTheme.colorScheme.primaryContainer,
-                modifier = Modifier.size(60.dp, 36.dp)
+                modifier = Modifier.size(width = 48.dp, height = 28.dp)
             ) {
                 Box(
                     contentAlignment = Alignment.Center,
@@ -174,10 +172,9 @@ fun EmergencyNumberCard(number: EmergencyNumber, onClick: () -> Unit) {
                 ) {
                     Text(
                         text = number.number,
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
             }

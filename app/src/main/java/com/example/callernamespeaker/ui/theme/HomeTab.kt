@@ -35,11 +35,11 @@ import com.google.firebase.auth.FirebaseAuth
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.callernamespeaker.model.NewsPost
 import com.example.callernamespeaker.viewmodel.BlacklistViewModel
+import com.example.callernamespeaker.viewmodel.ReportViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeTab(navController: NavController) {
-
     val viewModel: PhoneLookupViewModel = viewModel()
     val context = LocalContext.current
 
@@ -53,6 +53,11 @@ fun HomeTab(navController: NavController) {
 
     var showPhoneCheckDialog by remember { mutableStateOf(false) }
     var phoneInput by remember { mutableStateOf("") }
+
+    val reportViewModel: ReportViewModel = viewModel()
+    var showReportDialog by remember { mutableStateOf(false) }
+    var reportPhone by remember { mutableStateOf("") }
+    var reportReason by remember { mutableStateOf("") }
 
     val currentUser = FirebaseAuth.getInstance().currentUser
     val uid = currentUser?.uid
@@ -71,19 +76,20 @@ fun HomeTab(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(12.dp)
+            .padding(10.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 6.dp),
+                .padding(vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
                 text = "Đọc tên người gọi: ${if (enabled) "Bật" else "Tắt"}",
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Medium
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.Medium,
+                fontSize = 14.sp
             )
             Switch(
                 checked = enabled,
@@ -97,8 +103,9 @@ fun HomeTab(navController: NavController) {
         Text(
             text = "Cẩm nang an toàn thông tin",
             fontWeight = FontWeight.SemiBold,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(bottom = 12.dp)
+            style = MaterialTheme.typography.bodyMedium,
+            fontSize = 15.sp,
+            modifier = Modifier.padding(bottom = 10.dp)
         )
 
         Image(
@@ -106,7 +113,7 @@ fun HomeTab(navController: NavController) {
             contentDescription = "Banner an toàn thông tin",
             modifier = Modifier
                 .fillMaxWidth()
-                .height(180.dp)
+                .height(140.dp)
                 .clip(RoundedCornerShape(8.dp)),
             contentScale = ContentScale.Crop
         )
@@ -114,10 +121,12 @@ fun HomeTab(navController: NavController) {
         Text(
             text = "Tra cứu nhanh",
             fontWeight = FontWeight.SemiBold,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+            fontSize = 15.sp,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(top = 14.dp, bottom = 6.dp)
         )
-        Spacer(modifier = Modifier.height(10.dp))
+
+        Spacer(modifier = Modifier.height(6.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -129,6 +138,7 @@ fun HomeTab(navController: NavController) {
             ServiceButton("Lừa đảo", Icons.Default.Report, Modifier.weight(1f)) {}
             ServiceButton("Mạng", Icons.Default.Wifi, Modifier.weight(1f)) {}
         }
+
         Spacer(modifier = Modifier.height(4.dp))
 
         Row(
@@ -136,12 +146,14 @@ fun HomeTab(navController: NavController) {
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             ServiceButton("Chặn số", Icons.Default.Block, Modifier.weight(1f)) {}
-            ServiceButton("Báo cáo", Icons.Default.Flag, Modifier.weight(1f)) {}
+            ServiceButton("Báo cáo", Icons.Default.Flag, Modifier.weight(1f)) {
+                showReportDialog = true
+            }
             ServiceButton("Website", Icons.Default.Public, Modifier.weight(1f)) {}
             ServiceButton("Tra STK", Icons.Default.Money, Modifier.weight(1f)) {}
         }
 
-        Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         NewsSection(navController)
     }
 
@@ -179,10 +191,66 @@ fun HomeTab(navController: NavController) {
             text = {
                 OutlinedTextField(
                     value = phoneInput,
+                    shape = RoundedCornerShape(12.dp),
                     onValueChange = { phoneInput = it },
                     placeholder = { Text("VD: 0912345678") },
                     singleLine = true
                 )
+            }
+        )
+    }
+
+    if (showReportDialog) {
+        AlertDialog(
+            onDismissRequest = { showReportDialog = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+                    if (reportPhone.isNotBlank() && reportReason.isNotBlank() && userId.isNotBlank()) {
+                        reportViewModel.reportPhoneNumber(
+                            phone = reportPhone.trim(),
+                            userId = userId,
+                            reason = reportReason.trim(),
+                            onComplete = {
+                                Toast.makeText(context, "Báo cáo thành công", Toast.LENGTH_SHORT).show()
+                                showReportDialog = false
+                                reportPhone = ""
+                                reportReason = ""
+                            },
+                            onError = {
+                                Toast.makeText(context, "Lỗi: $it", Toast.LENGTH_SHORT).show()
+                            }
+                        )
+                    }
+                }) {
+                    Text("Báo cáo")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showReportDialog = false }) {
+                    Text("Hủy")
+                }
+            },
+            title = { Text("Báo cáo số điện thoại") },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = reportPhone,
+                        onValueChange = { reportPhone = it },
+                        label = { Text("Số điện thoại") },
+                        shape = RoundedCornerShape(12.dp),
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = reportReason,
+                        onValueChange = { reportReason = it },
+                        shape = RoundedCornerShape(12.dp),
+                        label = { Text("Lý do báo cáo") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
         )
     }
@@ -197,33 +265,28 @@ fun ServiceButton(
 ) {
     Column(
         modifier = modifier
-            .padding(6.dp)
-            .clip(RoundedCornerShape(16.dp))
+            .padding(4.dp)
+            .clip(RoundedCornerShape(14.dp))
             .background(Color(0xFFE3F2FD))
             .clickable(onClick = onClick)
-            .padding(vertical = 4.dp),
+            .padding(vertical = 6.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier = Modifier,
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = text,
-                tint = Color(0xFF1976D2),
-                modifier = Modifier.size(26.dp)
-            )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
+        Icon(
+            imageVector = icon,
+            contentDescription = text,
+            tint = Color(0xFF1976D2),
+            modifier = Modifier.size(22.dp)
+        )
+        Spacer(modifier = Modifier.height(6.dp))
         Text(
             text = text,
-            style = MaterialTheme.typography.bodyMedium.copy(
+            style = MaterialTheme.typography.bodySmall.copy(
                 color = Color.Black,
-                fontSize = 13.sp
+                fontSize = 12.sp
             ),
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 4.dp)
+            modifier = Modifier.padding(horizontal = 2.dp)
         )
     }
 }

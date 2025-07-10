@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.callernamespeaker.viewmodel.BlacklistViewModel
 
@@ -58,6 +59,7 @@ fun ReportTab(viewModel: BlacklistViewModel = viewModel()) {
         ) {
             Text(
                 text = "Danh sách chặn",
+                fontSize = 15.sp,
                 style = MaterialTheme.typography.headlineSmall.copy(
                     fontWeight = FontWeight.SemiBold
                 ),
@@ -90,7 +92,6 @@ fun ReportTab(viewModel: BlacklistViewModel = viewModel()) {
             }
         }
 
-
         if (list.isEmpty()) {
             Box(
                 modifier = Modifier
@@ -122,10 +123,8 @@ fun ReportTab(viewModel: BlacklistViewModel = viewModel()) {
             }
         } else {
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .heightIn(max = 100.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                modifier = Modifier.fillMaxSize() .background(Color.White),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(list.size) { index ->
                     val item = list[index]
@@ -134,24 +133,24 @@ fun ReportTab(viewModel: BlacklistViewModel = viewModel()) {
                             .fillMaxWidth()
                             .animateItemPlacement(),
                         colors = CardDefaults.elevatedCardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant
                         )
                     ) {
                         Row(
                             modifier = Modifier
-                                .padding(16.dp)
+                                .padding(12.dp)
                                 .fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Column(
                                 modifier = Modifier.weight(1f),
-                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                                verticalArrangement = Arrangement.spacedBy(2.dp)
                             ) {
                                 Text(
                                     text = item.number.formatPhoneNumber(),
-                                    style = MaterialTheme.typography.titleMedium.copy(
-                                        fontWeight = FontWeight.SemiBold
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        fontWeight = FontWeight.Medium
                                     ),
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
@@ -179,12 +178,14 @@ fun ReportTab(viewModel: BlacklistViewModel = viewModel()) {
                             }
 
                             IconButton(
-                                onClick = { showUnblockDialog = item.number }
+                                onClick = { showUnblockDialog = item.number },
+                                modifier = Modifier.size(32.dp)
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Block,
                                     contentDescription = "Bỏ chặn",
-                                    tint = MaterialTheme.colorScheme.error
+                                    tint = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.size(20.dp)
                                 )
                             }
                         }
