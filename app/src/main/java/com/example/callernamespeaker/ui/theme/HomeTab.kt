@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -23,6 +24,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,6 +60,10 @@ fun HomeTab(navController: NavController) {
     var showReportDialog by remember { mutableStateOf(false) }
     var reportPhone by remember { mutableStateOf("") }
     var reportReason by remember { mutableStateOf("") }
+
+    var showBlockDialog by remember { mutableStateOf(false) }
+    var blockPhoneInput by remember { mutableStateOf("") }
+    val blacklistViewModel: BlacklistViewModel = viewModel()
 
     val currentUser = FirebaseAuth.getInstance().currentUser
     val uid = currentUser?.uid
@@ -145,7 +151,9 @@ fun HomeTab(navController: NavController) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            ServiceButton("Chặn số", Icons.Default.Block, Modifier.weight(1f)) {}
+            ServiceButton("Chặn số", Icons.Default.Block, Modifier.weight(1f)) {
+                showBlockDialog = true
+            }
             ServiceButton("Báo cáo", Icons.Default.Flag, Modifier.weight(1f)) {
                 showReportDialog = true
             }
@@ -250,6 +258,69 @@ fun HomeTab(navController: NavController) {
                         label = { Text("Lý do báo cáo") },
                         modifier = Modifier.fillMaxWidth()
                     )
+                }
+            }
+        )
+    }
+
+    if (showBlockDialog) {
+        val cleanedPhone = blockPhoneInput.trim().replace("+84", "0").replace(" ", "")
+        val isBlocked = prefs.getBoolean(cleanedPhone, false)
+
+        AlertDialog(
+            onDismissRequest = {
+                showBlockDialog = false
+                blockPhoneInput = ""
+            },
+            title = { Text("Chặn số điện thoại") },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = blockPhoneInput,
+                        onValueChange = { blockPhoneInput = it },
+                        label = { Text("Nhập số điện thoại") },
+                        shape = RoundedCornerShape(12.dp),
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Phone),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    if (isBlocked) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            "Số này đã được chặn!",
+                            color = Color.Gray,
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        val phone = blockPhoneInput.trim().replace("+84", "0").replace(" ", "")
+                        if (phone.isNotBlank()) {
+                            blacklistViewModel.addToBlacklist(phone, type = "unknown") {
+                                Toast.makeText(context, "Đã chặn số $phone", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                        showBlockDialog = false
+                        blockPhoneInput = ""
+                    },
+                    colors = ButtonDefaults.textButtonColors(contentColor = Color.Red)
+                ) {
+                    Text("Chặn")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showBlockDialog = false
+                        blockPhoneInput = ""
+                    }
+                ) {
+                    Text("Hủy")
                 }
             }
         )

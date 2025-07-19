@@ -49,5 +49,28 @@ class PhoneLookupViewModel : ViewModel() {
             }
     }
 
+    fun getMostRecentReportReason(phone: String, callback: (String?) -> Unit) {
+        FirebaseFirestore.getInstance()
+            .collection("Reports")
+            .document(phone)
+            .get()
+            .addOnSuccessListener { doc ->
+                if (doc.exists()) {
+                    val reports = doc.get("reports") as? List<Map<String, Any>>
+                    val latestReport = reports?.maxByOrNull {
+                        it["timestamp"] as? Long ?: 0L
+                    }
+                    val reason = latestReport?.get("reason") as? String
+                    callback(reason)
+                } else {
+                    callback(null)
+                }
+            }
+            .addOnFailureListener {
+                callback(null)
+            }
+    }
+
+
 
 }

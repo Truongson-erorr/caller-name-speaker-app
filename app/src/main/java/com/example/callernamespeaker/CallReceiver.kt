@@ -7,8 +7,8 @@ import android.net.Uri
 import android.os.Build
 import android.provider.ContactsContract
 import android.telephony.TelephonyManager
-import android.util.Log
 import android.widget.Toast
+import com.google.firebase.firestore.FirebaseFirestore
 
 class CallReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
@@ -22,14 +22,8 @@ class CallReceiver : BroadcastReceiver() {
                 if (isNumberBlocked(context, cleanedNumber)) {
                     val warningText = "Cảnh báo. Số $cleanedNumber đã bị bạn chặn"
 
-                    // Hiển thị toast như cũ
-                    Toast.makeText(
-                        context,
-                        "⚠️ $warningText",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    Toast.makeText(context, "⚠️ $warningText", Toast.LENGTH_LONG).show()
 
-                    // Gửi intent để đọc cảnh báo bằng TTS
                     val speakIntent = Intent(context, CallTTSService::class.java).apply {
                         putExtra("text_to_speak", warningText)
                     }
@@ -39,26 +33,47 @@ class CallReceiver : BroadcastReceiver() {
                     } else {
                         context.startService(speakIntent)
                     }
-
                     return
                 }
 
-                // Nếu không bị chặn thì tiếp tục đọc tên
-                val contactName = getContactName(context, number)
-                val nameToSpeak = contactName ?: "số lạ: ${number.toCharArray().joinToString(" ") { it.toString() }}"
+                // Kiểm tra xem số này có bị báo cáo không
+                FirebaseFirestore.getInstance()
+                    .collection("Reports")
+                    .document(cleanedNumber)
+                    .get()
+                    .addOnSuccessListener { document ->
+                        val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+                        if (!prefs.getBoolean("tts_enabled", true)) return@addOnSuccessListener
 
-                val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
-                if (!prefs.getBoolean("tts_enabled", true)) return
+                        if (document.exists()) {
+                            val count = document.getLong("reportCount") ?: 0
+                            val reports = document.get("reports") as? List<Map<String, Any>>
+                            val latestReason = reports?.lastOrNull()?.get("reason")?.toString() ?: "Không rõ"
 
-                val speakIntent = Intent(context, CallTTSService::class.java).apply {
-                    putExtra("text_to_speak", nameToSpeak)
-                }
+                            val warningText = "Số $cleanedNumber đã bị $count người báo cáo: $latestReason"
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    context.startForegroundService(speakIntent)
-                } else {
-                    context.startService(speakIntent)
-                }
+                            // Hiển thị cảnh báo bằng Toast
+                            Toast.makeText(context, "⚠️ $warningText", Toast.LENGTH_LONG).show()
+
+                            // Đọc cảnh báo bằng TTS
+                            val speakIntent = Intent(context, CallTTSService::class.java).apply {
+                                putExtra("text_to_speak", warningText)
+                            }
+
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                context.startForegroundService(speakIntent)
+                            } else {
+                                context.startService(speakIntent)
+                            }
+                        } else {
+                            // Nếu không có báo cáo → đọc tên hoặc "số lạ"
+                            speakCallerNormally(context, number)
+                        }
+                    }
+                    .addOnFailureListener {
+                        // Nếu truy vấn Firestore lỗi, vẫn đọc như bình thường
+                        speakCallerNormally(context, number)
+                    }
             }
         }
     }
@@ -84,5 +99,23 @@ class CallReceiver : BroadcastReceiver() {
             }
         }
         return null
+    }
+
+    private fun speakCallerNormally(context: Context, phoneNumber: String) {
+        val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+        if (!prefs.getBoolean("tts_enabled", true)) return
+
+        val contactName = getContactName(context, phoneNumber)
+        val nameToSpeak = contactName ?: "số lạ: ${phoneNumber.toCharArray().joinToString(" ") { it.toString() }}"
+
+        val speakIntent = Intent(context, CallTTSService::class.java).apply {
+            putExtra("text_to_speak", nameToSpeak)
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(speakIntent)
+        } else {
+            context.startService(speakIntent)
+        }
     }
 }
