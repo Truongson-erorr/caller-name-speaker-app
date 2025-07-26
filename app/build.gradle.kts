@@ -41,6 +41,7 @@ android {
 }
 
 dependencies {
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.33.2-alpha") // hoặc bản mới hơn
     implementation(platform("com.google.firebase:firebase-bom:33.16.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation ("io.coil-kt:coil-compose:2.7.0")

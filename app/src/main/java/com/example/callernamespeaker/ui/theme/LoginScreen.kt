@@ -29,171 +29,152 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(navController: NavController) {
     val context = LocalContext.current
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var isLoading by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
-    var showPassword by remember { mutableStateOf(false) }
+    val email = remember { mutableStateOf("") }
+    val password = remember { mutableStateOf("") }
+    val passwordVisible = remember { mutableStateOf(false) }
 
-    Box(
+    var showRobotCheck by remember { mutableStateOf(false) }
+    var isHumanChecked by remember { mutableStateOf(false) }
+
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(Color(0xFF0D47A1), Color(0xFF1976D2))
-                )
-            ),
-        contentAlignment = Alignment.Center
+            .background(Color.White)
+            .padding(horizontal = 28.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Card(
-            shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
-            modifier = Modifier
-                .padding(horizontal = 12.dp)
-                .fillMaxWidth(0.95f)
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(20.dp)
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+        Text(
+            text = "Đăng nhập",
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.DarkGray,
+            modifier = Modifier.padding(bottom = 32.dp)
+        )
+
+        // Email
+        TextField(
+            value = email.value,
+            onValueChange = { email.value = it },
+            placeholder = { Text("Email", fontSize = 13.sp) },
+            leadingIcon = {
                 Icon(
-                    imageVector = Icons.Default.Security,
-                    contentDescription = "Biểu tượng bảo mật",
-                    tint = Color(0xFF1976D2),
-                    modifier = Modifier
-                        .size(54.dp)
-                        .padding(bottom = 10.dp)
+                    Icons.Default.Email,
+                    contentDescription = null,
+                    tint = Color(0xFF1976D2) // xanh dương nổi bật
                 )
+            },
+            singleLine = true,
+            shape = RoundedCornerShape(10.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color(0xFFE3F2FD), shape = RoundedCornerShape(10.dp)), // nền xanh nhạt
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = Color(0xFFE3F2FD), // nền bên trong
+                cursorColor = Color(0xFF1976D2), // màu con trỏ
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
+            )
+        )
+        Spacer(modifier = Modifier.height(16.dp))
 
+        // Mật khẩu
+        TextField(
+            value = password.value,
+            onValueChange = { password.value = it },
+            placeholder = { Text("Mật khẩu", fontSize = 13.sp) },
+            leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = Color(0xFF1976D2)) },
+            trailingIcon = {
+                val image = if (passwordVisible.value)
+                    Icons.Default.Visibility else Icons.Default.VisibilityOff
+
+                IconButton(onClick = {
+                    passwordVisible.value = !passwordVisible.value
+                }) {
+                    Icon(imageVector = image, contentDescription = null, tint = Color(0xFF1976D2))
+                }
+            },
+            singleLine = true,
+            visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
+            shape = RoundedCornerShape(10.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color(0xFFE3F2FD), shape = RoundedCornerShape(10.dp)),
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = Color(0xFFE3F2FD),
+                unfocusedIndicatorColor = Color.Transparent,
+                focusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent,
+            )
+        )
+
+        Spacer(modifier = Modifier.height(17.dp))
+        if (showRobotCheck) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp)
+            ) {
+                Checkbox(
+                    checked = isHumanChecked,
+                    onCheckedChange = { isHumanChecked = it },
+                    colors = CheckboxDefaults.colors(
+                        checkedColor = Color(0xFF1976D2)
+                    )
+                )
                 Text(
-                    text = "Đăng nhập",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF0D47A1),
-                    modifier = Modifier.padding(bottom = 16.dp)
+                    "Tôi không phải người máy",
+                    fontSize = 14.sp,
+                    color = Color.DarkGray
                 )
-
-                OutlinedTextField(
-                    value = email,
-                    onValueChange = { email = it },
-                    label = { Text("Email", fontSize = 13.sp) },
-                    shape = RoundedCornerShape(12.dp),
-                    singleLine = true,
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Email,
-                            contentDescription = null,
-                            tint = Color(0xFF1976D2),
-                            modifier = Modifier.size(20.dp)
-                        )
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 10.dp)
-                )
-
-                OutlinedTextField(
-                    value = password,
-                    onValueChange = { password = it },
-                    label = { Text("Mật khẩu", fontSize = 13.sp) },
-                    visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
-                    shape = RoundedCornerShape(12.dp),
-                    singleLine = true,
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Lock,
-                            contentDescription = null,
-                            tint = Color(0xFF1976D2),
-                            modifier = Modifier.size(20.dp)
-                        )
-                    },
-                    trailingIcon = {
-                        IconButton(onClick = { showPassword = !showPassword }) {
-                            Icon(
-                                imageVector = if (showPassword) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                contentDescription = null,
-                                tint = Color(0xFF1976D2),
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 6.dp)
-                )
-
-                errorMessage?.let { message ->
-                    Text(
-                        text = message,
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodySmall,
-                        fontSize = 12.sp,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp),
-                        textAlign = TextAlign.Center
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-                Button(
-                    onClick = {
-                        if (email.isBlank() || password.isBlank()) {
-                            errorMessage = "Vui lòng nhập đầy đủ thông tin"
-                            return@Button
-                        }
-                        isLoading = true
-                        errorMessage = null
-                        FirebaseAuth.getInstance()
-                            .signInWithEmailAndPassword(email, password)
-                            .addOnCompleteListener { task ->
-                                isLoading = false
-                                if (task.isSuccessful) {
-                                    navController.navigate("main") {
-                                        popUpTo("LoginScreen") { inclusive = true }
-                                    }
-                                } else {
-                                    errorMessage = task.exception?.message ?: "Đăng nhập thất bại"
-                                }
-                            }
-                    },
-                    enabled = !isLoading,
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF1976D2),
-                        contentColor = Color.White,
-                        disabledContainerColor = Color(0xFF90CAF9)
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(42.dp)
-                ) {
-                    if (isLoading) {
-                        CircularProgressIndicator(
-                            color = Color.White,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    } else {
-                        Text("Đăng nhập", fontSize = 14.sp)
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                TextButton(onClick = { navController.navigate("RegisterScreen") }) {
-                    Text(
-                        "Chưa có tài khoản? Đăng ký",
-                        color = Color(0xFF1976D2),
-                        fontSize = 12.sp
-                    )
-                }
             }
+        }
+
+        Button(
+            onClick = {
+                if (!showRobotCheck) {
+                    if (email.value.isBlank() || password.value.isBlank()) {
+                        Toast.makeText(context, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show()
+                        return@Button
+                    }
+
+                    showRobotCheck = true
+                    return@Button
+                }
+
+                if (!isHumanChecked) {
+                    Toast.makeText(context, "Vui lòng xác nhận bạn không phải người máy", Toast.LENGTH_SHORT).show()
+                    return@Button
+                }
+
+                Toast.makeText(context, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show()
+                navController.navigate("main")
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 20.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1976D2)),
+            shape = RoundedCornerShape(12.dp),
+        ) {
+            Text("Đăng nhập", color = Color.White)
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        TextButton(onClick = {
+            navController.navigate("RegisterScreen")
+        }) {
+            Text(
+                "Chưa có tài khoản? Đăng ký",
+                color = Color(0xFF1976D2),
+                fontSize = 14.sp
+            )
         }
     }
 }

@@ -54,10 +54,10 @@ fun NewsSection(navController: NavController) {
 
             Text(
                 text = "Xem tất cả",
-                color = MaterialTheme.colorScheme.primary,
+                color = Color(0xFF1565C0),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.clickable {
-
+                    navController.navigate("all_news")
                 }
             )
         }
