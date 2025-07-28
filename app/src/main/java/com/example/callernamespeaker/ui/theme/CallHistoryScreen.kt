@@ -46,12 +46,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
+import androidx.navigation.NavController
 
 @Composable
-fun CallHistoryScreen(context: Context = LocalContext.current) {
+fun CallHistoryScreen(
+    navController: NavController,
+    context: Context = LocalContext.current
+) {
     val callList = remember { CallLogHelper.getCallHistory(context) }
-
-    var selectedCall by remember { mutableStateOf<CallEntry?>(null) }
 
     LazyColumn(
         modifier = Modifier
@@ -59,14 +61,11 @@ fun CallHistoryScreen(context: Context = LocalContext.current) {
             .padding(16.dp)
     ) {
         items(callList) { call ->
-            CallHistoryItem(call) {
-                selectedCall = call
+            CallHistoryItem(call = call) {
+                val index = callList.indexOf(call)
+                navController.navigate("call_detail/$index")
             }
         }
-    }
-
-    selectedCall?.let { call ->
-        CallDetailDialog(call = call, onDismiss = { selectedCall = null })
     }
 }
 
@@ -118,79 +117,6 @@ fun CallHistoryItem(call: CallEntry, onClick: () -> Unit) {
                 tint = if (call.type == "Bị nhỡ") Color.Red else Color.Black,
                 modifier = Modifier.size(24.dp)
             )
-        }
-    }
-}
-
-@Composable
-fun CallDetailDialog(call: CallEntry, onDismiss: () -> Unit) {
-    Dialog(onDismissRequest = onDismiss) {
-        Surface(
-            shape = RoundedCornerShape(16.dp),
-            tonalElevation = 8.dp,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(90.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFFE3F2FD)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = null,
-                        tint = Color(0xFF1E88E5),
-                        modifier = Modifier.size(50.dp)
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    text = call.number,
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                    textAlign = TextAlign.Center
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Surface(
-                    color = Color(0xFFF5F5F5),
-                    shape = RoundedCornerShape(12.dp),
-                    tonalElevation = 2.dp,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(
-                        modifier = Modifier
-                        .padding(16.dp)
-                    ) {
-                        InfoRow("Ngày", call.date)
-                        InfoRow("Loại", call.type)
-                        InfoRow("Thời lượng", "${call.duration} giây")
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(20.dp))
-                Button(
-                    onClick = onDismiss,
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF2196F3),
-                        contentColor = Color.White
-                    )
-                ) {
-                    Text("Đóng")
-                }
-            }
         }
     }
 }

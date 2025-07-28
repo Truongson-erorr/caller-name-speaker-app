@@ -11,17 +11,23 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.callernamespeaker.CallEntry
 import com.example.callernamespeaker.ui.theme.RegisterScreen
 import com.example.callernamespeaker.ui.theme.LoginScreen
 import com.example.callernamespeaker.MainScreen
 import com.example.callernamespeaker.model.NewsPost
 import com.example.callernamespeaker.ui.theme.AllNewsScreen
+import com.example.callernamespeaker.ui.theme.CallDetailScreen
+import com.example.callernamespeaker.ui.theme.CallHistoryScreen
 import com.example.callernamespeaker.ui.theme.NewsDetailScreen
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun AppNavGraph(navController: NavHostController) {
+fun AppNavGraph(
+    navController: NavHostController,
+    callList: List<CallEntry>
+) {
     AnimatedNavHost(
         navController = navController,
         startDestination = "LoginScreen",
@@ -52,6 +58,19 @@ fun AppNavGraph(navController: NavHostController) {
         composable("all_news") {
             AllNewsScreen(navController)
         }
+
+        // chi tiet cuoc goi
+        composable(
+            route = "call_detail/{index}",
+            arguments = listOf(navArgument("index") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val index = backStackEntry.arguments?.getInt("index") ?: 0
+            val call = callList.getOrNull(index)
+            if (call != null) {
+                CallDetailScreen(navController, call)
+            }
+        }
+
 
     }
 }

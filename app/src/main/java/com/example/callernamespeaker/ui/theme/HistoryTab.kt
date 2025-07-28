@@ -1,14 +1,19 @@
 package com.example.callernamespeaker.ui.theme
 
+import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 
 @Composable
-fun HistoryTab() {
+fun HistoryTab(
+    navController: NavController,
+    context: Context
+) {
     var selectedTabIndex by remember { mutableStateOf(0) }
     val tabTitles = listOf("Lịch sử tra cứu", "Lịch sử cuộc gọi")
 
@@ -25,7 +30,7 @@ fun HistoryTab() {
 
         when (selectedTabIndex) {
             0 -> LookupHistoryScreen()
-            1 -> CallHistoryScreen()
+            1 -> CallHistoryScreen(navController, context)
         }
     }
 }

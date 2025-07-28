@@ -45,10 +45,17 @@ class MainActivity : ComponentActivity() {
         setContent {
             CallerNameSpeakerTheme {
                 val navController = rememberNavController()
+                val context = this
+                val callList = remember { CallLogHelper.getCallHistory(context) }
+
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    AppNavGraph(navController = navController)
+                    AppNavGraph(
+                        navController = navController,
+                        callList = callList
+                    )
                 }
             }
         }
+
     }
 }

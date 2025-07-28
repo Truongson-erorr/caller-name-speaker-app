@@ -199,7 +199,7 @@ fun MainScreen(navController: NavController) {
                 "home" -> HomeTab(navController = navController)
                 "emergency" -> EmergencyTab()
                 "report" -> ReportTab()
-                "history" -> HistoryTab()
+                "history" -> HistoryTab(navController, context)
             }
         }
     }
