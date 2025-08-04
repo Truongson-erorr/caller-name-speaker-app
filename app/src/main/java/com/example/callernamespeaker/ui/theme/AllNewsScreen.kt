@@ -14,6 +14,8 @@ import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -21,6 +23,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,8 +42,14 @@ fun AllNewsScreen(
     navController: NavController,
     viewModel: NewsViewModel = viewModel()
 ) {
+    var expanded by remember { mutableStateOf(false) }
+    var sortDescending by remember { mutableStateOf(true) }
+
     val newsList by viewModel.newsPosts.collectAsState()
-    val filteredNews = newsList.sortedByDescending { it.date } // Giả sử date định dạng "dd/MM/yyyy"
+    val filteredNews = if (sortDescending)
+        newsList.sortedByDescending { it.date }
+    else
+        newsList.sortedBy { it.date }
 
     Scaffold { innerPadding ->
         LazyColumn(
@@ -49,7 +60,7 @@ fun AllNewsScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             item {
-                Spacer(modifier = Modifier.height(15.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -57,33 +68,51 @@ fun AllNewsScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
-                            imageVector = Icons.Default.ArrowBackIosNew,
+                            imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.primary,
+                            tint = Color.Black,
                             modifier = Modifier
                                 .clickable { navController.popBackStack() }
                                 .padding(end = 8.dp)
                         )
                         Text(
-                            text = "Tất cả tin tức",
+                            text = "Tin tức trong ngày",
                             style = MaterialTheme.typography.headlineSmall,
                             fontWeight = FontWeight.Bold
                         )
                     }
 
-                    Icon(
-                        imageVector = Icons.Default.FilterAlt,
-                        contentDescription = "Lọc theo ngày",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier
-                            .clickable {  }
-                    )
-                }
+                    Box {
+                        Icon(
+                            imageVector = Icons.Default.FilterAlt,
+                            contentDescription = "Lọc",
+                            tint = Color.Black,
+                            modifier = Modifier.clickable { expanded = true }
+                        )
 
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Mới nhất") },
+                                onClick = {
+                                    sortDescending = true
+                                    expanded = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Cũ nhất") },
+                                onClick = {
+                                    sortDescending = false
+                                    expanded = false
+                                }
+                            )
+                        }
+                    }
+                }
             }
 
             items(filteredNews) { post ->

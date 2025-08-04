@@ -93,6 +93,7 @@ fun NewsDetailScreen(postId: String) {
                     .padding(16.dp)
                     .verticalScroll(scrollState)
             ) {
+                Spacer(modifier = Modifier.height(40.dp))
                 Text(
                     text = post!!.title,
                     style = MaterialTheme.typography.headlineSmall,
@@ -155,7 +156,6 @@ fun CommentSection(postId: String, userName: String, viewModel: CommentViewModel
             modifier = Modifier.padding(bottom = 12.dp)
         )
 
-        // Danh sách bình luận
         if (comments.isEmpty()) {
             Text(
                 text = "Chưa có bình luận nào. Hãy là người đầu tiên!",

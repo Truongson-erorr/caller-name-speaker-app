@@ -40,6 +40,9 @@ fun LoginScreen(navController: NavController) {
     var showRobotCheck by remember { mutableStateOf(false) }
     var isHumanChecked by remember { mutableStateOf(false) }
 
+    val isLoading = remember { mutableStateOf(false) }
+    val auth = FirebaseAuth.getInstance()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -133,36 +136,48 @@ fun LoginScreen(navController: NavController) {
                     fontSize = 14.sp,
                     color = Color.DarkGray
                 )
+                LaunchedEffect(isHumanChecked) {
+                    if (isHumanChecked) {
+                        isLoading.value = true
+                        auth.signInWithEmailAndPassword(email.value, password.value)
+                            .addOnCompleteListener { task ->
+                                isLoading.value = false
+                                if (task.isSuccessful) {
+                                    Toast.makeText(context, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show()
+                                    navController.navigate("main")
+                                } else {
+                                    Toast.makeText(context, "Đăng nhập thất bại: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                    }
+                }
             }
         }
 
         Button(
             onClick = {
-                if (!showRobotCheck) {
-                    if (email.value.isBlank() || password.value.isBlank()) {
-                        Toast.makeText(context, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show()
-                        return@Button
-                    }
-
-                    showRobotCheck = true
+                if (email.value.isBlank() || password.value.isBlank()) {
+                    Toast.makeText(context, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show()
                     return@Button
                 }
-
-                if (!isHumanChecked) {
-                    Toast.makeText(context, "Vui lòng xác nhận bạn không phải người máy", Toast.LENGTH_SHORT).show()
-                    return@Button
-                }
-
-                Toast.makeText(context, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show()
-                navController.navigate("main")
+                showRobotCheck = true
             },
+            enabled = !isLoading.value,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 20.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1976D2)),
             shape = RoundedCornerShape(12.dp),
         ) {
-            Text("Đăng nhập", color = Color.White)
+            if (isLoading.value) {
+                CircularProgressIndicator(
+                    color = Color.White,
+                    modifier = Modifier.size(20.dp),
+                    strokeWidth = 2.dp
+                )
+            } else {
+                Text("Đăng nhập", color = Color.White)
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
