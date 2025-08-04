@@ -59,7 +59,6 @@ fun LoginScreen(navController: NavController) {
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
-        // Email
         TextField(
             value = email.value,
             onValueChange = { email.value = it },
@@ -68,7 +67,7 @@ fun LoginScreen(navController: NavController) {
                 Icon(
                     Icons.Default.Email,
                     contentDescription = null,
-                    tint = Color(0xFF1976D2) // xanh dương nổi bật
+                    tint = Color(0xFF1976D2)
                 )
             },
             singleLine = true,
@@ -86,7 +85,6 @@ fun LoginScreen(navController: NavController) {
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Mật khẩu
         TextField(
             value = password.value,
             onValueChange = { password.value = it },
@@ -179,7 +177,6 @@ fun LoginScreen(navController: NavController) {
                 Text("Đăng nhập", color = Color.White)
             }
         }
-
         Spacer(modifier = Modifier.height(16.dp))
 
         TextButton(onClick = {
