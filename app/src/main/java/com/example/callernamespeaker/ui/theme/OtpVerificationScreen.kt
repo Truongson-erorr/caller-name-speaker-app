@@ -5,14 +5,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -27,6 +31,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -56,111 +61,132 @@ fun OtpVerificationScreen(
     phoneNumber: String
 ) {
     val context = LocalContext.current
-    val otp = remember { mutableStateOf("") }
     val auth = FirebaseAuth.getInstance()
-    var passwordVisible by remember { mutableStateOf(false) }
-    val gradientColors = listOf(Color(0xFF6A11CB), Color(0xFF2575FC))
+    val otpValues = remember { List(6) { mutableStateOf("") } }
 
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Brush.verticalGradient(gradientColors))
+            .background(Color.White)
+            .padding(horizontal = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
     ) {
-        Card(
+        Spacer(modifier = Modifier.height(30.dp))
+
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 24.dp)
-                .align(Alignment.Center),
-            shape = RoundedCornerShape(24.dp),
-            elevation = CardDefaults.cardElevation(8.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.95f))
+                .padding(bottom = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(
-                modifier = Modifier
-                    .padding(24.dp)
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
+            IconButton(onClick = { navController.popBackStack() }) {
                 Icon(
-                    imageVector = Icons.Default.Lock,
-                    contentDescription = null,
-                    tint = Color(0xFF2575FC),
-                    modifier = Modifier.size(64.dp)
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Quay lại",
+                    tint = Color.Black,
                 )
-
-                Text(
-                    text = "Xác minh OTP",
-                    style = MaterialTheme.typography.headlineSmall.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF2575FC),
-                    ),
-                    textAlign = TextAlign.Center
-                )
-
-                Text(
-                    text = "Nhập mã OTP đã gửi đến $phoneNumber",
-                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray),
-                    textAlign = TextAlign.Center
-                )
-
-                OutlinedTextField(
-                    value = otp.value,
-                    onValueChange = { otp.value = it },
-                    label = { Text("Mã OTP") },
-                    leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
-                    trailingIcon = {
-                        IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                            Icon(
-                                imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                contentDescription = null
-                            )
-                        }
-                    },
-                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        unfocusedBorderColor = Color.LightGray
-                    )
-                )
-
-                Button(
-                    onClick = {
-                        val credential = PhoneAuthProvider.getCredential(verificationId, otp.value)
-                        auth.signInWithCredential(credential)
-                            .addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    Toast.makeText(context, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
-                                    navController.navigate("main")
-                                } else {
-                                    Toast.makeText(context, "Sai mã OTP", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF2575FC),
-                        contentColor = Color.White
-                    )
-                ) {
-                    Text("XÁC MINH", fontWeight = FontWeight.Bold)
-                }
-
-                TextButton(
-                    onClick = { navController.popBackStack() },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Quay lại", color = MaterialTheme.colorScheme.primary)
-                }
             }
         }
+
+        Spacer(modifier = Modifier.height(36.dp))
+        Icon(
+            imageVector = Icons.Default.Lock,
+            contentDescription = null,
+            tint = Color(0xFF2575FC),
+            modifier = Modifier.size(64.dp)
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Text(
+            text = "Xác minh OTP",
+            style = MaterialTheme.typography.headlineSmall.copy(
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF2575FC)
+            ),
+            textAlign = TextAlign.Center
+        )
+
+        Text(
+            text = "Mã đã gửi đến $phoneNumber",
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(top = 4.dp, bottom = 24.dp)
+        )
+
+        // Nhập mã OTP
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            otpValues.forEach { otpChar ->
+                TextField(
+                    value = otpChar.value,
+                    onValueChange = {
+                        if (it.length <= 1 && it.all { c -> c.isDigit() }) {
+                            otpChar.value = it
+                        }
+                    },
+                    modifier = Modifier
+                        .width(48.dp)
+                        .height(64.dp),
+                    singleLine = true,
+                    textStyle = MaterialTheme.typography.headlineMedium.copy(
+                        textAlign = TextAlign.Center
+                    ),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = TextFieldDefaults.textFieldColors(
+                        containerColor = Color(0xFFF5F5F5),
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        cursorColor = Color(0xFF2575FC)
+                    )
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(40.dp))
+
+        Button(
+            onClick = {
+                val otp = otpValues.joinToString("") { it.value }
+
+                if (otp.length < 6) {
+                    Toast.makeText(context, "Vui lòng nhập đầy đủ 6 số OTP", Toast.LENGTH_SHORT).show()
+                    return@Button
+                }
+
+                val credential = PhoneAuthProvider.getCredential(verificationId, otp)
+                auth.signInWithCredential(credential)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Toast.makeText(context, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
+                            navController.navigate("main") {
+                                popUpTo("otp_verification") { inclusive = true }
+                            }
+                        } else {
+                            Toast.makeText(context, "Sai mã OTP", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            shape = RoundedCornerShape(8.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF2575FC),
+                contentColor = Color.White
+            )
+        ) {
+            Text("XÁC MINH", fontWeight = FontWeight.Bold)
+        }
+
+        Spacer(modifier = Modifier.height(40.dp))
     }
 }
+
+
+
 
 

@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,118 +32,171 @@ import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
 import java.util.concurrent.TimeUnit
 
+data class CountryCode(val emoji: String, val code: String, val name: String)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(navController: NavController) {
     val context = LocalContext.current
     val phone = remember { mutableStateOf("") }
     val auth = FirebaseAuth.getInstance()
-    val gradientColors = listOf(Color(0xFF6A11CB), Color(0xFF2575FC))
 
-    Box(
+    val countryCodes = listOf(
+        CountryCode("🇻🇳", "+84", "Việt Nam"),
+        CountryCode("🇺🇸", "+1", "Mỹ"),
+        CountryCode("🇰🇷", "+82", "Hàn Quốc"),
+        CountryCode("🇯🇵", "+81", "Nhật Bản"),
+        CountryCode("🇦🇺", "+61", "Úc"),
+        CountryCode("🇩🇪", "+49", "Đức")
+    )
+    val selectedCountry = remember { mutableStateOf(countryCodes[0]) }
+    val expanded = remember { mutableStateOf(false) }
+
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Brush.verticalGradient(gradientColors))
+            .background(Color.White)
+            .padding(horizontal = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
     ) {
-        Card(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 24.dp)
-                .align(Alignment.Center),
-            shape = RoundedCornerShape(24.dp),
-            elevation = CardDefaults.cardElevation(8.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.95f))
+                .padding(top = 100.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            Column(
+            Spacer(modifier = Modifier.height(50.dp))
+            Icon(
+                imageVector = Icons.Default.Security,
+                contentDescription = null,
+                tint = Color(0xFF2575FC),
+                modifier = Modifier.size(92.dp)
+            )
+
+            Text(
+                text = "Chào mừng đến BlockSon",
+                style = MaterialTheme.typography.headlineSmall.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF2575FC)
+                ),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 10.dp)
+            )
+
+            Text(
+                text = "Bảo vệ bạn khỏi các cuộc gọi lừa đảo",
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 1.dp, bottom = 20.dp)
+            )
+
+            Row(
                 modifier = Modifier
-                    .padding(24.dp)
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .fillMaxWidth()
+                    .height(56.dp) // Chiều cao chuẩn TextField
+                    .background(Color(0xFFF5F5F5), RoundedCornerShape(12.dp))
+                    .clip(RoundedCornerShape(12.dp))
             ) {
-                Icon(
-                    imageVector = Icons.Default.Security,
-                    contentDescription = "Logo",
-                    tint = Color(0xFF2575FC),
-                    modifier = Modifier.size(64.dp)
-                )
 
-                Text(
-                    text = "Đăng nhập",
-                    style = MaterialTheme.typography.headlineSmall.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF2575FC),
-                    ),
-                    textAlign = TextAlign.Center
-                )
+                Box(
+                    modifier = Modifier
+                        .width(110.dp)
+                        .fillMaxHeight()
+                        .clickable { expanded.value = true }
+                        .padding(start = 12.dp),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    Text(
+                        text = "${selectedCountry.value.emoji} ${selectedCountry.value.code}",
+                        style = MaterialTheme.typography.bodyLarge.copy(color = Color.Black)
+                    )
+                    DropdownMenu(
+                        expanded = expanded.value,
+                        onDismissRequest = { expanded.value = false }
+                    ) {
+                        countryCodes.forEach { country ->
+                            DropdownMenuItem(
+                                text = { Text("${country.emoji} ${country.code} - ${country.name}") },
+                                onClick = {
+                                    selectedCountry.value = country
+                                    expanded.value = false
+                                }
+                            )
+                        }
+                    }
+                }
 
-                Text(
-                    text = "Nhập số điện thoại để nhận mã OTP",
-                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray),
-                    textAlign = TextAlign.Center
-                )
-
-                OutlinedTextField(
+                TextField(
                     value = phone.value,
                     onValueChange = { phone.value = it },
-                    label = { Text("Số điện thoại") },
-                    leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null) },
+                    placeholder = { Text("Số điện thoại") },
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                     singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        unfocusedBorderColor = Color.LightGray
+                    colors = TextFieldDefaults.textFieldColors(
+                        containerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                        errorIndicatorColor = Color.Transparent,
+                        cursorColor = Color(0xFF2575FC),
                     )
                 )
+            }
+        }
 
-                Button(
-                    onClick = {
-                        if (phone.value.length < 10) {
-                            Toast.makeText(context, "Vui lòng nhập số điện thoại hợp lệ", Toast.LENGTH_SHORT).show()
-                            return@Button
+        Spacer(modifier = Modifier.height(30.dp))
+        Button(
+            onClick = {
+                if (phone.value.length < 6) {
+                    Toast.makeText(context, "Vui lòng nhập số điện thoại hợp lệ", Toast.LENGTH_SHORT).show()
+                    return@Button
+                }
+
+                val fullPhoneNumber = selectedCountry.value.code + phone.value
+
+                val options = PhoneAuthOptions.newBuilder(auth)
+                    .setPhoneNumber(fullPhoneNumber)
+                    .setTimeout(60L, TimeUnit.SECONDS)
+                    .setActivity(context as Activity)
+                    .setCallbacks(object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+                        override fun onVerificationCompleted(credential: PhoneAuthCredential) {
+                            auth.signInWithCredential(credential)
+                                .addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        Toast.makeText(context, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
+                                        navController.navigate("main")
+                                    }
+                                }
                         }
 
-                        val options = PhoneAuthOptions.newBuilder(auth)
-                            .setPhoneNumber(phone.value)
-                            .setTimeout(60L, TimeUnit.SECONDS)
-                            .setActivity(context as Activity)
-                            .setCallbacks(object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-                                override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-                                    auth.signInWithCredential(credential)
-                                        .addOnCompleteListener { task ->
-                                            if (task.isSuccessful) {
-                                                Toast.makeText(context, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
-                                                navController.navigate("main")
-                                            }
-                                        }
-                                }
+                        override fun onVerificationFailed(e: FirebaseException) {
+                            Toast.makeText(context, "Lỗi: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+                        }
 
-                                override fun onVerificationFailed(e: FirebaseException) {
-                                    Toast.makeText(context, "Lỗi: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
-                                }
+                        override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
+                            navController.navigate("otp_verification/${verificationId}/${fullPhoneNumber}")
+                        }
+                    })
+                    .build()
 
-                                override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
-                                    navController.navigate("otp_verification/${verificationId}/${phone.value}")
-                                }
-                            })
-                            .build()
-                        PhoneAuthProvider.verifyPhoneNumber(options)
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    shape = RoundedCornerShape(2.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF2575FC),
-                        contentColor = Color.White
-                    )
-                ) {
-                    Text("GỬI MÃ OTP", fontWeight = FontWeight.Bold)
-                }
-            }
+                PhoneAuthProvider.verifyPhoneNumber(options)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 32.dp)
+                .height(50.dp),
+            shape = RoundedCornerShape(8.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF2575FC),
+                contentColor = Color.White
+            )
+        ) {
+            Text("GỬI MÃ OTP", fontWeight = FontWeight.Bold)
         }
     }
 }
-
