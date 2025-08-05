@@ -20,6 +20,7 @@ import com.example.callernamespeaker.ui.theme.AllNewsScreen
 import com.example.callernamespeaker.ui.theme.CallDetailScreen
 import com.example.callernamespeaker.ui.theme.CallHistoryScreen
 import com.example.callernamespeaker.ui.theme.NewsDetailScreen
+import com.example.callernamespeaker.ui.theme.OtpVerificationScreen
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -39,9 +40,19 @@ fun AppNavGraph(
         composable("LoginScreen") {
             LoginScreen(navController)
         }
-
         composable("RegisterScreen") {
             RegisterScreen(navController)
+        }
+        composable(
+            "otp_verification/{verificationId}/{phoneNumber}",
+            arguments = listOf(
+                navArgument("verificationId") { type = NavType.StringType },
+                navArgument("phoneNumber") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val verificationId = backStackEntry.arguments?.getString("verificationId")!!
+            val phoneNumber = backStackEntry.arguments?.getString("phoneNumber")!!
+            OtpVerificationScreen(navController, verificationId, phoneNumber)
         }
 
         composable("main") {
@@ -53,7 +64,7 @@ fun AppNavGraph(
             arguments = listOf(navArgument("id") { type = NavType.StringType })
         ) { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id") ?: ""
-            NewsDetailScreen(postId = id)
+            NewsDetailScreen(postId = id, navController)
         }
         composable("all_news") {
             AllNewsScreen(navController)

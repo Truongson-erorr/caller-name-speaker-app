@@ -3,6 +3,7 @@ package com.example.callernamespeaker.ui.theme
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,6 +15,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -25,9 +27,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.callernamespeaker.model.NewsPost
 import com.example.callernamespeaker.viewmodel.CommentViewModel
@@ -38,7 +42,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun NewsDetailScreen(postId: String) {
+fun NewsDetailScreen(postId: String, navController: NavController) {
     val firestore = FirebaseFirestore.getInstance()
     var post by remember { mutableStateOf<NewsPost?>(null) }
 
@@ -93,13 +97,31 @@ fun NewsDetailScreen(postId: String) {
                     .padding(16.dp)
                     .verticalScroll(scrollState)
             ) {
-                Spacer(modifier = Modifier.height(40.dp))
-                Text(
-                    text = post!!.title,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
+                Spacer(modifier = Modifier.height(30.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color.Black,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable { navController.popBackStack() }
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text(
+                        text = post!!.title,
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
 
                 Text(
                     text = post!!.date,
