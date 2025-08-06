@@ -22,6 +22,7 @@ import com.example.callernamespeaker.ui.theme.CallHistoryScreen
 import com.example.callernamespeaker.ui.theme.EmergencyTab
 import com.example.callernamespeaker.ui.theme.NewsDetailScreen
 import com.example.callernamespeaker.ui.theme.OtpVerificationScreen
+import com.example.callernamespeaker.ui.theme.UserInfoScreen
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -47,6 +48,9 @@ fun AppNavGraph(
         composable("EmergencyTab") {
             EmergencyTab(navController)
         }
+        composable("UserInfoScreen") {
+        UserInfoScreen(navController)
+    }
         composable(
             "otp_verification/{verificationId}/{phoneNumber}",
             arguments = listOf(

@@ -202,7 +202,7 @@ fun OtpVerificationScreen(
                 isLoading = false
                 Toast.makeText(context, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
                 navController.navigate("main") {
-                    popUpTo("otp_verification") { inclusive = true }
+                    popUpTo("UserInfoScreen") { inclusive = true }
                 }
             }
         }
