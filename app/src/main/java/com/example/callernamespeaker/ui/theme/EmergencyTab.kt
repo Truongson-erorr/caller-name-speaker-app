@@ -74,6 +74,7 @@ fun EmergencyTab(navController: NavController) {
             )
         }
 
+        Spacer(modifier = Modifier.height(10.dp))
         Surface(
             shape = RoundedCornerShape(8.dp),
             color = Color(0xFFBBDEFB),
