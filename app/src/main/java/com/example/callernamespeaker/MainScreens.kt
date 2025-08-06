@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Report
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
@@ -23,6 +24,7 @@ import androidx.navigation.NavController
 import com.example.callernamespeaker.ui.theme.EmergencyTab
 import com.example.callernamespeaker.ui.theme.HistoryTab
 import com.example.callernamespeaker.ui.theme.HomeTab
+import com.example.callernamespeaker.ui.theme.NotificationScreen
 import com.example.callernamespeaker.ui.theme.ReportTab
 import com.google.firebase.auth.FirebaseAuth
 import org.checkerframework.checker.units.qual.N
@@ -39,12 +41,12 @@ fun MainScreen(navController: NavController) {
                     .fillMaxWidth()
                     .height(75.dp)
                     .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)),
-                color = Color(0xFF1565C0), // Màu nền
+                color = Color(0xFF1565C0),
                 contentColor = Color.White,
                 shadowElevation = 8.dp
             ) {
                 NavigationBar(
-                    containerColor = Color(0xFF1565C0), // Màu xanh dương
+                    containerColor = Color(0xFF1565C0),
                     contentColor = Color.White
                 ) {
                     NavigationBarItem(
@@ -86,42 +88,6 @@ fun MainScreen(navController: NavController) {
                     NavigationBarItem(
                         icon = {
                             Icon(
-                                imageVector = Icons.Default.Warning,
-                                contentDescription = "Khẩn cấp",
-                                modifier = Modifier.size(20.dp)
-                            )
-                        },
-                        label = {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(
-                                    "Số khẩn cấp",
-                                    fontSize = 8.sp,
-                                    color = if (selectedTab == "emergency") Color.White else Color.LightGray
-                                )
-                                if (selectedTab == "emergency") {
-                                    Box(
-                                        modifier = Modifier
-                                            .width(20.dp)
-                                            .height(2.dp)
-                                            .background(Color.White)
-                                    )
-                                }
-                            }
-                        },
-                        selected = selectedTab == "emergency",
-                        onClick = { selectedTab = "emergency" },
-                        colors = NavigationBarItemDefaults.colors(
-                            indicatorColor = Color.Transparent,
-                            selectedIconColor = Color.White,
-                            unselectedIconColor = Color.White,
-                            selectedTextColor = Color.White,
-                            unselectedTextColor = Color.LightGray
-                        )
-                    )
-
-                    NavigationBarItem(
-                        icon = {
-                            Icon(
                                 imageVector = Icons.Default.List,
                                 contentDescription = "Danh sách đen",
                                 modifier = Modifier.size(20.dp)
@@ -146,6 +112,42 @@ fun MainScreen(navController: NavController) {
                         },
                         selected = selectedTab == "report",
                         onClick = { selectedTab = "report" },
+                        colors = NavigationBarItemDefaults.colors(
+                            indicatorColor = Color.Transparent,
+                            selectedIconColor = Color.White,
+                            unselectedIconColor = Color.White,
+                            selectedTextColor = Color.White,
+                            unselectedTextColor = Color.LightGray
+                        )
+                    )
+
+                    NavigationBarItem(
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.Notifications,
+                                contentDescription = "Thông báo",
+                                modifier = Modifier.size(20.dp)
+                            )
+                        },
+                        label = {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    "Thông báo",
+                                    fontSize = 8.sp,
+                                    color = if (selectedTab == "notification") Color.White else Color.LightGray
+                                )
+                                if (selectedTab == "notification") {
+                                    Box(
+                                        modifier = Modifier
+                                            .width(20.dp)
+                                            .height(2.dp)
+                                            .background(Color.White)
+                                    )
+                                }
+                            }
+                        },
+                        selected = selectedTab == "notification",
+                        onClick = { selectedTab = "notification" },
                         colors = NavigationBarItemDefaults.colors(
                             indicatorColor = Color.Transparent,
                             selectedIconColor = Color.White,
@@ -197,8 +199,8 @@ fun MainScreen(navController: NavController) {
         Box(modifier = Modifier.padding(innerPadding)) {
             when (selectedTab) {
                 "home" -> HomeTab(navController = navController)
-                "emergency" -> EmergencyTab()
                 "report" -> ReportTab()
+                "notification" -> NotificationScreen()
                 "history" -> HistoryTab(navController, context)
             }
         }
