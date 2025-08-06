@@ -40,7 +40,7 @@ fun LoginScreen(navController: NavController) {
     val context = LocalContext.current
     val phone = remember { mutableStateOf("") }
     val auth = FirebaseAuth.getInstance()
-
+    var isLoading by remember { mutableStateOf(false) }
     val countryCodes = listOf(
         CountryCode("🇻🇳", "+84", "Việt Nam"),
         CountryCode("🇺🇸", "+1", "Mỹ"),
@@ -157,6 +157,8 @@ fun LoginScreen(navController: NavController) {
                     return@Button
                 }
 
+                isLoading = true // Bắt đầu loading
+
                 val fullPhoneNumber = selectedCountry.value.code + phone.value
 
                 val options = PhoneAuthOptions.newBuilder(auth)
@@ -167,6 +169,7 @@ fun LoginScreen(navController: NavController) {
                         override fun onVerificationCompleted(credential: PhoneAuthCredential) {
                             auth.signInWithCredential(credential)
                                 .addOnCompleteListener { task ->
+                                    isLoading = false
                                     if (task.isSuccessful) {
                                         Toast.makeText(context, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
                                         navController.navigate("main")
@@ -175,10 +178,12 @@ fun LoginScreen(navController: NavController) {
                         }
 
                         override fun onVerificationFailed(e: FirebaseException) {
+                            isLoading = false
                             Toast.makeText(context, "Lỗi: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
                         }
 
                         override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
+                            isLoading = false
                             navController.navigate("otp_verification/${verificationId}/${fullPhoneNumber}")
                         }
                     })
@@ -191,12 +196,21 @@ fun LoginScreen(navController: NavController) {
                 .padding(bottom = 32.dp)
                 .height(50.dp),
             shape = RoundedCornerShape(8.dp),
+            enabled = !isLoading,
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF2575FC),
                 contentColor = Color.White
             )
         ) {
-            Text("GỬI MÃ OTP", fontWeight = FontWeight.Bold)
+            if (isLoading) {
+                CircularProgressIndicator(
+                    color = Color.White,
+                    strokeWidth = 2.dp,
+                    modifier = Modifier.size(24.dp)
+                )
+            } else {
+                Text("GỬI MÃ OTP", fontWeight = FontWeight.Bold)
+            }
         }
     }
 }
