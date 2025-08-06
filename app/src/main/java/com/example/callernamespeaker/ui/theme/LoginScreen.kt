@@ -95,7 +95,7 @@ fun LoginScreen(navController: NavController) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp) // Chiều cao chuẩn TextField
+                    .height(56.dp)
                     .background(Color(0xFFF5F5F5), RoundedCornerShape(12.dp))
                     .clip(RoundedCornerShape(12.dp))
             ) {
@@ -157,7 +157,7 @@ fun LoginScreen(navController: NavController) {
                     return@Button
                 }
 
-                isLoading = true // Bắt đầu loading
+                isLoading = true
 
                 val fullPhoneNumber = selectedCountry.value.code + phone.value
 
