@@ -36,20 +36,20 @@ fun MainScreen(navController: NavController) {
     val context = LocalContext.current
 
     val selectedColor = Color(0xFF1565C0)
-    val unselectedColor = Color(0xFF90CAF9)
+    val unselectedColor = Color.White
     Scaffold(
         bottomBar = {
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(75.dp)
+                    .height(78.dp)
                     .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)),
-                color = Color(0xFFF1F6FB),
+                color = Color(0xFF1565C0),
                 contentColor = Color.White,
                 shadowElevation = 8.dp
             ) {
                 NavigationBar(
-                    containerColor = Color(0xFF1565C0),
+                    containerColor = Color.Black,
                     contentColor = selectedColor
                 ) {
                     @Composable
