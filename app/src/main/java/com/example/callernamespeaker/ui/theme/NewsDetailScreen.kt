@@ -161,7 +161,6 @@ fun CommentSection(postId: String, userName: String, viewModel: CommentViewModel
             .fillMaxWidth()
             .padding( horizontal = 16.dp)
     ) {
-        // Tiêu đề bình luận
         Text(
             text = "Bình luận (${comments.size})",
             fontWeight = FontWeight.Bold,
@@ -183,7 +182,7 @@ fun CommentSection(postId: String, userName: String, viewModel: CommentViewModel
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(max = 300.dp) // Giới hạn chiều cao để cuộn
+                    .heightIn(max = 300.dp)
             ) {
                 items(comments) { comment ->
                     CommentItem(comment = comment)
@@ -200,6 +199,7 @@ fun CommentSection(postId: String, userName: String, viewModel: CommentViewModel
         OutlinedTextField(
             value = newComment,
             onValueChange = { newComment = it },
+            shape = RoundedCornerShape(26.dp),
             placeholder = { Text("Nhập bình luận...") },
             modifier = Modifier
                 .fillMaxWidth()
@@ -228,7 +228,7 @@ fun CommentSection(postId: String, userName: String, viewModel: CommentViewModel
                     Icon(
                         imageVector = Icons.Default.Send,
                         contentDescription = "Gửi bình luận",
-                        tint = if (newComment.isNotBlank()) Color(0xFF2196F3) else Color.Gray
+                        tint = if (newComment.isNotBlank()) Color.Black else Color.Gray
                     )
                 }
             }
@@ -247,7 +247,7 @@ fun CommentItem(comment: Comment) {
         Icon(
             imageVector = Icons.Default.AccountCircle,
             contentDescription = "User avatar",
-            tint = Color(0xFF2196F3),
+            tint = Color.Gray,
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)
