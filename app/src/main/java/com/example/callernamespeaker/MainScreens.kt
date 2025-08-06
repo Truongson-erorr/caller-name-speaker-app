@@ -65,13 +65,13 @@ fun MainScreen(navController: NavController) {
                                     imageVector = icon,
                                     contentDescription = label,
                                     tint = if (selected) selectedColor else unselectedColor,
-                                    modifier = Modifier.size(23.dp)
+                                    modifier = Modifier.size(21.dp)
                                 )
                             },
                             label = {
                                 Text(
                                     text = label,
-                                    fontSize = 11.sp,
+                                    fontSize = 10.sp,
                                     color = if (selected) selectedColor else unselectedColor
                                 )
                             },

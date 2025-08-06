@@ -256,8 +256,6 @@ fun CommentItem(comment: Comment) {
         )
 
         Spacer(modifier = Modifier.width(12.dp))
-
-        // Nội dung bình luận
         Column {
             Text(
                 text = comment.userName,
