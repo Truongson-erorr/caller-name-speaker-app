@@ -201,8 +201,8 @@ fun OtpVerificationScreen(
                 kotlinx.coroutines.delay(2500)
                 isLoading = false
                 Toast.makeText(context, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
-                navController.navigate("main") {
-                    popUpTo("UserInfoScreen") { inclusive = true }
+                navController.navigate("UserInfoScreen") {
+                    popUpTo("otp_verification") { inclusive = true }
                 }
             }
         }
