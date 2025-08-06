@@ -149,7 +149,7 @@ fun UserInfoScreen(navController: NavController) {
                     "role" to "user"
                 )
 
-                db.collection("Ssers").document(uid)
+                db.collection("Users").document(uid)
                     .set(userData)
                     .addOnSuccessListener {
                         isLoading = false
