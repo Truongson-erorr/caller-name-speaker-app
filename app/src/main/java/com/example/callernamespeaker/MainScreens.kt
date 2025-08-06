@@ -44,12 +44,12 @@ fun MainScreen(navController: NavController) {
                     .fillMaxWidth()
                     .height(75.dp)
                     .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)),
-                color = Color(0xFF1565C0),
+                color = Color(0xFFF1F6FB),
                 contentColor = Color.White,
                 shadowElevation = 8.dp
             ) {
                 NavigationBar(
-                    containerColor = Color.White,
+                    containerColor = Color(0xFF1565C0),
                     contentColor = selectedColor
                 ) {
                     @Composable
