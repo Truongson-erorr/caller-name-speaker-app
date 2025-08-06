@@ -34,7 +34,7 @@ fun NotificationScreen() {
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             color = Color.Black,
-            modifier = Modifier.padding(bottom = 16.dp)
+            modifier = Modifier.padding(bottom = 10.dp)
         )
 
         Row(
@@ -49,7 +49,7 @@ fun NotificationScreen() {
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(64.dp)
+                    .size(54.dp)
                     .clip(RoundedCornerShape(10.dp))
             )
 
@@ -65,7 +65,7 @@ fun NotificationScreen() {
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Đăng lúc: 5 phút trước",
+                    text = "5 phút trước",
                     fontSize = 12.sp,
                     color = Color.Gray
                 )

@@ -24,6 +24,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,6 +35,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,6 +65,8 @@ fun OtpVerificationScreen(
     val context = LocalContext.current
     val auth = FirebaseAuth.getInstance()
     val otpValues = remember { List(6) { mutableStateOf("") } }
+    var isLoading by remember { mutableStateOf(false) }
+    var navigateToMain by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -89,7 +93,7 @@ fun OtpVerificationScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(36.dp))
+        Spacer(modifier = Modifier.height(56.dp))
         Icon(
             imageVector = Icons.Default.Lock,
             contentDescription = null,
@@ -115,7 +119,6 @@ fun OtpVerificationScreen(
             modifier = Modifier.padding(top = 4.dp, bottom = 24.dp)
         )
 
-        // Nhập mã OTP
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -157,15 +160,15 @@ fun OtpVerificationScreen(
                     return@Button
                 }
 
+                isLoading = true
+
                 val credential = PhoneAuthProvider.getCredential(verificationId, otp)
                 auth.signInWithCredential(credential)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            Toast.makeText(context, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
-                            navController.navigate("main") {
-                                popUpTo("otp_verification") { inclusive = true }
-                            }
+                            navigateToMain = true
                         } else {
+                            isLoading = false
                             Toast.makeText(context, "Sai mã OTP", Toast.LENGTH_SHORT).show()
                         }
                     }
@@ -174,15 +177,35 @@ fun OtpVerificationScreen(
                 .fillMaxWidth()
                 .height(50.dp),
             shape = RoundedCornerShape(8.dp),
+            enabled = !isLoading,
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF2575FC),
                 contentColor = Color.White
             )
         ) {
-            Text("XÁC MINH", fontWeight = FontWeight.Bold)
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    color = Color.White,
+                    strokeWidth = 2.dp
+                )
+            } else {
+                Text("XÁC MINH", fontWeight = FontWeight.Bold)
+            }
         }
 
         Spacer(modifier = Modifier.height(40.dp))
+
+        if (navigateToMain) {
+            LaunchedEffect(Unit) {
+                kotlinx.coroutines.delay(2500)
+                isLoading = false
+                Toast.makeText(context, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
+                navController.navigate("main") {
+                    popUpTo("otp_verification") { inclusive = true }
+                }
+            }
+        }
     }
 }
 
