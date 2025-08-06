@@ -133,7 +133,7 @@ fun ReportTab(viewModel: BlacklistViewModel = viewModel()) {
                             .fillMaxWidth()
                             .animateItemPlacement(),
                         colors = CardDefaults.elevatedCardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                            containerColor = Color.White
                         )
                     ) {
                         Row(
