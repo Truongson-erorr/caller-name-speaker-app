@@ -19,6 +19,7 @@ import com.example.callernamespeaker.model.NewsPost
 import com.example.callernamespeaker.ui.theme.AllNewsScreen
 import com.example.callernamespeaker.ui.theme.CallDetailScreen
 import com.example.callernamespeaker.ui.theme.CallHistoryScreen
+import com.example.callernamespeaker.ui.theme.EmergencyTab
 import com.example.callernamespeaker.ui.theme.NewsDetailScreen
 import com.example.callernamespeaker.ui.theme.OtpVerificationScreen
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -42,6 +43,9 @@ fun AppNavGraph(
         }
         composable("RegisterScreen") {
             RegisterScreen(navController)
+        }
+        composable("EmergencyTab") {
+            EmergencyTab(navController)
         }
         composable(
             "otp_verification/{verificationId}/{phoneNumber}",

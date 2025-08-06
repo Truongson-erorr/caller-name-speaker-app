@@ -25,9 +25,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 @Composable
-fun EmergencyTab() {
+fun EmergencyTab(
+    navController: NavController
+) {
     val context = LocalContext.current
 
     val emergencyNumbers = listOf(

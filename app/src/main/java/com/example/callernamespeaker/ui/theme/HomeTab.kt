@@ -143,7 +143,7 @@ fun HomeTab(navController: NavController) {
             ServiceButton("Danh tính", Icons.Default.PersonSearch, Modifier.weight(1f)) {}
             ServiceButton("Lừa đảo", Icons.Default.Report, Modifier.weight(1f)) {}
             ServiceButton("Khẩn cấp", Icons.Default.Wifi, Modifier.weight(1f)) {
-                navController.navigate("emergency")
+                navController.navigate("EmergencyTab")
             }
         }
 
