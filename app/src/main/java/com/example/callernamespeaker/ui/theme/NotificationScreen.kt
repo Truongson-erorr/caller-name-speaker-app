@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -22,10 +23,11 @@ fun NotificationScreen() {
             .background(Color(0xFFF5F7FA))
             .padding(16.dp),
         verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.Start
     ) {
         Text(
             text = "Thông báo mới",
+            fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.headlineSmall.copy(
                 color = Color(0xFF2575FC)
             ),
