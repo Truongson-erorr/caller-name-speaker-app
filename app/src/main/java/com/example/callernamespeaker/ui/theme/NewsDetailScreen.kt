@@ -104,15 +104,6 @@ fun NewsDetailScreen(postId: String, navController: NavController) {
                         .fillMaxWidth()
                         .padding(16.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(24.dp)
-                            .clickable { navController.popBackStack() }
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
                     Text(
                         text = post!!.title,
                         style = MaterialTheme.typography.headlineSmall,
