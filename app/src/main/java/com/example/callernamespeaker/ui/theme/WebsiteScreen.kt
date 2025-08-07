@@ -39,10 +39,11 @@ fun WebsiteScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 20.dp, vertical = 30.dp),
+            .padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.height(50.dp))
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
