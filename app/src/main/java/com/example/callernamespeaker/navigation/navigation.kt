@@ -23,6 +23,7 @@ import com.example.callernamespeaker.ui.theme.EmergencyTab
 import com.example.callernamespeaker.ui.theme.NewsDetailScreen
 import com.example.callernamespeaker.ui.theme.OtpVerificationScreen
 import com.example.callernamespeaker.ui.theme.UserInfoScreen
+import com.example.callernamespeaker.ui.theme.WebsiteScreen
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -66,7 +67,9 @@ fun AppNavGraph(
         composable("main") {
             MainScreen(navController)
         }
-
+        composable("WebsiteScreen") {
+            WebsiteScreen(navController)
+        }
         composable(
             route = "news_detail/{id}",
             arguments = listOf(navArgument("id") { type = NavType.StringType })

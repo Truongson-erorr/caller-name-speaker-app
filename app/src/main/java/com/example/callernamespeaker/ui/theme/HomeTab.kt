@@ -159,7 +159,10 @@ fun HomeTab(navController: NavController) {
             ServiceButton("Báo cáo", Icons.Default.Flag, Modifier.weight(1f)) {
                 showReportDialog = true
             }
-            ServiceButton("Website", Icons.Default.Public, Modifier.weight(1f)) {}
+            ServiceButton("Website", Icons.Default.Public, Modifier.weight(1f)) {
+                navController.navigate("WebsiteScreen")
+            }
+
             ServiceButton("Tra STK", Icons.Default.Money, Modifier.weight(1f)) {}
         }
 
