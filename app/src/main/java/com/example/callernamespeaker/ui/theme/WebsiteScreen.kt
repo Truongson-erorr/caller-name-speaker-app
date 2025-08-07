@@ -13,6 +13,10 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import android.widget.Toast
+import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 
 @Composable
@@ -35,16 +39,35 @@ fun WebsiteScreen(
             .fillMaxSize()
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.Start
     ) {
-        Text(
-            text = "Kiểm Tra Website",
-            fontSize = 24.sp,
-            color = MaterialTheme.colorScheme.primary
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 12.dp)
         )
+        {
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = "Back",
+                tint = Color.Black,
+                modifier = Modifier
+                    .clickable { navController.popBackStack() }
+                    .padding(end = 8.dp)
+                    .size(26.dp)
+            )
+            Text(
+                text = "Kiểm Tra Website",
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp,
+                color = Color.Black
+            )
+        }
 
         OutlinedTextField(
             value = urlInput,
+            shape = RoundedCornerShape(16.dp),
             onValueChange = { urlInput = it },
             label = { Text("Nhập link website") },
             placeholder = { Text("https://example.com") },
