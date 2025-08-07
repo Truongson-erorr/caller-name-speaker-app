@@ -166,7 +166,39 @@ fun OtpVerificationScreen(
                 auth.signInWithCredential(credential)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            navigateToMain = true
+                            val currentUser = auth.currentUser
+                            val uid = currentUser?.uid
+
+                            if (uid != null) {
+                                val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                                db.collection("Users").document(uid).get()
+                                    .addOnSuccessListener { document ->
+                                        isLoading = false
+                                        if (document != null && document.exists()) {
+                                            val name = document.getString("name")
+                                            if (!name.isNullOrBlank()) {
+                                                navController.navigate("main") {
+                                                    popUpTo("otp_verification") { inclusive = true }
+                                                }
+                                            } else {
+                                                navController.navigate("UserInfoScreen") {
+                                                    popUpTo("otp_verification") { inclusive = true }
+                                                }
+                                            }
+                                        } else {
+                                            navController.navigate("UserInfoScreen") {
+                                                popUpTo("otp_verification") { inclusive = true }
+                                            }
+                                        }
+                                    }
+                                    .addOnFailureListener {
+                                        isLoading = false
+                                        Toast.makeText(context, "Lỗi kiểm tra hồ sơ: ${it.message}", Toast.LENGTH_SHORT).show()
+                                    }
+                            } else {
+                                isLoading = false
+                                Toast.makeText(context, "Không thể lấy thông tin người dùng", Toast.LENGTH_SHORT).show()
+                            }
                         } else {
                             isLoading = false
                             Toast.makeText(context, "Sai mã OTP", Toast.LENGTH_SHORT).show()

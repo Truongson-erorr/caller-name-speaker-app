@@ -49,7 +49,7 @@ fun MainScreen(navController: NavController) {
                 shadowElevation = 8.dp
             ) {
                 NavigationBar(
-                    containerColor = Color.Black,
+                    containerColor = Color.DarkGray,
                     contentColor = selectedColor
                 ) {
                     @Composable
