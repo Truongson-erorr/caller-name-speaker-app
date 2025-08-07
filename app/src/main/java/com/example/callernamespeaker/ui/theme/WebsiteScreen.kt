@@ -43,7 +43,7 @@ fun WebsiteScreen(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(50.dp))
+        Spacer(modifier = Modifier.height(56.dp))
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -106,7 +106,11 @@ fun WebsiteScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF2575FC),
+                contentColor = Color.White
+            )
         ) {
             Text("Kiểm tra", fontWeight = FontWeight.Bold)
         }
