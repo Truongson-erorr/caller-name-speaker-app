@@ -19,12 +19,14 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WebsiteScreen(
     navController: NavController
 ) {
     var urlInput by remember { mutableStateOf(TextFieldValue("")) }
     var result by remember { mutableStateOf<String?>(null) }
+    var domain by remember { mutableStateOf<String?>(null) }
     val context = LocalContext.current
 
     val blacklistedSites = listOf(
@@ -37,17 +39,18 @@ fun WebsiteScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalAlignment = Alignment.Start
+            .padding(horizontal = 20.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.height(30.dp))
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 12.dp)
-        )
-        {
+                .padding(bottom = 24.dp)
+        ) {
             Icon(
                 imageVector = Icons.Default.ArrowBack,
                 contentDescription = "Back",
@@ -65,40 +68,88 @@ fun WebsiteScreen(
             )
         }
 
-        OutlinedTextField(
+        TextField(
             value = urlInput,
-            shape = RoundedCornerShape(16.dp),
             onValueChange = { urlInput = it },
-            label = { Text("Nhập link website") },
-            placeholder = { Text("https://example.com") },
+            shape = RoundedCornerShape(14.dp),
+            placeholder = { Text("Dán link website vào đây...") },
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = Color(0xFFF5F5F5),
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                cursorColor = MaterialTheme.colorScheme.primary
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = {
-                val normalizedUrl = urlInput.text.trim().lowercase()
+                val input = urlInput.text.trim().lowercase()
+                val cleanDomain = input
+                    .removePrefix("https://")
+                    .removePrefix("http://")
+                    .removePrefix("www.")
+                    .substringBefore("/")
+                domain = cleanDomain
 
-                // Kiểm tra xem URL có trong blacklist không
                 val isUnsafe = blacklistedSites.any { site ->
-                    normalizedUrl.contains(site)
+                    cleanDomain.contains(site)
                 }
 
                 result = if (isUnsafe) "❌ Website có thể không an toàn!" else "✅ Website an toàn."
                 Toast.makeText(context, result, Toast.LENGTH_SHORT).show()
             },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Text("Kiểm tra")
+            Text("Kiểm tra", fontWeight = FontWeight.Bold)
         }
 
+        Spacer(modifier = Modifier.height(24.dp))
+
         result?.let {
-            Text(
-                text = it,
-                color = if (it.contains("an toàn")) Color(0xFF2E7D32) else Color.Red,
-                fontSize = 18.sp
-            )
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = if (it.contains("an toàn")) Color(0xFFE8F5E9) else Color(0xFFFFEBEE)
+                ),
+                elevation = CardDefaults.cardElevation(4.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Text("Thông tin Website", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+
+                    domain?.let {
+                        Text(text = "Tên miền: $it", modifier = Modifier.padding(top = 8.dp))
+                    }
+
+                    Text(
+                        text = "Trạng thái: $result",
+                        color = if (result!!.contains("an toàn")) Color(0xFF2E7D32) else Color.Red,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+
+                    if (result!!.contains("không an toàn")) {
+                        Text(
+                            text = "⚠️ Gợi ý: Không nhập thông tin cá nhân hoặc đăng nhập vào website này.",
+                            fontSize = 14.sp,
+                            color = Color.DarkGray,
+                            modifier = Modifier.padding(top = 12.dp)
+                        )
+                    }
+                }
+            }
         }
     }
 }
