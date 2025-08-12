@@ -147,9 +147,25 @@ fun LoginScreen(navController: NavController) {
                     )
                 )
             }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                TextButton(
+                    onClick = {  navController.navigate("ForgotPasswordScreen") }
+                ) {
+                    Text(
+                        "Quên mật khẩu",
+                        color = Color(0xFF2575FC),
+                        fontSize = 14.sp
+                    )
+                }
+            }
+
         }
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Button(
             onClick = {
                 if (phone.value.length < 6) {

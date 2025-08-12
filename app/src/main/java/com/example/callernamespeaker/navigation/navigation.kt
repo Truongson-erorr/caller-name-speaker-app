@@ -20,6 +20,7 @@ import com.example.callernamespeaker.ui.theme.AllNewsScreen
 import com.example.callernamespeaker.ui.theme.CallDetailScreen
 import com.example.callernamespeaker.ui.theme.CallHistoryScreen
 import com.example.callernamespeaker.ui.theme.EmergencyTab
+import com.example.callernamespeaker.ui.theme.ForgotPasswordScreen
 import com.example.callernamespeaker.ui.theme.NewsDetailScreen
 import com.example.callernamespeaker.ui.theme.OtpVerificationScreen
 import com.example.callernamespeaker.ui.theme.UserInfoScreen
@@ -91,6 +92,10 @@ fun AppNavGraph(
             if (call != null) {
                 CallDetailScreen(navController, call)
             }
+        }
+
+        composable("ForgotPasswordScreen") {
+            ForgotPasswordScreen(navController)
         }
 
 
