@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.LockReset
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -47,7 +48,22 @@ fun ForgotPasswordScreen(navController: NavController) {
             .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(100.dp))
+        Spacer(modifier = Modifier.height(30.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = { navController.popBackStack() }) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color.Black
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(40.dp))
 
         Icon(
             imageVector = Icons.Default.LockReset,
@@ -72,8 +88,8 @@ fun ForgotPasswordScreen(navController: NavController) {
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(vertical = 8.dp)
         )
-
         Spacer(modifier = Modifier.height(20.dp))
+
 
         Row(
             modifier = Modifier
@@ -129,7 +145,6 @@ fun ForgotPasswordScreen(navController: NavController) {
                 )
             )
         }
-
         Spacer(modifier = Modifier.height(20.dp))
 
         Button(
@@ -159,12 +174,6 @@ fun ForgotPasswordScreen(navController: NavController) {
             } else {
                 Text("GỬI MÃ KHÔI PHỤC", fontWeight = FontWeight.Bold)
             }
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        TextButton(onClick = { navController.popBackStack() }) {
-            Text("Quay lại đăng nhập", color = Color(0xFF2575FC))
         }
     }
 }
