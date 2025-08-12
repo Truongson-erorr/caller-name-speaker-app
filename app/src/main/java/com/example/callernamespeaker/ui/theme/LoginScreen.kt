@@ -99,7 +99,6 @@ fun LoginScreen(navController: NavController) {
                     .background(Color(0xFFF5F5F5), RoundedCornerShape(12.dp))
                     .clip(RoundedCornerShape(12.dp))
             ) {
-
                 Box(
                     modifier = Modifier
                         .width(110.dp)

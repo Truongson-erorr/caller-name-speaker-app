@@ -22,11 +22,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.callernamespeaker.ui.theme.EmergencyTab
+import com.example.callernamespeaker.ui.screens.NotificationScreen
 import com.example.callernamespeaker.ui.theme.HistoryTab
 import com.example.callernamespeaker.ui.theme.HomeTab
-import com.example.callernamespeaker.ui.theme.NotificationScreen
 import com.example.callernamespeaker.ui.theme.ReportTab
+import com.example.personalexpensetracker.viewmodel.NotificationViewModel
 import com.google.firebase.auth.FirebaseAuth
 import org.checkerframework.checker.units.qual.N
 
