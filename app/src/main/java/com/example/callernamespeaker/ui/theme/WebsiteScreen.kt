@@ -83,7 +83,6 @@ fun WebsiteScreen(
                 .fillMaxWidth()
                 .height(56.dp)
         )
-
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
@@ -100,7 +99,7 @@ fun WebsiteScreen(
                     cleanDomain.contains(site)
                 }
 
-                result = if (isUnsafe) "❌ Website có thể không an toàn!" else "✅ Website an toàn."
+                result = if (isUnsafe) "Website có thể không an toàn!" else "Website an toàn."
                 Toast.makeText(context, result, Toast.LENGTH_SHORT).show()
             },
             modifier = Modifier
@@ -123,7 +122,7 @@ fun WebsiteScreen(
                     .fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = if (it.contains("an toàn")) Color(0xFFE8F5E9) else Color(0xFFFFEBEE)
+                    containerColor = if (it.contains("an toàn")) Color.White else Color(0xFFFFEBEE)
                 ),
                 elevation = CardDefaults.cardElevation(4.dp)
             ) {
@@ -145,7 +144,7 @@ fun WebsiteScreen(
 
                     if (result!!.contains("không an toàn")) {
                         Text(
-                            text = "⚠️ Gợi ý: Không nhập thông tin cá nhân hoặc đăng nhập vào website này.",
+                            text = "Gợi ý: Không nhập thông tin cá nhân hoặc đăng nhập vào website này.",
                             fontSize = 14.sp,
                             color = Color.DarkGray,
                             modifier = Modifier.padding(top = 12.dp)
