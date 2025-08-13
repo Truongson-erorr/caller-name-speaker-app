@@ -165,6 +165,7 @@ fun NewsDetailScreen(postId: String, navController: NavController) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentSection(postId: String, userName: String, viewModel: CommentViewModel = viewModel()) {
     val comments by viewModel.comments.collectAsState()
@@ -214,14 +215,19 @@ fun CommentSection(postId: String, userName: String, viewModel: CommentViewModel
         }
         Spacer(modifier = Modifier.height(16.dp))
 
-        OutlinedTextField(
+        TextField(
             value = newComment,
             onValueChange = { newComment = it },
-            shape = RoundedCornerShape(26.dp),
-            placeholder = { Text("Nhập bình luận...") },
+            shape = RoundedCornerShape(30.dp),
+            placeholder = { Text("Thêm bình luận...") },
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color.White),
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = Color.White,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
+            ),
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Send
             ),
