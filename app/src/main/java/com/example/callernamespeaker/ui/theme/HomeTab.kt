@@ -131,7 +131,7 @@ fun HomeTab(navController: NavController) {
             contentDescription = "Banner an toàn thông tin",
             modifier = Modifier
                 .fillMaxWidth()
-                .height(140.dp)
+                .height(170.dp)
                 .clip(RoundedCornerShape(8.dp)),
             contentScale = ContentScale.Crop
         )
@@ -237,6 +237,13 @@ fun HomeTab(navController: NavController) {
                             reason = reportReason.trim(),
                             onComplete = {
                                 Toast.makeText(context, "Báo cáo thành công", Toast.LENGTH_SHORT).show()
+
+                                notificationViewModel.addNotification(
+                                    userId = userId,
+                                    title = "Báo cáo số điện thoại",
+                                    message = "Bạn vừa báo cáo số ${reportPhone.trim()} với lý do: ${reportReason.trim()}",
+                                )
+
                                 showReportDialog = false
                                 reportPhone = ""
                                 reportReason = ""
