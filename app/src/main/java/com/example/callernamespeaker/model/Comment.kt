@@ -6,5 +6,6 @@ data class Comment(
     val postId: String = "",
     val userId: String = "",
     val content: String = "",
+    val like: String="",
     val timestamp: Long = System.currentTimeMillis()
 )
