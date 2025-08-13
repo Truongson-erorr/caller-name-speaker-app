@@ -25,18 +25,26 @@ class NotificationViewModel(
     }
 
     fun listenToNotifications(userId: String) {
-        db.collection("notifications")
+        FirebaseFirestore.getInstance()
+            .collection("notifications")
             .whereEqualTo("userId", userId)
-            .orderBy("timestamp", Query.Direction.DESCENDING)
-            .addSnapshotListener { snapshots, e ->
+            .addSnapshotListener { snapshot, e ->
                 if (e != null) {
-                    e.printStackTrace()
+                    Log.w("NotificationVM", "Listen failed.", e)
                     return@addSnapshotListener
                 }
-                val list = snapshots?.documents?.mapNotNull { doc ->
-                    doc.toObject(Notification::class.java)?.copy(id = doc.id)
-                } ?: emptyList()
-                _notifications.value = list
+                if (snapshot != null) {
+                    val list = snapshot.documents.map { doc ->
+                        Notification(
+                            id = doc.id,
+                            title = doc.getString("title") ?: "",
+                            message = doc.getString("message") ?: "",
+                            timestamp = doc.getLong("timestamp") ?: 0,
+                            isRead = doc.getBoolean("isRead") ?: false
+                        )
+                    }
+                    _notifications.value = list
+                }
             }
     }
 
@@ -61,10 +69,10 @@ class NotificationViewModel(
     }
 
     fun deleteNotification(id: String) {
-        db.collection("notifications")
+        FirebaseFirestore.getInstance()
+            .collection("notifications")
             .document(id)
             .delete()
-            .addOnFailureListener { it.printStackTrace() }
     }
 
     fun markAsRead(notificationId: String) {

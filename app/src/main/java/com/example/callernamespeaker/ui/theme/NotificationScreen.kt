@@ -53,7 +53,8 @@ fun NotificationScreen() {
             modifier = Modifier.padding(bottom = 12.dp)
         )
 
-        if (notifications.isEmpty()) {
+        if (
+            notifications.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -68,6 +69,7 @@ fun NotificationScreen() {
                     NotificationItem(
                         notification = notification,
                         onMarkAsRead = { notificationViewModel.markAsRead(notification.id) },
+                        onDelete = { notificationViewModel.deleteNotification(notification.id) }
                     )
                 }
             }
@@ -78,8 +80,11 @@ fun NotificationScreen() {
 @Composable
 fun NotificationItem(
     notification: Notification,
-    onMarkAsRead: () -> Unit
+    onMarkAsRead: () -> Unit,
+    onDelete: () -> Unit
 ) {
+    var showDeleteConfirm by remember { mutableStateOf(false) }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -124,10 +129,40 @@ fun NotificationItem(
                     color = Color.Gray
                 )
             }
+            IconButton(
+                onClick = { showDeleteConfirm = true }
+            ) {
+                Icon(
+                    Icons.Default.Delete,
+                    contentDescription = "Xoá"
+                )
+            }
         }
     }
-}
 
+    if (showDeleteConfirm) {
+        AlertDialog(
+            onDismissRequest = { showDeleteConfirm = false },
+            title = { Text("Xác nhận xoá") },
+            text = { Text("Bạn có chắc chắn muốn xoá thông báo này không?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onDelete()
+                        showDeleteConfirm = false
+                    }
+                ) {
+                    Text("Xoá", color = Color.Red)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteConfirm = false }) {
+                    Text("Huỷ")
+                }
+            }
+        )
+    }
+}
 
 fun formatTime(timestamp: Long): String {
     return DateFormat.format("HH:mm dd/MM/yyyy", timestamp).toString()
