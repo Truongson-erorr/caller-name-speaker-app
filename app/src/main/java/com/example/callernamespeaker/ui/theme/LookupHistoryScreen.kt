@@ -25,8 +25,9 @@ import com.example.callernamespeaker.viewmodel.BlacklistViewModel
 import com.example.callernamespeaker.viewmodel.PhoneLookupViewModel
 
 @Composable
-fun LookupHistoryScreen(viewModel: PhoneLookupViewModel = viewModel()) {
-
+fun LookupHistoryScreen(
+    viewModel: PhoneLookupViewModel = viewModel()
+) {
     LaunchedEffect(Unit) {
         viewModel.fetchHistory()
     }

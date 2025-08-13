@@ -25,7 +25,9 @@ import com.example.callernamespeaker.viewmodel.BlacklistViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ReportTab(viewModel: BlacklistViewModel = viewModel()) {
+fun ReportTab(
+    viewModel: BlacklistViewModel = viewModel()
+) {
     val list = viewModel.blockedList
     val context = LocalContext.current
     var showUnblockDialog by remember { mutableStateOf<String?>(null) }

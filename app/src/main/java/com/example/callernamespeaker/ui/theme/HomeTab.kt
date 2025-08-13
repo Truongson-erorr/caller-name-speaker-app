@@ -38,13 +38,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.callernamespeaker.model.NewsPost
 import com.example.callernamespeaker.viewmodel.BlacklistViewModel
 import com.example.callernamespeaker.viewmodel.ReportViewModel
-import com.example.personalexpensetracker.viewmodel.NotificationViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeTab(
-    navController: NavController
-) {
+fun HomeTab(navController: NavController) {
     val viewModel: PhoneLookupViewModel = viewModel()
     val context = LocalContext.current
 
@@ -71,7 +68,6 @@ fun HomeTab(
     val currentUser = FirebaseAuth.getInstance().currentUser
     val uid = currentUser?.uid
 
-    val notificationViewModel: NotificationViewModel = viewModel()
     LaunchedEffect(uid) {
         if (uid == null) {
             Toast.makeText(context, "Chưa đăng nhập", Toast.LENGTH_SHORT).show()
@@ -307,17 +303,9 @@ fun HomeTab(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        val phone = blockPhoneInput.trim()
-                            .replace("+84", "0")
-                            .replace(" ", "")
-
+                        val phone = blockPhoneInput.trim().replace("+84", "0").replace(" ", "")
                         if (phone.isNotBlank()) {
                             blacklistViewModel.addToBlacklist(phone, type = "unknown") {
-                                notificationViewModel.addNotification( // dùng instance
-                                    title = "Chặn số điện thoại",
-                                    message = "Bạn đã chặn thành công số $phone",
-                                )
-
                                 Toast.makeText(context, "Đã chặn số $phone", Toast.LENGTH_SHORT).show()
                             }
                         }

@@ -17,7 +17,6 @@ class ReportViewModel : ViewModel() {
         onError: (String) -> Unit
     ) {
         val docRef = db.collection("Reports").document(phone)
-
         val newReport = Report(userId, reason)
 
         db.runTransaction { transaction ->

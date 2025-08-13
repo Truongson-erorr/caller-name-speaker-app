@@ -3,12 +3,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.callernamespeaker.model.NewsPost
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.toObject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.util.*
 
 class NewsViewModel : ViewModel() {
     private val _newsPosts = MutableStateFlow<List<NewsPost>>(emptyList())

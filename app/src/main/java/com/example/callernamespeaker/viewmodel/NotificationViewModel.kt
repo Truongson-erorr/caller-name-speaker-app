@@ -1,14 +1,18 @@
 package com.example.personalexpensetracker.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.callernamespeaker.model.Notification
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class NotificationViewModel : ViewModel() {
+class NotificationViewModel(
+    private val userId: String
+) : ViewModel() {
 
     private val db = FirebaseFirestore.getInstance()
 
@@ -16,12 +20,13 @@ class NotificationViewModel : ViewModel() {
     val notifications: StateFlow<List<Notification>> = _notifications
 
     init {
-        listenToNotifications()
+        listenToNotifications(userId)
     }
 
-    private fun listenToNotifications() {
+    fun listenToNotifications(userId: String) {
         db.collection("notifications")
-            .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            .whereEqualTo("userId", userId)
+            .orderBy("timestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshots, e ->
                 if (e != null) {
                     e.printStackTrace()
@@ -34,18 +39,25 @@ class NotificationViewModel : ViewModel() {
             }
     }
 
-    fun addNotification(title: String, message: String) {
-        viewModelScope.launch {
-            val newNotification = Notification(
-                title = title,
-                message = message,
-                timestamp = System.currentTimeMillis()
-            )
-            db.collection("notifications")
-                .add(newNotification)
-                .addOnFailureListener { it.printStackTrace() }
-        }
+    fun addNotification(userId: String, title: String, message: String) {
+        val notification = hashMapOf(
+            "userId" to userId,
+            "title" to title,
+            "message" to message,
+            "timestamp" to System.currentTimeMillis()
+        )
+
+        FirebaseFirestore.getInstance()
+            .collection("notifications")
+            .add(notification)
+            .addOnSuccessListener {
+                Log.d("Notification", "Notification added successfully")
+            }
+            .addOnFailureListener { e ->
+                Log.e("Notification", "Error adding notification", e)
+            }
     }
+
 
     fun deleteNotification(id: String) {
         db.collection("notifications")
