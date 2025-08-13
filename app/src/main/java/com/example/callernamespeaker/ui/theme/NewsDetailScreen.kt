@@ -295,7 +295,6 @@ fun CommentItem(
                     color = Color.Gray
                 )
             }
-
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
