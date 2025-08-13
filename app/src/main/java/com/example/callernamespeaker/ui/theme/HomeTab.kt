@@ -28,6 +28,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
@@ -38,6 +40,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.callernamespeaker.model.NewsPost
 import com.example.callernamespeaker.viewmodel.BlacklistViewModel
 import com.example.callernamespeaker.viewmodel.ReportViewModel
+import com.example.personalexpensetracker.viewmodel.NotificationViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,6 +70,15 @@ fun HomeTab(navController: NavController) {
 
     val currentUser = FirebaseAuth.getInstance().currentUser
     val uid = currentUser?.uid
+
+    val notificationViewModel: NotificationViewModel = viewModel(
+        factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+                return NotificationViewModel(currentUserId) as T
+            }
+        }
+    )
 
     LaunchedEffect(uid) {
         if (uid == null) {
@@ -307,6 +319,15 @@ fun HomeTab(navController: NavController) {
                         if (phone.isNotBlank()) {
                             blacklistViewModel.addToBlacklist(phone, type = "unknown") {
                                 Toast.makeText(context, "Đã chặn số $phone", Toast.LENGTH_SHORT).show()
+
+                                val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+                                if (userId.isNotBlank()) {
+                                    notificationViewModel.addNotification(
+                                        userId = userId,
+                                        title = "Chặn số thành công",
+                                        message = "Bạn vừa chặn số $phone"
+                                    )
+                                }
                             }
                         }
                         showBlockDialog = false

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.callernamespeaker.model.Notification
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -58,11 +59,21 @@ class NotificationViewModel(
             }
     }
 
-
     fun deleteNotification(id: String) {
         db.collection("notifications")
             .document(id)
             .delete()
             .addOnFailureListener { it.printStackTrace() }
     }
+
+    fun markAsRead(notificationId: String) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val docRef = db.collection("notifications")
+            .document(userId)
+            .collection("user_notifications")
+            .document(notificationId)
+
+        docRef.update("isRead", true)
+    }
+
 }

@@ -1,10 +1,12 @@
 package com.example.callernamespeaker.ui.screens
 
 import android.text.format.DateFormat
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -65,7 +67,7 @@ fun NotificationScreen() {
                 items(notifications) { notification ->
                     NotificationItem(
                         notification = notification,
-                        onDelete = { notificationViewModel.deleteNotification(notification.id) }
+                        onMarkAsRead = { notificationViewModel.markAsRead(notification.id) },
                     )
                 }
             }
@@ -76,12 +78,13 @@ fun NotificationScreen() {
 @Composable
 fun NotificationItem(
     notification: Notification,
-    onDelete: () -> Unit
+    onMarkAsRead: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 6.dp),
+            .padding(vertical = 6.dp)
+            .clickable { onMarkAsRead() },
         colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5))
     ) {
         Row(
@@ -90,6 +93,17 @@ fun NotificationItem(
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            if (!notification.isRead) {
+                Icon(
+                    imageVector = Icons.Default.Circle,
+                    contentDescription = "Chưa đọc",
+                    tint = Color.Red,
+                    modifier = Modifier
+                        .size(12.dp)
+                        .padding(end = 8.dp)
+                )
+            }
+
             Column(
                 modifier = Modifier.weight(1f)
             ) {
@@ -110,16 +124,10 @@ fun NotificationItem(
                     color = Color.Gray
                 )
             }
-            IconButton(onClick = onDelete) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Xóa thông báo",
-                    tint = Color.Red
-                )
-            }
         }
     }
 }
+
 
 fun formatTime(timestamp: Long): String {
     return DateFormat.format("HH:mm dd/MM/yyyy", timestamp).toString()
