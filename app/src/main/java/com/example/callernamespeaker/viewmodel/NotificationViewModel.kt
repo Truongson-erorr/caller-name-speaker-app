@@ -45,7 +45,8 @@ class NotificationViewModel(
             "userId" to userId,
             "title" to title,
             "message" to message,
-            "timestamp" to System.currentTimeMillis()
+            "timestamp" to System.currentTimeMillis(),
+            "isRead" to false
         )
 
         FirebaseFirestore.getInstance()
