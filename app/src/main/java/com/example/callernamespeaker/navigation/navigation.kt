@@ -19,6 +19,7 @@ import com.example.callernamespeaker.model.NewsPost
 import com.example.callernamespeaker.ui.theme.AllNewsScreen
 import com.example.callernamespeaker.ui.theme.CallDetailScreen
 import com.example.callernamespeaker.ui.theme.CallHistoryScreen
+import com.example.callernamespeaker.ui.theme.ChatScreen
 import com.example.callernamespeaker.ui.theme.EmergencyTab
 import com.example.callernamespeaker.ui.theme.ForgotPasswordScreen
 import com.example.callernamespeaker.ui.theme.NewsDetailScreen
@@ -81,7 +82,6 @@ fun AppNavGraph(
         composable("all_news") {
             AllNewsScreen(navController)
         }
-
         // chi tiet cuoc goi
         composable(
             route = "call_detail/{index}",
@@ -93,11 +93,11 @@ fun AppNavGraph(
                 CallDetailScreen(navController, call)
             }
         }
-
         composable("ForgotPasswordScreen") {
             ForgotPasswordScreen(navController)
         }
-
-
+        composable("ChatScreen") {
+            ChatScreen()
+        }
     }
 }

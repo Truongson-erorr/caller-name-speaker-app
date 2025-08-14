@@ -173,10 +173,10 @@ fun HomeTab(navController: NavController) {
             ServiceButton("Website", Icons.Default.Public, Modifier.weight(1f)) {
                 navController.navigate("WebsiteScreen")
             }
-
-            ServiceButton("Tra STK", Icons.Default.Money, Modifier.weight(1f)) {}
+            ServiceButton("Giải đáp", Icons.Default.Chat, Modifier.weight(1f)) {
+                navController.navigate("ChatScreen")
+            }
         }
-
         Spacer(modifier = Modifier.height(12.dp))
         NewsSection(navController)
     }
