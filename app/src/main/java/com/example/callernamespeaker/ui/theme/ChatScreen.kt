@@ -6,7 +6,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.SupportAgent
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,7 +22,9 @@ data class Message(
 )
 
 @Composable
-fun ChatScreen() {
+fun ChatScreen(
+    onBack: () -> Unit = {}
+) {
     var messages by remember {
         mutableStateOf(
             listOf(
@@ -34,46 +38,72 @@ fun ChatScreen() {
 
     var inputText by remember { mutableStateOf("") }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF5F5F5))
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .weight(1f)
-                .padding(8.dp),
-            reverseLayout = true
-        ) {
-            items(messages.reversed()) { msg ->
-                ChatBubble(message = msg)
-                Spacer(modifier = Modifier.height(6.dp))
-            }
-        }
+        Column(modifier = Modifier.fillMaxSize()) {
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            TextField(
-                value = inputText,
-                onValueChange = { inputText = it },
-                placeholder = { Text("Nhập tin nhắn...") },
-                modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(16.dp)
-            )
-
-            IconButton(
-                onClick = {
-                    if (inputText.isNotBlank()) {
-                        messages = messages + Message(inputText, isUser = true)
-                        inputText = ""
-                    }
-                }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White)
+                    .padding(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Icon(Icons.Default.Send, contentDescription = "Send")
+                IconButton(onClick = { onBack() }) {
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                }
+                Text(
+                    text = "Trung tâm hỗ trợ",
+                    style = MaterialTheme.typography.titleMedium,
+
+                )
+                Icon(
+                    Icons.Default.SupportAgent,
+                    contentDescription = "Support",
+                    tint = Color(0xFF1976D2)
+                )
+            }
+
+            LazyColumn(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(8.dp),
+                reverseLayout = true
+            ) {
+                items(messages.reversed()) { msg ->
+                    ChatBubble(message = msg)
+                    Spacer(modifier = Modifier.height(6.dp))
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextField(
+                    value = inputText,
+                    onValueChange = { inputText = it },
+                    placeholder = { Text("Nhập tin nhắn...") },
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(16.dp)
+                )
+
+                IconButton(
+                    onClick = {
+                        if (inputText.isNotBlank()) {
+                            messages = messages + Message(inputText, isUser = true)
+                            inputText = ""
+                        }
+                    }
+                ) {
+                    Icon(Icons.Default.Send, contentDescription = "Send")
+                }
             }
         }
     }
