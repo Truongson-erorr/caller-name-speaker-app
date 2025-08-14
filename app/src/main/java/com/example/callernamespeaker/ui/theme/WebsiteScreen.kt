@@ -40,12 +40,11 @@ fun WebsiteScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 20.dp),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(56.dp))
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 24.dp)
@@ -55,14 +54,17 @@ fun WebsiteScreen(
                 contentDescription = "Back",
                 tint = Color.Black,
                 modifier = Modifier
+                    .align(Alignment.CenterStart)
                     .clickable { navController.popBackStack() }
-                    .padding(end = 8.dp)
+                    .padding(start = 8.dp)
                     .size(26.dp)
             )
+
             Text(
                 text = "Kiểm Tra Website",
                 fontWeight = FontWeight.Bold,
-                color = Color.Black
+                color = Color.Black,
+                modifier = Modifier.align(Alignment.Center)
             )
         }
 
