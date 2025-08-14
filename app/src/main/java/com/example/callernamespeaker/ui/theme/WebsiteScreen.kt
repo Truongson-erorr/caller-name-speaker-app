@@ -40,7 +40,7 @@ fun WebsiteScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 20.dp),
-        verticalArrangement = Arrangement.Top,
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(56.dp))
@@ -62,7 +62,6 @@ fun WebsiteScreen(
             Text(
                 text = "Kiểm Tra Website",
                 fontWeight = FontWeight.Bold,
-                fontSize = 24.sp,
                 color = Color.Black
             )
         }

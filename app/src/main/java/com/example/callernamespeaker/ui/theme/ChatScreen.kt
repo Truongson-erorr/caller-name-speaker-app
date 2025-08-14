@@ -1,6 +1,7 @@
 package com.example.callernamespeaker.ui.theme
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,7 +15,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 
 data class Message(
     val text: String,
@@ -23,6 +26,7 @@ data class Message(
 
 @Composable
 fun ChatScreen(
+    navController: NavController,
     onBack: () -> Unit = {}
 ) {
     var messages by remember {
@@ -44,20 +48,27 @@ fun ChatScreen(
             .background(Color(0xFFF5F5F5))
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-
+            Spacer(modifier = Modifier.height(35.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.White)
-                    .padding(12.dp),
+                    .background(Color.Transparent)
+                    .padding(24.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                IconButton(onClick = { onBack() }) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                }
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color.Black,
+                    modifier = Modifier
+                        .clickable { navController.popBackStack() }
+                        .padding(end = 8.dp)
+                        .size(26.dp)
+                )
                 Text(
                     text = "Trung tâm hỗ trợ",
+                    fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleMedium,
 
                 )

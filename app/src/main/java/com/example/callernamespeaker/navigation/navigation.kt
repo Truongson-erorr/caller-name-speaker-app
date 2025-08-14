@@ -97,7 +97,7 @@ fun AppNavGraph(
             ForgotPasswordScreen(navController)
         }
         composable("ChatScreen") {
-            ChatScreen()
+            ChatScreen(navController)
         }
     }
 }
