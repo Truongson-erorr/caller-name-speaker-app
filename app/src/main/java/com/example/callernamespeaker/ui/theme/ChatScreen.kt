@@ -18,11 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-
-data class Message(
-    val text: String,
-    val isUser: Boolean
-)
+import com.example.callernamespeaker.model.Message
 
 @Composable
 fun ChatScreen(
