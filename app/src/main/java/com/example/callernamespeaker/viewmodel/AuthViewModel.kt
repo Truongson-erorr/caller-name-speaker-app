@@ -3,7 +3,6 @@ package com.example.callernamespeaker.viewmodel
 import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
-import com.example.callernamespeaker.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 

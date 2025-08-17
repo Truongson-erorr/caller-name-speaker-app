@@ -1,6 +1,5 @@
 package com.example.callernamespeaker.ui.theme
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,7 +17,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
@@ -90,7 +88,6 @@ fun ForgotPasswordScreen(navController: NavController) {
         )
         Spacer(modifier = Modifier.height(20.dp))
 
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -149,11 +146,7 @@ fun ForgotPasswordScreen(navController: NavController) {
 
         Button(
             onClick = {
-                if (phone.value.length < 6) {
-                    Toast.makeText(context, "Vui lòng nhập số điện thoại hợp lệ", Toast.LENGTH_SHORT).show()
-                    return@Button
-                }
-                Toast.makeText(context, "Đã gửi mã khôi phục đến số điện thoại", Toast.LENGTH_SHORT).show()
+
             },
             modifier = Modifier
                 .fillMaxWidth()
