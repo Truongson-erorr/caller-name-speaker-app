@@ -171,7 +171,6 @@ fun LoginScreen(navController: NavController) {
                     Toast.makeText(context, "Vui lòng nhập số điện thoại hợp lệ", Toast.LENGTH_SHORT).show()
                     return@Button
                 }
-
                 isLoading = true
 
                 val fullPhoneNumber = selectedCountry.value.code + phone.value

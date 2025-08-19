@@ -40,11 +40,9 @@ object CallLogHelper {
                 val date = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
                     .format(Date(it.getLong(dateIndex)))
                 val duration = "${it.getString(durationIndex)} giây"
-
                 callList.add(CallEntry(number, type, date, duration))
             }
         }
-
         return callList
     }
 }
