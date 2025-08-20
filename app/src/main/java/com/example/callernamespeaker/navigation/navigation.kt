@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -16,10 +17,10 @@ import com.example.callernamespeaker.ui.theme.RegisterScreen
 import com.example.callernamespeaker.ui.theme.LoginScreen
 import com.example.callernamespeaker.MainScreen
 import com.example.callernamespeaker.model.NewsPost
+import com.example.callernamespeaker.ui.chat.ChatScreen
 import com.example.callernamespeaker.ui.theme.AllNewsScreen
 import com.example.callernamespeaker.ui.theme.CallDetailScreen
 import com.example.callernamespeaker.ui.theme.CallHistoryScreen
-import com.example.callernamespeaker.ui.theme.ChatScreen
 import com.example.callernamespeaker.ui.theme.EmergencyTab
 import com.example.callernamespeaker.ui.theme.ForgotPasswordScreen
 import com.example.callernamespeaker.ui.theme.NewsDetailScreen

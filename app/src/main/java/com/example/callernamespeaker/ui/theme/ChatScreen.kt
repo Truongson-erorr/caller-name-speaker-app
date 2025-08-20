@@ -1,11 +1,11 @@
-package com.example.callernamespeaker.ui.theme
+package com.example.callernamespeaker.ui.chat
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -15,39 +15,27 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.callernamespeaker.BuildConfig
 import com.example.callernamespeaker.model.Message
-import com.google.ai.client.generativeai.GenerativeModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.example.callernamespeaker.ui.theme.ChatBubble
+import com.example.callernamespeaker.ui.theme.TypingIndicator
+import com.example.callernamespeaker.viewmodel.ChatViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
     navController: NavController,
-    onBack: () -> Unit = {}
+    onBack: () -> Unit = {},
+    viewModel: ChatViewModel = viewModel()
 ) {
-    var messages by remember {
-        mutableStateOf(
-            listOf(
-                Message("Xin chào! Tôi có thể giúp gì cho bạn?", isUser = false)
-            )
-        )
-    }
+    val messages by viewModel.messages.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
     var inputText by remember { mutableStateOf("") }
-    var isLoading by remember { mutableStateOf(false) }
-
-    val geminiClient = remember {
-        GenerativeModel(
-            modelName = "gemini-1.5-flash",
-            apiKey = BuildConfig.API_KEY_GEMINI
-        )
-    }
 
     Box(
         modifier = Modifier
@@ -96,86 +84,58 @@ fun ChatScreen(
                     Spacer(modifier = Modifier.height(6.dp))
                 }
             }
-
             if (isLoading) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+                TypingIndicator()
             }
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(Color.White)
                     .padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                TextField(
+                OutlinedTextField(
                     value = inputText,
                     onValueChange = { inputText = it },
                     placeholder = { Text("Nhập tin nhắn...") },
-                    modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(16.dp)
+                    modifier = Modifier
+                        .weight(1f)
+                        .heightIn(min = 48.dp)
+                        .shadow(1.dp, RoundedCornerShape(24.dp)),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = Color.White,
+                        unfocusedBorderColor = Color.LightGray,
+                        containerColor = Color(0xFFF8F8F8)
+                    ),
+                    maxLines = 3
                 )
+                Spacer(modifier = Modifier.width(8.dp))
 
                 IconButton(
                     onClick = {
                         if (inputText.isNotBlank() && !isLoading) {
-                            val userMsg = inputText
-                            messages = messages + Message(userMsg, isUser = true)
+                            viewModel.sendMessage(inputText)
                             inputText = ""
-                            isLoading = true
-
-                            CoroutineScope(Dispatchers.IO).launch {
-                                try {
-                                    Log.d("ChatScreen", "Sending: $userMsg")
-                                    val response = geminiClient.generateContent(userMsg)
-                                    val botReply = response.text ?: "Xin lỗi, mình chưa có câu trả lời."
-                                    Log.d("ChatScreen", "Response: $botReply")
-
-                                    withContext(Dispatchers.Main) {
-                                        messages = messages + Message(botReply, isUser = false)
-                                    }
-                                } catch (e: Exception) {
-                                    Log.e("ChatScreen", "Gemini API Error", e)
-                                    withContext(Dispatchers.Main) {
-                                        messages = messages + Message("Lỗi: ${e.message}", isUser = false)
-                                    }
-                                } finally {
-                                    withContext(Dispatchers.Main) {
-                                        isLoading = false
-                                    }
-                                }
-                            }
                         }
-                    }
+                    },
+                    modifier = Modifier
+                        .size(48.dp)
+                        .background(
+                            if (inputText.isNotBlank()) Color(0xFF2196F3) else Color(0xFFBDBDBD),
+                            shape = CircleShape
+                        )
                 ) {
-                    Icon(Icons.Default.Send, contentDescription = "Send")
+                    Icon(
+                        Icons.Default.Send,
+                        contentDescription = "Send",
+                        tint = Color.White
+                    )
                 }
             }
         }
     }
 }
 
-@Composable
-fun ChatBubble(message: Message) {
-    val bubbleColor = if (message.isUser) Color(0xFF1976D2) else Color(0xFFE0E0E0)
-    val textColor = if (message.isUser) Color.White else Color.Black
 
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = if (message.isUser) Arrangement.End else Arrangement.Start
-    ) {
-        Box(
-            modifier = Modifier
-                .background(bubbleColor, RoundedCornerShape(16.dp))
-                .padding(12.dp)
-        ) {
-            Text(text = message.text, color = textColor)
-        }
-    }
-}
