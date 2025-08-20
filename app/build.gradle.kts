@@ -1,3 +1,4 @@
+import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -17,6 +18,14 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val localProperties = Properties()
+        val localFile = rootProject.file("local.properties")
+        if (localFile.exists()) {
+            localProperties.load(localFile.inputStream())
+        }
+        val geminiApiKey: String = localProperties.getProperty("API_KEY_GEMINI") ?: ""
+        buildConfigField("String", "API_KEY_GEMINI", "\"$geminiApiKey\"")
     }
 
     buildTypes {
@@ -37,10 +46,12 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
 dependencies {
+    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation ("com.google.android.gms:play-services-safetynet:18.0.1")
     implementation("com.google.accompanist:accompanist-navigation-animation:0.33.2-alpha") // hoặc bản mới hơn
@@ -60,6 +71,7 @@ dependencies {
     implementation(libs.androidx.navigation.runtime.android)
     implementation(libs.androidx.navigation.compose.android)
     implementation(libs.firebase.firestore.ktx)
+    implementation(libs.common)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

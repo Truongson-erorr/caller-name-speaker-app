@@ -1,5 +1,6 @@
 package com.example.callernamespeaker.ui.theme
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,7 +19,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.callernamespeaker.BuildConfig
 import com.example.callernamespeaker.model.Message
+import com.google.ai.client.generativeai.GenerativeModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun ChatScreen(
@@ -28,15 +35,19 @@ fun ChatScreen(
     var messages by remember {
         mutableStateOf(
             listOf(
-                Message("Xin chào! Tôi có thể giúp gì cho bạn?", isUser = false),
-                Message("Làm sao để chặn số?", isUser = true),
-                Message("Bạn có thể vào mục Blacklist và nhấn ➕ để thêm số.", isUser = false),
-                Message("Ok cảm ơn!", isUser = true)
+                Message("Xin chào! Tôi có thể giúp gì cho bạn?", isUser = false)
             )
         )
     }
-
     var inputText by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
+
+    val geminiClient = remember {
+        GenerativeModel(
+            modelName = "gemini-1.5-flash",
+            apiKey = BuildConfig.API_KEY_GEMINI
+        )
+    }
 
     Box(
         modifier = Modifier
@@ -66,7 +77,6 @@ fun ChatScreen(
                     text = "Trung tâm hỗ trợ",
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleMedium,
-
                 )
                 Icon(
                     Icons.Default.SupportAgent,
@@ -87,6 +97,17 @@ fun ChatScreen(
                 }
             }
 
+            if (isLoading) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -103,9 +124,33 @@ fun ChatScreen(
 
                 IconButton(
                     onClick = {
-                        if (inputText.isNotBlank()) {
-                            messages = messages + Message(inputText, isUser = true)
+                        if (inputText.isNotBlank() && !isLoading) {
+                            val userMsg = inputText
+                            messages = messages + Message(userMsg, isUser = true)
                             inputText = ""
+                            isLoading = true
+
+                            CoroutineScope(Dispatchers.IO).launch {
+                                try {
+                                    Log.d("ChatScreen", "Sending: $userMsg")
+                                    val response = geminiClient.generateContent(userMsg)
+                                    val botReply = response.text ?: "Xin lỗi, mình chưa có câu trả lời."
+                                    Log.d("ChatScreen", "Response: $botReply")
+
+                                    withContext(Dispatchers.Main) {
+                                        messages = messages + Message(botReply, isUser = false)
+                                    }
+                                } catch (e: Exception) {
+                                    Log.e("ChatScreen", "Gemini API Error", e)
+                                    withContext(Dispatchers.Main) {
+                                        messages = messages + Message("Lỗi: ${e.message}", isUser = false)
+                                    }
+                                } finally {
+                                    withContext(Dispatchers.Main) {
+                                        isLoading = false
+                                    }
+                                }
+                            }
                         }
                     }
                 ) {

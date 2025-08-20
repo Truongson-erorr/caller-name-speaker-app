@@ -82,7 +82,7 @@ fun AppNavGraph(
         composable("all_news") {
             AllNewsScreen(navController)
         }
-        // chi tiet cuoc goi
+
         composable(
             route = "call_detail/{index}",
             arguments = listOf(navArgument("index") { type = NavType.IntType })
