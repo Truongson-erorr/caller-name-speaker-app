@@ -36,7 +36,7 @@ fun ChatBubble(message: Message) {
         Column(
             modifier = Modifier
                 .background(bubbleColor, RoundedCornerShape(16.dp))
-                .padding(horizontal = 12.dp, vertical = 8.dp) // bớt padding vertical
+                .padding(horizontal = 12.dp, vertical = 8.dp)
         ) {
             Text(
                 text = message.text,
