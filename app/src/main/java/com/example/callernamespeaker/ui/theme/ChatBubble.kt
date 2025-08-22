@@ -18,7 +18,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-
 @Composable
 fun ChatBubble(message: Message) {
     val bubbleColor = if (message.isUser) Color(0xFF1976D2) else Color(0xFFE0E0E0)
