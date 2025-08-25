@@ -49,10 +49,4 @@ class WebsiteViewModel : ViewModel() {
             .add(data)
             .addOnSuccessListener { onDone() }
     }
-
-    fun deleteWebsite(id: String, onDone: () -> Unit = {}) {
-        db.collection("Websites").document(id)
-            .delete()
-            .addOnSuccessListener { onDone() }
-    }
 }

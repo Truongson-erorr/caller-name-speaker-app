@@ -6,9 +6,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -34,10 +31,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.callernamespeaker.viewmodel.PhoneLookupViewModel
-import com.example.callernamespeaker.model.PhoneLookup
 import com.google.firebase.auth.FirebaseAuth
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.callernamespeaker.model.NewsPost
 import com.example.callernamespeaker.viewmodel.BlacklistViewModel
 import com.example.callernamespeaker.viewmodel.ReportViewModel
 import com.example.personalexpensetracker.viewmodel.NotificationViewModel

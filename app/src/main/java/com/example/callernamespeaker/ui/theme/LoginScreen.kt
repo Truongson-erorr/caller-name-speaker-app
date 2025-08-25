@@ -202,7 +202,6 @@ fun LoginScreen(navController: NavController) {
                         }
                     })
                     .build()
-
                 PhoneAuthProvider.verifyPhoneNumber(options)
             },
             modifier = Modifier
