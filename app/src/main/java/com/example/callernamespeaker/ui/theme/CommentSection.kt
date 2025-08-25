@@ -53,7 +53,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentSection(postId: String, userName: String, viewModel: CommentViewModel = viewModel()) {
@@ -173,7 +172,9 @@ fun CommentItem(
         )
         Spacer(modifier = Modifier.width(12.dp))
 
-        Column(modifier = Modifier.weight(1f)) {
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
