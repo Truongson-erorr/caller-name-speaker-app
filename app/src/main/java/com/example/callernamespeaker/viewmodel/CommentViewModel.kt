@@ -29,6 +29,21 @@ class CommentViewModel : ViewModel() {
             }
     }
 
+    fun fetchReplies(postId: String, commentId: String, onResult: (List<Reply>) -> Unit) {
+        db.collection("Posts").document(postId)
+            .collection("Comments").document(commentId)
+            .collection("Replies")
+            .orderBy("timestamp", Query.Direction.ASCENDING)
+            .addSnapshotListener { value, error ->
+                if (error != null) return@addSnapshotListener
+                val replies = value?.documents?.mapNotNull { doc ->
+                    val reply = doc.toObject(Reply::class.java)
+                    reply?.copy(id = doc.id)
+                } ?: emptyList()
+                onResult(replies)
+            }
+    }
+
     fun addComment(postId: String, userName: String, content: String) {
         val currentUserId = auth.currentUser?.uid ?: return
 

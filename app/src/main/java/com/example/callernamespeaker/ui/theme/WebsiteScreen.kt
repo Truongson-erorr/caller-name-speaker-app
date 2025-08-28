@@ -1,6 +1,5 @@
 package com.example.callernamespeaker.ui.theme
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -18,6 +17,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,7 +28,9 @@ fun WebsiteScreen(
     var urlInput by remember { mutableStateOf(TextFieldValue("")) }
     var result by remember { mutableStateOf<String?>(null) }
     var domain by remember { mutableStateOf<String?>(null) }
+    var isLoading by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     val blacklistedSites = listOf(
         "phishing-example.com",
@@ -89,19 +92,30 @@ fun WebsiteScreen(
         Button(
             onClick = {
                 val input = urlInput.text.trim().lowercase()
-                val cleanDomain = input
-                    .removePrefix("https://")
-                    .removePrefix("http://")
-                    .removePrefix("www.")
-                    .substringBefore("/")
-                domain = cleanDomain
+                if (input.isNotBlank()) {
+                    isLoading = true
+                    result = null
+                    domain = null
 
-                val isUnsafe = blacklistedSites.any { site ->
-                    cleanDomain.contains(site)
+                    coroutineScope.launch {
+                        delay(2500)
+
+                        val cleanDomain = input
+                            .removePrefix("https://")
+                            .removePrefix("http://")
+                            .removePrefix("www.")
+                            .substringBefore("/")
+                        domain = cleanDomain
+
+                        val isUnsafe = blacklistedSites.any { site ->
+                            cleanDomain.contains(site)
+                        }
+
+                        result = if (isUnsafe) "Website có thể không an toàn!" else "Website an toàn."
+                        Toast.makeText(context, result, Toast.LENGTH_SHORT).show()
+                        isLoading = false
+                    }
                 }
-
-                result = if (isUnsafe) "Website có thể không an toàn!" else "Website an toàn."
-                Toast.makeText(context, result, Toast.LENGTH_SHORT).show()
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -114,45 +128,57 @@ fun WebsiteScreen(
         ) {
             Text("Kiểm tra", fontWeight = FontWeight.Bold)
         }
-
         Spacer(modifier = Modifier.height(24.dp))
 
-        result?.let {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = if (it.contains("an toàn")) Color.White else Color(0xFFFFEBEE)
-                ),
-                elevation = CardDefaults.cardElevation(4.dp)
+        if (isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
             ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
+                CircularProgressIndicator(
+                    color = Color(0xFF2575FC),
+                    strokeWidth = 4.dp
+                )
+            }
+        } else {
+            result?.let {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (it.contains("an toàn")) Color.White else Color(0xFFFFEBEE)
+                    ),
+                    elevation = CardDefaults.cardElevation(4.dp)
                 ) {
-                    Text("Thông tin Website", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Text("Thông tin Website", fontWeight = FontWeight.Bold, fontSize = 18.sp)
 
-                    domain?.let {
-                        Text(text = "Tên miền: $it", modifier = Modifier.padding(top = 8.dp))
-                    }
+                        domain?.let {
+                            Text(text = "Tên miền: $it", modifier = Modifier.padding(top = 8.dp))
+                        }
 
-                    Text(
-                        text = "Trạng thái: $result",
-                        color = if (result!!.contains("an toàn")) Color(0xFF2E7D32) else Color.Red,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.padding(top = 8.dp)
-                    )
-
-                    if (result!!.contains("không an toàn")) {
                         Text(
-                            text = "Gợi ý: Không nhập thông tin cá nhân hoặc đăng nhập vào website này.",
-                            fontSize = 14.sp,
-                            color = Color.DarkGray,
-                            modifier = Modifier.padding(top = 12.dp)
+                            text = "Trạng thái: $result",
+                            color = if (result!!.contains("an toàn")) Color(0xFF2E7D32) else Color.Red,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.padding(top = 8.dp)
                         )
+
+                        if (result!!.contains("không an toàn")) {
+                            Text(
+                                text = "Gợi ý: Không nhập thông tin cá nhân hoặc đăng nhập vào website này.",
+                                fontSize = 14.sp,
+                                color = Color.DarkGray,
+                                modifier = Modifier.padding(top = 12.dp)
+                            )
+                        }
                     }
                 }
             }
         }
     }
 }
+
+
