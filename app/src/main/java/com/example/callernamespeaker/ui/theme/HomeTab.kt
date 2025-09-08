@@ -167,7 +167,7 @@ fun HomeTab(navController: NavController) {
             ServiceButton("Website", Icons.Default.Public, Modifier.weight(1f)) {
                 navController.navigate("WebsiteScreen")
             }
-            ServiceButton("Giải đáp", Icons.Default.Chat, Modifier.weight(1f)) {
+            ServiceButton("Giải đáp AI", Icons.Default.Chat, Modifier.weight(1f)) {
                 navController.navigate("ChatScreen")
             }
         }

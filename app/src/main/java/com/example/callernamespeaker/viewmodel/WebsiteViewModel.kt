@@ -1,52 +1,73 @@
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.callernamespeaker.model.Website
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
 
 class WebsiteViewModel : ViewModel() {
-    private val db = FirebaseFirestore.getInstance()
+    var urlInput by mutableStateOf("")
+    var isLoading by mutableStateOf(false)
+    var result by mutableStateOf<String?>(null)
+    var domain by mutableStateOf<String?>(null)
 
-    private val _websites = MutableStateFlow<List<Website>>(emptyList())
-    val websites: StateFlow<List<Website>> = _websites
+    private val client = OkHttpClient()
 
-    init {
-        loadWebsites()
-    }
+    fun checkWebsiteSafety(apiKey: String) {
+        val input = urlInput.trim().lowercase()
+        if (input.isBlank()) return
 
-    fun loadWebsites() {
-        viewModelScope.launch {
-            db.collection("Websites")
-                .get()
-                .addOnSuccessListener { snapshot ->
-                    val list = snapshot.map { doc ->
-                        Website(
-                            id = doc.id,
-                            url = doc.getString("url") ?: "",
-                            category = doc.getString("category") ?: "",
-                            description = doc.getString("description") ?: "",
-                            createdAt = doc.getLong("createdAt") ?: System.currentTimeMillis()
-                        )
+        isLoading = true
+        result = null
+        domain = input
+            .removePrefix("https://")
+            .removePrefix("http://")
+            .removePrefix("www.")
+            .substringBefore("/")
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val prompt = "Hãy phân tích link sau và cho biết nó có an toàn không: $input"
+
+                val body = """
+                    {
+                      "contents":[{"parts":[{"text":"$prompt"}]}]
                     }
-                    _websites.value = list
-                }
-                .addOnFailureListener {
-                    _websites.value = emptyList()
-                }
-        }
-    }
+                """.trimIndent()
 
-    fun addWebsite(website: Website, onDone: () -> Unit = {}) {
-        val data = mapOf(
-            "url" to website.url,
-            "category" to website.category,
-            "description" to website.description,
-            "createdAt" to website.createdAt
-        )
-        db.collection("Websites")
-            .add(data)
-            .addOnSuccessListener { onDone() }
+                val request = Request.Builder()
+                    .url("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=$apiKey")
+                    .post(RequestBody.create("application/json".toMediaType(), body))
+                    .build()
+
+                client.newCall(request).execute().use { response ->
+                    val resBody = response.body?.string()
+                    val message = if (resBody != null && response.isSuccessful) {
+                        "AI phân tích: $resBody"
+                    } else {
+                        "Không thể phân tích website"
+                    }
+                    withContext(Dispatchers.Main) {
+                        result = message
+                        isLoading = false
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    result = "Lỗi: ${e.message}"
+                    isLoading = false
+                }
+            }
+        }
     }
 }

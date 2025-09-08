@@ -1,43 +1,37 @@
 package com.example.callernamespeaker.ui.theme
 
+import WebsiteViewModel
+import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import android.widget.Toast
-import androidx.compose.foundation.clickable
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.ui.text.font.FontWeight
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.example.callernamespeaker.BuildConfig
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WebsiteScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: WebsiteViewModel = viewModel()
 ) {
-    var urlInput by remember { mutableStateOf(TextFieldValue("")) }
-    var result by remember { mutableStateOf<String?>(null) }
-    var domain by remember { mutableStateOf<String?>(null) }
-    var isLoading by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
 
-    val blacklistedSites = listOf(
-        "phishing-example.com",
-        "scam-site.net",
-        "fakebank.org",
-        "dangerous-site.xyz"
-    )
+    val urlInput = viewModel.urlInput
+    val isLoading = viewModel.isLoading
+    val result = viewModel.result
+    val domain = viewModel.domain
 
     Column(
         modifier = Modifier
@@ -47,6 +41,7 @@ fun WebsiteScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(56.dp))
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -73,7 +68,7 @@ fun WebsiteScreen(
 
         TextField(
             value = urlInput,
-            onValueChange = { urlInput = it },
+            onValueChange = { viewModel.urlInput = it },
             shape = RoundedCornerShape(14.dp),
             placeholder = { Text("Dán link website vào đây...") },
             singleLine = true,
@@ -91,30 +86,9 @@ fun WebsiteScreen(
 
         Button(
             onClick = {
-                val input = urlInput.text.trim().lowercase()
-                if (input.isNotBlank()) {
-                    isLoading = true
-                    result = null
-                    domain = null
-
-                    coroutineScope.launch {
-                        delay(2500)
-
-                        val cleanDomain = input
-                            .removePrefix("https://")
-                            .removePrefix("http://")
-                            .removePrefix("www.")
-                            .substringBefore("/")
-                        domain = cleanDomain
-
-                        val isUnsafe = blacklistedSites.any { site ->
-                            cleanDomain.contains(site)
-                        }
-
-                        result = if (isUnsafe) "Website có thể không an toàn!" else "Website an toàn."
-                        Toast.makeText(context, result, Toast.LENGTH_SHORT).show()
-                        isLoading = false
-                    }
+                viewModel.checkWebsiteSafety(apiKey = BuildConfig.API_KEY_GEMINI)
+                if (viewModel.result != null) {
+                    Toast.makeText(context, viewModel.result, Toast.LENGTH_SHORT).show()
                 }
             },
             modifier = Modifier
@@ -146,7 +120,8 @@ fun WebsiteScreen(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = if (it.contains("an toàn")) Color.White else Color(0xFFFFEBEE)
+                        containerColor = if (it.contains("an toàn", ignoreCase = true))
+                            Color.White else Color(0xFFFFEBEE)
                     ),
                     elevation = CardDefaults.cardElevation(4.dp)
                 ) {
@@ -155,18 +130,19 @@ fun WebsiteScreen(
                     ) {
                         Text("Thông tin Website", fontWeight = FontWeight.Bold, fontSize = 18.sp)
 
-                        domain?.let {
-                            Text(text = "Tên miền: $it", modifier = Modifier.padding(top = 8.dp))
+                        domain?.let { d ->
+                            Text(text = "Tên miền: $d", modifier = Modifier.padding(top = 8.dp))
                         }
 
                         Text(
-                            text = "Trạng thái: $result",
-                            color = if (result!!.contains("an toàn")) Color(0xFF2E7D32) else Color.Red,
+                            text = "Trạng thái: $it",
+                            color = if (it.contains("an toàn", ignoreCase = true))
+                                Color(0xFF2E7D32) else Color.Red,
                             fontWeight = FontWeight.SemiBold,
                             modifier = Modifier.padding(top = 8.dp)
                         )
 
-                        if (result!!.contains("không an toàn")) {
+                        if (it.contains("không an toàn", ignoreCase = true)) {
                             Text(
                                 text = "Gợi ý: Không nhập thông tin cá nhân hoặc đăng nhập vào website này.",
                                 fontSize = 14.sp,
@@ -180,5 +156,3 @@ fun WebsiteScreen(
         }
     }
 }
-
-
