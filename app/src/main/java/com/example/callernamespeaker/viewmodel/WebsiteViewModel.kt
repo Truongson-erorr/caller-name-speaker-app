@@ -1,72 +1,54 @@
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+package com.example.callernamespeaker.viewmodel
+
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.callernamespeaker.model.Website
-import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.Dispatchers
+import com.example.callernamespeaker.BuildConfig
+import com.google.ai.client.generativeai.GenerativeModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody
 
 class WebsiteViewModel : ViewModel() {
-    var urlInput by mutableStateOf("")
-    var isLoading by mutableStateOf(false)
-    var result by mutableStateOf<String?>(null)
-    var domain by mutableStateOf<String?>(null)
 
-    private val client = OkHttpClient()
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
 
-    fun checkWebsiteSafety(apiKey: String) {
-        val input = urlInput.trim().lowercase()
-        if (input.isBlank()) return
+    private val _result = MutableStateFlow<String?>(null)
+    val result: StateFlow<String?> = _result
 
-        isLoading = true
-        result = null
-        domain = input
-            .removePrefix("https://")
-            .removePrefix("http://")
-            .removePrefix("www.")
-            .substringBefore("/")
+    private val geminiClient = GenerativeModel(
+        modelName = "gemini-1.5-flash",
+        apiKey = BuildConfig.API_KEY_GEMINI
+    )
 
-        viewModelScope.launch(Dispatchers.IO) {
+    fun checkWebsiteSafety(url: String) {
+        if (url.isBlank() || _isLoading.value) return
+
+        _isLoading.value = true
+        _result.value = null
+
+        viewModelScope.launch {
             try {
-                val prompt = "Hãy phân tích link sau và cho biết nó có an toàn không: $input"
+                Log.d("WebsiteViewModel", "Checking: $url")
 
-                val body = """
-                    {
-                      "contents":[{"parts":[{"text":"$prompt"}]}]
-                    }
+                val prompt = """
+                    Phân tích độ an toàn của website sau: $url
+                    - Website có khả năng là an toàn hay nguy hiểm?
+                    - Nếu nguy hiểm, hãy giải thích lý do (ví dụ: lừa đảo, giả mạo, chứa phần mềm độc hại...).
+                    - Nếu an toàn, xác nhận ngắn gọn.
                 """.trimIndent()
 
-                val request = Request.Builder()
-                    .url("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=$apiKey")
-                    .post(RequestBody.create("application/json".toMediaType(), body))
-                    .build()
+                val response = geminiClient.generateContent(prompt)
+                val analysis = response.text ?: "Không thể phân tích website này."
 
-                client.newCall(request).execute().use { response ->
-                    val resBody = response.body?.string()
-                    val message = if (resBody != null && response.isSuccessful) {
-                        "AI phân tích: $resBody"
-                    } else {
-                        "Không thể phân tích website"
-                    }
-                    withContext(Dispatchers.Main) {
-                        result = message
-                        isLoading = false
-                    }
-                }
+                _result.value = analysis
+                Log.d("WebsiteViewModel", "Result: $analysis")
             } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    result = "Lỗi: ${e.message}"
-                    isLoading = false
-                }
+                Log.e("WebsiteViewModel", "Gemini API Error", e)
+                _result.value = "Lỗi khi phân tích: ${e.message}"
+            } finally {
+                _isLoading.value = false
             }
         }
     }
