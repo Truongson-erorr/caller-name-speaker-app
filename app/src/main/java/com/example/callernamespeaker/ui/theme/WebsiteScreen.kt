@@ -3,7 +3,9 @@ package com.example.callernamespeaker.ui.theme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
@@ -36,7 +38,8 @@ fun WebsiteScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp)
-                .align(Alignment.TopCenter),
+                .align(Alignment.TopCenter)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(35.dp))
@@ -63,7 +66,16 @@ fun WebsiteScreen(
                     color = Color.Black
                 )
             }
-
+            Text(
+                text = "Hãy dán liên kết website bạn muốn kiểm tra vào ô trên, sau đó nhấn nút \"Kiểm tra\" để hệ thống phân tích mức độ an toàn. " +
+                        "Công cụ này sẽ giúp bạn phát hiện các trang web có nguy cơ chứa mã độc, lừa đảo hoặc không đáng tin cậy. " +
+                        "Ví dụ: bạn có thể thử kiểm tra các địa chỉ như https://example.com hoặc http://tenmien.vn để trải nghiệm. " +
+                        "Lưu ý: Chỉ nhập đường dẫn hợp lệ, bao gồm http:// hoặc https:// để kết quả chính xác hơn.",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Gray,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(16.dp))
             TextField(
                 value = url,
                 onValueChange = { url = it },
@@ -92,16 +104,6 @@ fun WebsiteScreen(
             ) {
                 Text("Kiểm tra")
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "Hãy dán liên kết website bạn muốn kiểm tra vào ô trên, sau đó nhấn nút \"Kiểm tra\" để hệ thống phân tích mức độ an toàn. " +
-                        "Công cụ này sẽ giúp bạn phát hiện các trang web có nguy cơ chứa mã độc, lừa đảo hoặc không đáng tin cậy. " +
-                        "Ví dụ: bạn có thể thử kiểm tra các địa chỉ như https://example.com hoặc http://tenmien.vn để trải nghiệm. " +
-                        "Lưu ý: Chỉ nhập đường dẫn hợp lệ, bao gồm http:// hoặc https:// để kết quả chính xác hơn.",
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.Gray,
-                modifier = Modifier.fillMaxWidth()
-            )
             Spacer(modifier = Modifier.height(24.dp))
 
             result?.let {
