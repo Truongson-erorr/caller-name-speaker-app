@@ -56,7 +56,6 @@ fun WebsiteScreen(
                         .padding(start = 8.dp)
                         .size(26.dp)
                 )
-
                 Text(
                     text = "Kiểm tra Website",
                     fontWeight = FontWeight.Bold,
@@ -93,6 +92,16 @@ fun WebsiteScreen(
             ) {
                 Text("Kiểm tra")
             }
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "Hãy dán liên kết website bạn muốn kiểm tra vào ô trên, sau đó nhấn nút \"Kiểm tra\" để hệ thống phân tích mức độ an toàn. " +
+                        "Công cụ này sẽ giúp bạn phát hiện các trang web có nguy cơ chứa mã độc, lừa đảo hoặc không đáng tin cậy. " +
+                        "Ví dụ: bạn có thể thử kiểm tra các địa chỉ như https://example.com hoặc http://tenmien.vn để trải nghiệm. " +
+                        "Lưu ý: Chỉ nhập đường dẫn hợp lệ, bao gồm http:// hoặc https:// để kết quả chính xác hơn.",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Gray,
+                modifier = Modifier.fillMaxWidth()
+            )
             Spacer(modifier = Modifier.height(24.dp))
 
             result?.let {
