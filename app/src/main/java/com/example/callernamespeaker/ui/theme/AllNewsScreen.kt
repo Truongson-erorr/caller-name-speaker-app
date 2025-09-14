@@ -77,7 +77,6 @@ fun AllNewsScreen(
                             .clickable { navController.popBackStack() }
                             .padding(start = 8.dp)
                     )
-
                     Text(
                         text = "Tin tức trong ngày",
                         style = MaterialTheme.typography.headlineSmall,

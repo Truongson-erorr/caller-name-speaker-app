@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CastConnected
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
@@ -23,12 +24,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.callernamespeaker.ui.screens.NotificationScreen
+import com.example.callernamespeaker.ui.theme.AllNewsScreen
 import com.example.callernamespeaker.ui.theme.HistoryTab
 import com.example.callernamespeaker.ui.theme.HomeTab
 import com.example.callernamespeaker.ui.theme.ReportTab
-import com.example.personalexpensetracker.viewmodel.NotificationViewModel
-import com.google.firebase.auth.FirebaseAuth
-import org.checkerframework.checker.units.qual.N
 
 @Composable
 fun MainScreen(navController: NavController) {
@@ -84,7 +83,8 @@ fun MainScreen(navController: NavController) {
                     }
 
                     NavItem(selected = selectedTab == "home", icon = Icons.Default.Home, label = "Trang chủ", key = "home")
-                    NavItem(selected = selectedTab == "report", icon = Icons.Default.List, label = "Danh sách đen", key = "report")
+                    NavItem(selected = selectedTab == "post", icon = Icons.Default.CastConnected, label = "Tin tức", key = "post")
+                    NavItem(selected = selectedTab == "report", icon = Icons.Default.List, label = "chặn số", key = "report")
                     NavItem(selected = selectedTab == "notification", icon = Icons.Default.Notifications, label = "Thông báo", key = "notification")
                     NavItem(selected = selectedTab == "history", icon = Icons.Default.History, label = "Lịch sử", key = "history")
                 }
@@ -94,6 +94,7 @@ fun MainScreen(navController: NavController) {
         Box(modifier = Modifier.padding(innerPadding)) {
             when (selectedTab) {
                 "home" -> HomeTab(navController = navController)
+                "post" -> AllNewsScreen(navController = navController)
                 "report" -> ReportTab()
                 "notification" -> NotificationScreen()
                 "history" -> HistoryTab(navController, context)
