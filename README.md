@@ -56,4 +56,5 @@ cd CallerNameSpeaker
 # Open the project in Android Studio
 # Sync Gradle and build the project
 
-# Run on an emulator or physical device
+# Run on an emulator or physical device.
+
