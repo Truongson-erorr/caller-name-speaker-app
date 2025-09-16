@@ -30,7 +30,9 @@ import com.example.callernamespeaker.ui.theme.HomeTab
 import com.example.callernamespeaker.ui.theme.ReportTab
 
 @Composable
-fun MainScreen(navController: NavController) {
+fun MainScreen(
+    navController: NavController
+) {
     var selectedTab by remember { mutableStateOf("home") }
     val context = LocalContext.current
 

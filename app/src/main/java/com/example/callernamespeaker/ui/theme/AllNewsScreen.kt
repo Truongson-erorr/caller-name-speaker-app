@@ -128,7 +128,10 @@ fun AllNewsScreen(
 }
 
 @Composable
-fun NewsCardItem2(post: NewsPost, onClick: () -> Unit = {}) {
+fun NewsCardItem2(
+    post: NewsPost,
+    onClick: () -> Unit = {}
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
