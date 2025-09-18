@@ -14,9 +14,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DiscoverScreen() {
     var query by remember { mutableStateOf("") }
@@ -34,21 +36,28 @@ fun DiscoverScreen() {
     ) {
         Text(
             "Khám phá",
-            fontSize = 24.sp,
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.titleLarge,
-            color = Color(0xFF0D47A1)
+            color = Color.Black
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        OutlinedTextField(
+        TextField(
             value = query,
             onValueChange = { query = it },
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("Nhập số để kiểm tra...") },
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
             shape = RoundedCornerShape(12.dp),
-            singleLine = true
+            singleLine = true,
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = Color(0xFFF5F5F5),
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
+            )
         )
+
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(

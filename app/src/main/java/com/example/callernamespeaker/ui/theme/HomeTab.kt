@@ -6,8 +6,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -35,7 +37,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.example.callernamespeaker.viewmodel.BlacklistViewModel
 import com.example.callernamespeaker.viewmodel.ReportViewModel
 import com.example.personalexpensetracker.viewmodel.NotificationViewModel
-
+import androidx.compose.foundation.verticalScroll
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeTab(navController: NavController) {
@@ -73,6 +75,7 @@ fun HomeTab(navController: NavController) {
             }
         }
     )
+    val scrollState = rememberScrollState()
 
     LaunchedEffect(uid) {
         if (uid == null) {
@@ -87,8 +90,9 @@ fun HomeTab(navController: NavController) {
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .padding(10.dp)
+            .verticalScroll(scrollState)
     ) {
         Row(
             modifier = Modifier
@@ -119,16 +123,7 @@ fun HomeTab(navController: NavController) {
             fontSize = 15.sp,
             modifier = Modifier.padding(bottom = 10.dp)
         )
-
-        Image(
-            painter = rememberAsyncImagePainter("https://res.cloudinary.com/dq64aidpx/image/upload/v1750863841/yvs2jacr2afus1y1spfn.jpg"),
-            contentDescription = "Banner an toàn thông tin",
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(170.dp)
-                .clip(RoundedCornerShape(8.dp)),
-            contentScale = ContentScale.Crop
-        )
+        BannerCarousel()
 
         Text(
             text = "Tra cứu nhanh",
@@ -173,6 +168,8 @@ fun HomeTab(navController: NavController) {
         }
         Spacer(modifier = Modifier.height(12.dp))
         NewsSection(navController)
+        Spacer(modifier = Modifier.height(12.dp))
+        SecuritytipScreen()
     }
 
     if (showPhoneCheckDialog) {

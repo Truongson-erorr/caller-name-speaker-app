@@ -38,7 +38,9 @@ fun NewsSection(navController: NavController) {
     val viewModel: NewsViewModel = viewModel()
     val newsList by viewModel.newsPosts.collectAsState()
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
