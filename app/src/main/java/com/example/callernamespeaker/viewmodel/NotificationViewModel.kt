@@ -2,14 +2,11 @@ package com.example.personalexpensetracker.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.callernamespeaker.model.Notification
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 
 class NotificationViewModel(
     private val userId: String
@@ -20,13 +17,15 @@ class NotificationViewModel(
     private val _notifications = MutableStateFlow<List<Notification>>(emptyList())
     val notifications: StateFlow<List<Notification>> = _notifications
 
+    private val _unreadCount = MutableStateFlow(0)
+    val unreadCount: StateFlow<Int> = _unreadCount
+
     init {
         listenToNotifications(userId)
     }
 
     fun listenToNotifications(userId: String) {
-        FirebaseFirestore.getInstance()
-            .collection("notifications")
+        db.collection("notifications")
             .whereEqualTo("userId", userId)
             .addSnapshotListener { snapshot, e ->
                 if (e != null) {
@@ -44,6 +43,7 @@ class NotificationViewModel(
                         )
                     }
                     _notifications.value = list
+                    _unreadCount.value = list.count { !it.isRead }
                 }
             }
     }
@@ -57,8 +57,7 @@ class NotificationViewModel(
             "isRead" to false
         )
 
-        FirebaseFirestore.getInstance()
-            .collection("notifications")
+        db.collection("notifications")
             .add(notification)
             .addOnSuccessListener {
                 Log.d("Notification", "Notification added successfully")
@@ -69,20 +68,20 @@ class NotificationViewModel(
     }
 
     fun deleteNotification(id: String) {
-        FirebaseFirestore.getInstance()
-            .collection("notifications")
+        db.collection("notifications")
             .document(id)
             .delete()
     }
 
     fun markAsRead(notificationId: String) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val docRef = db.collection("notifications")
-            .document(userId)
-            .collection("user_notifications")
+        db.collection("notifications")
             .document(notificationId)
-
-        docRef.update("isRead", true)
+            .update("isRead", true)
+            .addOnSuccessListener {
+                Log.d("NotificationVM", "Marked as read: $notificationId")
+            }
+            .addOnFailureListener { e ->
+                Log.e("NotificationVM", "Error marking as read", e)
+            }
     }
-
 }

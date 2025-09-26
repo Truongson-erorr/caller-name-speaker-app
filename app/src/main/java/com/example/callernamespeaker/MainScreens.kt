@@ -1,7 +1,5 @@
 package com.example.callernamespeaker
 
-import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -11,8 +9,6 @@ import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Report
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -45,7 +41,7 @@ fun MainScreen(
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(78.dp)
+                    .height(80.dp)
                     .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)),
                 color = Color(0xFF1565C0),
                 contentColor = Color.White,

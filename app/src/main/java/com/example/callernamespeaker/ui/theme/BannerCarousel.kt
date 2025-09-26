@@ -33,10 +33,9 @@ import androidx.compose.animation.slideOutHorizontally
 fun BannerCarousel() {
     val images = listOf(
         "https://res.cloudinary.com/dq64aidpx/image/upload/v1750863841/yvs2jacr2afus1y1spfn.jpg",
-        "https://res.cloudinary.com/demo/image/upload/w_800,h_400,c_fill/sample.jpg",
-        "https://res.cloudinary.com/demo/image/upload/w_800,h_400,c_fill/balloons.jpg"
+        "https://res.cloudinary.com/dq64aidpx/image/upload/v1754394786/istockphoto-1412282189-612x612_pjohig.jpg",
+        "https://res.cloudinary.com/dq64aidpx/image/upload/v1750685133/hydr9m9vdyzqioxsbvw4.jpg"
     )
-
     var currentIndex by remember { mutableStateOf(0) }
 
     LaunchedEffect(Unit) {
