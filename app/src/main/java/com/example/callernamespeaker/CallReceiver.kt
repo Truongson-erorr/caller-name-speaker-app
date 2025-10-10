@@ -52,10 +52,8 @@ class CallReceiver : BroadcastReceiver() {
 
                             val warningText = "Số $cleanedNumber đã bị $count người báo cáo: $latestReason"
 
-                            // Hiển thị cảnh báo bằng Toast
                             Toast.makeText(context, "⚠️ $warningText", Toast.LENGTH_LONG).show()
 
-                            // Đọc cảnh báo bằng TTS
                             val speakIntent = Intent(context, CallTTSService::class.java).apply {
                                 putExtra("text_to_speak", warningText)
                             }

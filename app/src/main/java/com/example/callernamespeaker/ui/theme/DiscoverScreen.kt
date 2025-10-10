@@ -57,7 +57,6 @@ fun DiscoverScreen() {
                 unfocusedIndicatorColor = Color.Transparent
             )
         )
-
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(

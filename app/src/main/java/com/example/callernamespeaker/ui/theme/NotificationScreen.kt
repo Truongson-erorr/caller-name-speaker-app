@@ -86,6 +86,7 @@ fun NotificationItem(
     onDelete: () -> Unit
 ) {
     var showDeleteConfirm by remember { mutableStateOf(false) }
+    val textWeight = if (!notification.isRead) FontWeight.Bold else FontWeight.Normal
 
     Card(
         modifier = Modifier
@@ -116,21 +117,24 @@ fun NotificationItem(
             ) {
                 Text(
                     text = notification.title,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = textWeight,
                     style = MaterialTheme.typography.titleMedium
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = notification.message,
+                    fontWeight = textWeight,
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = formatTime(notification.timestamp),
+                    fontWeight = textWeight,
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.Gray
                 )
             }
+
             IconButton(
                 onClick = { showDeleteConfirm = true }
             ) {

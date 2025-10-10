@@ -20,14 +20,18 @@ import com.example.callernamespeaker.model.NewsPost
 import com.example.callernamespeaker.ui.chat.ChatScreen
 import com.example.callernamespeaker.ui.theme.AllNewsScreen
 import com.example.callernamespeaker.ui.theme.CallDetailScreen
-import com.example.callernamespeaker.ui.theme.CallHistoryScreen
 import com.example.callernamespeaker.ui.theme.EmergencyTab
 import com.example.callernamespeaker.ui.theme.ForgotPasswordScreen
 import com.example.callernamespeaker.ui.theme.NewsDetailScreen
 import com.example.callernamespeaker.ui.theme.OtpVerificationScreen
+import com.example.callernamespeaker.ui.theme.ReportScreen
 import com.example.callernamespeaker.ui.theme.UserInfoScreen
 import com.example.callernamespeaker.ui.theme.WebsiteScreen
+import com.example.callernamespeaker.viewmodel.ReportViewModel
+import com.example.personalexpensetracker.viewmodel.NotificationViewModel
+import com.example.personalexpensetracker.viewmodel.NotificationViewModelFactory
 import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -100,5 +104,22 @@ fun AppNavGraph(
         composable("ChatScreen") {
             ChatScreen(navController)
         }
+        composable("report") {
+            val reportViewModel: ReportViewModel = viewModel()
+
+            val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+
+            val notificationViewModel: NotificationViewModel = viewModel(
+                factory = NotificationViewModelFactory(userId)
+            )
+
+            ReportScreen(
+                navController = navController,
+                reportViewModel = reportViewModel,
+                notificationViewModel = notificationViewModel
+            )
+        }
+
+
     }
 }

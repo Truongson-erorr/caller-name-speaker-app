@@ -55,17 +55,14 @@ fun HomeTab(navController: NavController) {
     var showPhoneCheckDialog by remember { mutableStateOf(false) }
     var phoneInput by remember { mutableStateOf("") }
 
-    val reportViewModel: ReportViewModel = viewModel()
-    var showReportDialog by remember { mutableStateOf(false) }
-    var reportPhone by remember { mutableStateOf("") }
-    var reportReason by remember { mutableStateOf("") }
-
     var showBlockDialog by remember { mutableStateOf(false) }
     var blockPhoneInput by remember { mutableStateOf("") }
     val blacklistViewModel: BlacklistViewModel = viewModel()
 
     val currentUser = FirebaseAuth.getInstance().currentUser
     val uid = currentUser?.uid
+
+    var smsTtsEnabled by remember { mutableStateOf(prefs.getBoolean("sms_tts_enabled", true)) }
 
     val notificationViewModel: NotificationViewModel = viewModel(
         factory = object : ViewModelProvider.Factory {
@@ -116,6 +113,28 @@ fun HomeTab(navController: NavController) {
             )
         }
 
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "Đọc cảnh báo tin nhắn chứa link: ${if (smsTtsEnabled) "Bật" else "Tắt"}",
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.Medium,
+                fontSize = 14.sp
+            )
+            Switch(
+                checked = smsTtsEnabled,
+                onCheckedChange = {
+                    smsTtsEnabled = it
+                    prefs.edit().putBoolean("sms_tts_enabled", it).apply()
+                }
+            )
+        }
+
         Text(
             text = "Cẩm nang an toàn thông tin",
             fontWeight = FontWeight.SemiBold,
@@ -157,7 +176,7 @@ fun HomeTab(navController: NavController) {
                 showBlockDialog = true
             }
             ServiceButton("Báo cáo", Icons.Default.Flag, Modifier.weight(1f)) {
-                showReportDialog = true
+                navController.navigate("report")
             }
             ServiceButton("Website", Icons.Default.Public, Modifier.weight(1f)) {
                 navController.navigate("WebsiteScreen")
@@ -211,68 +230,6 @@ fun HomeTab(navController: NavController) {
                     placeholder = { Text("VD: 0912345678") },
                     singleLine = true
                 )
-            }
-        )
-    }
-
-    if (showReportDialog) {
-        AlertDialog(
-            onDismissRequest = { showReportDialog = false },
-            confirmButton = {
-                TextButton(onClick = {
-                    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
-                    if (reportPhone.isNotBlank() && reportReason.isNotBlank() && userId.isNotBlank()) {
-                        reportViewModel.reportPhoneNumber(
-                            phone = reportPhone.trim(),
-                            userId = userId,
-                            reason = reportReason.trim(),
-                            onComplete = {
-                                Toast.makeText(context, "Báo cáo thành công", Toast.LENGTH_SHORT).show()
-
-                                notificationViewModel.addNotification(
-                                    userId = userId,
-                                    title = "Báo cáo số điện thoại",
-                                    message = "Bạn vừa báo cáo số ${reportPhone.trim()} với lý do: ${reportReason.trim()}",
-                                )
-
-                                showReportDialog = false
-                                reportPhone = ""
-                                reportReason = ""
-                            },
-                            onError = {
-                                Toast.makeText(context, "Lỗi: $it", Toast.LENGTH_SHORT).show()
-                            }
-                        )
-                    }
-                }) {
-                    Text("Báo cáo")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showReportDialog = false }) {
-                    Text("Hủy")
-                }
-            },
-            title = { Text("Báo cáo số điện thoại") },
-            text = {
-                Column {
-                    OutlinedTextField(
-                        value = reportPhone,
-                        onValueChange = { reportPhone = it },
-                        label = { Text("Số điện thoại") },
-                        shape = RoundedCornerShape(12.dp),
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    OutlinedTextField(
-                        value = reportReason,
-                        onValueChange = { reportReason = it },
-                        shape = RoundedCornerShape(12.dp),
-                        label = { Text("Lý do báo cáo") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
             }
         )
     }
