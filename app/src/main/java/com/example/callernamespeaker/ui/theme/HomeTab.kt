@@ -50,9 +50,6 @@ fun HomeTab(navController: NavController) {
         mutableStateOf(prefs.getBoolean("tts_enabled", true))
     }
 
-    var showPhoneCheckDialog by remember { mutableStateOf(false) }
-    var phoneInput by remember { mutableStateOf("") }
-
     var showBlockDialog by remember { mutableStateOf(false) }
     var blockPhoneInput by remember { mutableStateOf("") }
     val blacklistViewModel: BlacklistViewModel = viewModel()
@@ -171,7 +168,7 @@ fun HomeTab(navController: NavController) {
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             ServiceButton("Chặn số", Icons.Default.Block, Modifier.weight(1f)) {
-                showBlockDialog = true
+                navController.navigate("block_phone")
             }
             ServiceButton("Báo cáo", Icons.Default.Flag, Modifier.weight(1f)) {
                 navController.navigate("report")
@@ -187,49 +184,6 @@ fun HomeTab(navController: NavController) {
         NewsSection(navController)
         Spacer(modifier = Modifier.height(12.dp))
         SecuritytipScreen()
-    }
-
-    if (showPhoneCheckDialog) {
-        val prefs = context.getSharedPreferences("blocked_numbers", Context.MODE_PRIVATE)
-
-        AlertDialog(
-            onDismissRequest = { showPhoneCheckDialog = false },
-            confirmButton = {
-                TextButton(onClick = {
-                    val cleaned = phoneInput.trim().replace("+84", "0").replace(" ", "")
-                    val isBlocked = prefs.contains(cleaned)
-                    val type = classifyPhoneNumber(cleaned)
-
-                    viewModel.saveLookup(cleaned, type, isBlocked)
-
-                    Toast.makeText(
-                        context,
-                        "Số $cleaned (${type}) ${if (isBlocked) "đã bị chặn" else "chưa bị chặn"}",
-                        Toast.LENGTH_LONG
-                    ).show()
-
-                    phoneInput = ""
-                    showPhoneCheckDialog = false
-                }) {
-                    Text("Kiểm tra")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showPhoneCheckDialog = false }) {
-                    Text("Hủy")
-                }
-            },
-            title = { Text("Nhập số điện thoại") },
-            text = {
-                OutlinedTextField(
-                    value = phoneInput,
-                    shape = RoundedCornerShape(12.dp),
-                    onValueChange = { phoneInput = it },
-                    placeholder = { Text("VD: 0912345678") },
-                    singleLine = true
-                )
-            }
-        )
     }
 
     if (showBlockDialog) {
