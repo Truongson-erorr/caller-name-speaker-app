@@ -18,6 +18,7 @@ import com.example.callernamespeaker.ui.theme.LoginScreen
 import com.example.callernamespeaker.MainScreen
 import com.example.callernamespeaker.model.NewsPost
 import com.example.callernamespeaker.ui.chat.ChatScreen
+import com.example.callernamespeaker.ui.screens.SearchScreen
 import com.example.callernamespeaker.ui.theme.AllNewsScreen
 import com.example.callernamespeaker.ui.theme.CallDetailScreen
 import com.example.callernamespeaker.ui.theme.EmergencyTab
@@ -119,7 +120,8 @@ fun AppNavGraph(
                 notificationViewModel = notificationViewModel
             )
         }
-
-
+        composable("SearchScreen") {
+            SearchScreen(navController)
+        }
     }
 }

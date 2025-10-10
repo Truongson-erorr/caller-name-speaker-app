@@ -31,14 +31,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
 import com.example.callernamespeaker.viewmodel.PhoneLookupViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.example.callernamespeaker.viewmodel.BlacklistViewModel
 import com.example.callernamespeaker.viewmodel.ReportViewModel
 import com.example.personalexpensetracker.viewmodel.NotificationViewModel
-import androidx.compose.foundation.verticalScroll
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun HomeTab(navController: NavController) {
     val viewModel: PhoneLookupViewModel = viewModel()
@@ -158,7 +156,7 @@ fun HomeTab(navController: NavController) {
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             ServiceButton("Tra SDT", Icons.Default.Search, Modifier.weight(1f)) {
-                showPhoneCheckDialog = true
+                navController.navigate("SearchScreen")
             }
             ServiceButton("Danh tính", Icons.Default.PersonSearch, Modifier.weight(1f)) {}
             ServiceButton("Lừa đảo", Icons.Default.Report, Modifier.weight(1f)) {}
