@@ -18,9 +18,9 @@ import com.example.callernamespeaker.ui.theme.LoginScreen
 import com.example.callernamespeaker.MainScreen
 import com.example.callernamespeaker.model.NewsPost
 import com.example.callernamespeaker.ui.chat.ChatScreen
+import com.example.callernamespeaker.ui.screens.BlockPhoneScreen
 import com.example.callernamespeaker.ui.screens.SearchScreen
 import com.example.callernamespeaker.ui.theme.AllNewsScreen
-import com.example.callernamespeaker.ui.theme.BlockPhoneScreen
 import com.example.callernamespeaker.ui.theme.CallDetailScreen
 import com.example.callernamespeaker.ui.theme.EmergencyTab
 import com.example.callernamespeaker.ui.theme.ForgotPasswordScreen
@@ -73,7 +73,6 @@ fun AppNavGraph(
             val phoneNumber = backStackEntry.arguments?.getString("phoneNumber")!!
             OtpVerificationScreen(navController, verificationId, phoneNumber)
         }
-
         composable("main") {
             MainScreen(navController)
         }
@@ -90,7 +89,6 @@ fun AppNavGraph(
         composable("all_news") {
             AllNewsScreen(navController)
         }
-
         composable(
             route = "call_detail/{index}",
             arguments = listOf(navArgument("index") { type = NavType.IntType })

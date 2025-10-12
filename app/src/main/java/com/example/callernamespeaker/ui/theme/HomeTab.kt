@@ -27,15 +27,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.callernamespeaker.viewmodel.PhoneLookupViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.example.callernamespeaker.viewmodel.BlacklistViewModel
-import com.example.callernamespeaker.viewmodel.ReportViewModel
-import com.example.personalexpensetracker.viewmodel.NotificationViewModel
 
 @Composable
 fun HomeTab(navController: NavController) {
@@ -50,23 +45,11 @@ fun HomeTab(navController: NavController) {
         mutableStateOf(prefs.getBoolean("tts_enabled", true))
     }
 
-    var showBlockDialog by remember { mutableStateOf(false) }
-    var blockPhoneInput by remember { mutableStateOf("") }
-    val blacklistViewModel: BlacklistViewModel = viewModel()
-
     val currentUser = FirebaseAuth.getInstance().currentUser
     val uid = currentUser?.uid
 
     var smsTtsEnabled by remember { mutableStateOf(prefs.getBoolean("sms_tts_enabled", true)) }
 
-    val notificationViewModel: NotificationViewModel = viewModel(
-        factory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
-                return NotificationViewModel(currentUserId) as T
-            }
-        }
-    )
     val scrollState = rememberScrollState()
 
     LaunchedEffect(uid) {
@@ -184,78 +167,6 @@ fun HomeTab(navController: NavController) {
         NewsSection(navController)
         Spacer(modifier = Modifier.height(12.dp))
         SecuritytipScreen()
-    }
-
-    if (showBlockDialog) {
-        val cleanedPhone = blockPhoneInput.trim().replace("+84", "0").replace(" ", "")
-        val isBlocked = prefs.getBoolean(cleanedPhone, false)
-
-        AlertDialog(
-            onDismissRequest = {
-                showBlockDialog = false
-                blockPhoneInput = ""
-            },
-            title = { Text("Chặn số điện thoại") },
-            text = {
-                Column {
-                    OutlinedTextField(
-                        value = blockPhoneInput,
-                        onValueChange = { blockPhoneInput = it },
-                        label = { Text("Nhập số điện thoại") },
-                        shape = RoundedCornerShape(12.dp),
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Phone),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    if (isBlocked) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            "Số này đã được chặn!",
-                            color = Color.Gray,
-                            style = MaterialTheme.typography.labelMedium,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        val phone = blockPhoneInput.trim().replace("+84", "0").replace(" ", "")
-                        if (phone.isNotBlank()) {
-                            blacklistViewModel.addToBlacklist(phone, type = "unknown") {
-                                Toast.makeText(context, "Đã chặn số $phone", Toast.LENGTH_SHORT).show()
-
-                                val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
-                                if (userId.isNotBlank()) {
-                                    notificationViewModel.addNotification(
-                                        userId = userId,
-                                        title = "Chặn số thành công",
-                                        message = "Bạn vừa chặn số $phone"
-                                    )
-                                }
-                            }
-                        }
-                        showBlockDialog = false
-                        blockPhoneInput = ""
-                    },
-                    colors = ButtonDefaults.textButtonColors(contentColor = Color.Red)
-                ) {
-                    Text("Chặn")
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        showBlockDialog = false
-                        blockPhoneInput = ""
-                    }
-                ) {
-                    Text("Hủy")
-                }
-            }
-        )
     }
 }
 

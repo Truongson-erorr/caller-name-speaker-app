@@ -1,39 +1,25 @@
-package com.example.callernamespeaker.ui.theme
+package com.example.callernamespeaker.ui.screens
 
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.callernamespeaker.viewmodel.BlacklistViewModel
 import com.example.personalexpensetracker.viewmodel.NotificationViewModel
@@ -43,50 +29,82 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun BlockPhoneScreen(
     navController: NavController,
-    blacklistViewModel: BlacklistViewModel,
+    blacklistViewModel: BlacklistViewModel = viewModel(),
     notificationViewModel: NotificationViewModel
 ) {
     val context = LocalContext.current
     val prefs = context.getSharedPreferences("blocked_numbers", Context.MODE_PRIVATE)
-
     var blockPhoneInput by remember { mutableStateOf("") }
 
     val cleanedPhone = blockPhoneInput.trim().replace("+84", "0").replace(" ", "")
     val isBlocked = prefs.getBoolean(cleanedPhone, false)
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Chặn số điện thoại") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Quay lại")
-                    }
-                }
-            )
-        }
-    ) { padding ->
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Top
+                .fillMaxWidth()
+                .padding(20.dp)
+                .align(Alignment.TopCenter)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(modifier = Modifier.height(35.dp))
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 24.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color.Black,
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .clickable { navController.popBackStack() }
+                        .padding(start = 8.dp)
+                        .size(26.dp)
+                )
+                Text(
+                    text = "Chặn số điện thoại",
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.Black
+                )
+            }
+
+            Text(
+                text = "Nếu bạn muốn chặn các cuộc gọi hoặc tin nhắn từ số điện thoại nghi ngờ, hãy nhập số vào ô bên dưới. " +
+                        "Sau khi chặn, hệ thống sẽ không hiển thị thông báo hoặc cảnh báo từ số này nữa.",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Gray,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
             OutlinedTextField(
                 value = blockPhoneInput,
                 onValueChange = { blockPhoneInput = it },
-                label = { Text("Nhập số điện thoại") },
-                shape = RoundedCornerShape(12.dp),
+                label = { Text("Số điện thoại cần chặn") },
                 singleLine = true,
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Phone),
-                modifier = Modifier.fillMaxWidth()
+                shape = RoundedCornerShape(14.dp),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = Color(0xFFF5F5F5),
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    cursorColor = MaterialTheme.colorScheme.primary
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp)
             )
 
             if (isBlocked && cleanedPhone.isNotBlank()) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    "⚠️ Số này đã được chặn!",
+                    text = "⚠️ Số này đã được chặn!",
                     color = Color.Gray,
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.Medium
@@ -95,6 +113,7 @@ fun BlockPhoneScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            // 🔹 Nút chặn
             Button(
                 onClick = {
                     val phone = cleanedPhone
@@ -110,14 +129,21 @@ fun BlockPhoneScreen(
                                     message = "Bạn vừa chặn số $phone"
                                 )
                             }
+                            blockPhoneInput = ""
+                            navController.popBackStack()
                         }
+                    } else {
+                        Toast.makeText(context, "Vui lòng nhập số hợp lệ", Toast.LENGTH_SHORT).show()
                     }
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFD32F2F),
+                    contentColor = Color.White
+                ),
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(14.dp)
             ) {
-                Text("Chặn số này", color = Color.White)
+                Text("Chặn số này")
             }
         }
     }
