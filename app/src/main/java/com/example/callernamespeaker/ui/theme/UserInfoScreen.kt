@@ -2,36 +2,14 @@ package com.example.callernamespeaker.ui.theme
 
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,7 +19,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
 
@@ -50,7 +27,7 @@ import com.google.firebase.firestore.firestore
 fun UserInfoScreen(navController: NavController) {
     val context = LocalContext.current
     val auth = FirebaseAuth.getInstance()
-    val db = Firebase.firestore
+    val db = com.google.firebase.Firebase.firestore
 
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -66,7 +43,6 @@ fun UserInfoScreen(navController: NavController) {
         IconButton(onClick = { navController.popBackStack() }) {
             Icon(Icons.Default.ArrowBack, contentDescription = "Quay lại", tint = Color(0xFF1976D2))
         }
-
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
@@ -104,7 +80,7 @@ fun UserInfoScreen(navController: NavController) {
         TextField(
             value = email,
             onValueChange = { email = it },
-            placeholder = { Text("Email (không bắt buộc)", fontSize = 13.sp) },
+            placeholder = { Text("Email", fontSize = 13.sp) },
             leadingIcon = {
                 Icon(Icons.Default.Email, contentDescription = null, tint = Color(0xFF1976D2))
             },
@@ -136,12 +112,22 @@ fun UserInfoScreen(navController: NavController) {
         Button(
             onClick = {
                 val uid = auth.currentUser?.uid
-                if (uid.isNullOrBlank() || name.isBlank()) {
+                if (uid.isNullOrBlank()) {
+                    errorMessage = "Không tìm thấy tài khoản người dùng"
+                    return@Button
+                }
+                if (name.isBlank()) {
                     errorMessage = "Vui lòng nhập họ tên"
+                    return@Button
+                }
+                if (email.isBlank()) {
+                    errorMessage = "Vui lòng nhập email"
                     return@Button
                 }
 
                 isLoading = true
+                errorMessage = null
+
                 val userData = hashMapOf(
                     "uid" to uid,
                     "name" to name,

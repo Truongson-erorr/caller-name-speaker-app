@@ -21,8 +21,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.callernamespeaker.ui.screens.FamilyScreen
 import com.example.callernamespeaker.ui.screens.NotificationScreen
-import com.example.callernamespeaker.ui.theme.FamilyScreen
 import com.example.callernamespeaker.ui.theme.HistoryTab
 import com.example.callernamespeaker.ui.theme.HomeTab
 import com.example.callernamespeaker.ui.theme.ReportTab

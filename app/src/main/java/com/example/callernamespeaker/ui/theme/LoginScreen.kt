@@ -221,5 +221,24 @@ fun LoginScreen(navController: NavController) {
                 Text("GỬI MÃ OTP", fontWeight = FontWeight.Bold)
             }
         }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                fontSize = 14.sp,
+                text = "Chưa có tài khoản? "
+            )
+            Text(
+                "Đăng ký ngay",
+                color = Color(0xFF2575FC),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.clickable {
+                    navController.navigate("RegisterScreen")
+                }
+            )
+        }
     }
 }
