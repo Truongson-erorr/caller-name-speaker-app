@@ -2,8 +2,6 @@ package com.example.callernamespeaker.ui.theme
 
 import android.app.Activity
 import android.widget.Toast
-import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -22,8 +20,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -208,7 +204,7 @@ fun LoginScreen(navController: NavController) {
                 .fillMaxWidth()
                 .padding(bottom = 32.dp)
                 .height(50.dp),
-            shape = RoundedCornerShape(8.dp),
+            shape = RoundedCornerShape(26.dp),
             enabled = !isLoading,
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF2575FC),

@@ -24,7 +24,6 @@ import androidx.navigation.NavController
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ForgotPasswordScreen(navController: NavController) {
-    val context = LocalContext.current
     val phone = remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
 
@@ -151,7 +150,7 @@ fun ForgotPasswordScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
-            shape = RoundedCornerShape(8.dp),
+            shape = RoundedCornerShape(26.dp),
             enabled = !isLoading,
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF2575FC),

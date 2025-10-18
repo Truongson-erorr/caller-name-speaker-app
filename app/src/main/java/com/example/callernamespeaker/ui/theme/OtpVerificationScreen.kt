@@ -208,7 +208,7 @@ fun OtpVerificationScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
-            shape = RoundedCornerShape(8.dp),
+            shape = RoundedCornerShape(26.dp),
             enabled = !isLoading,
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF2575FC),

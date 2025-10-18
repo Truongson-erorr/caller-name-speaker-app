@@ -5,6 +5,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.CastConnected
+import androidx.compose.material.icons.filled.FamilyRestroom
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
@@ -21,8 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.callernamespeaker.ui.screens.NotificationScreen
-import com.example.callernamespeaker.ui.theme.AllNewsScreen
-import com.example.callernamespeaker.ui.theme.DiscoverScreen
+import com.example.callernamespeaker.ui.theme.FamilyScreen
 import com.example.callernamespeaker.ui.theme.HistoryTab
 import com.example.callernamespeaker.ui.theme.HomeTab
 import com.example.callernamespeaker.ui.theme.ReportTab
@@ -83,7 +83,7 @@ fun MainScreen(
                     }
 
                     NavItem(selected = selectedTab == "home", icon = Icons.Default.Home, label = "Trang chủ", key = "home")
-                    NavItem(selected = selectedTab == "post", icon = Icons.Default.AutoAwesome, label = "Khám phá", key = "post")
+                    NavItem(selected = selectedTab == "post", icon = Icons.Default.FamilyRestroom, label = "Gia đình", key = "post")
                     NavItem(selected = selectedTab == "report", icon = Icons.Default.List, label = "chặn số", key = "report")
                     NavItem(selected = selectedTab == "notification", icon = Icons.Default.Notifications, label = "Thông báo", key = "notification")
                     NavItem(selected = selectedTab == "history", icon = Icons.Default.History, label = "Lịch sử", key = "history")
@@ -94,7 +94,7 @@ fun MainScreen(
         Box(modifier = Modifier.padding(innerPadding)) {
             when (selectedTab) {
                 "home" -> HomeTab(navController = navController)
-                "post" -> DiscoverScreen()
+                "post" -> FamilyScreen()
                 "report" -> ReportTab()
                 "notification" -> NotificationScreen()
                 "history" -> HistoryTab(navController, context)
