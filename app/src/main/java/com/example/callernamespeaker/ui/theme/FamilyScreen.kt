@@ -2,6 +2,9 @@ package com.example.callernamespeaker.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Email
@@ -10,10 +13,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.callernamespeaker.model.ConnectionRequest
 import com.example.callernamespeaker.model.FamilyMember
+import com.example.callernamespeaker.ui.theme.ConnectionRequestItem
+import com.example.callernamespeaker.ui.theme.FamilyMemberItem
 import com.example.callernamespeaker.viewmodel.FamilyViewModel
 
 @Composable
@@ -27,9 +34,15 @@ fun FamilyScreen(
     var email by remember { mutableStateOf("") }
     var showDialog by remember { mutableStateOf(false) }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text("Kết nối gia đình", style = MaterialTheme.typography.headlineSmall)
-
+    Column(
+        modifier = Modifier.fillMaxSize().padding(16.dp)
+    ) {
+        Text(
+            "Kết nối thành viên",
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.headlineSmall
+        )
         Spacer(Modifier.height(16.dp))
 
         Button(
@@ -53,7 +66,7 @@ fun FamilyScreen(
 
         Spacer(Modifier.height(24.dp))
 
-        Text("📩 Lời mời kết nối đến:", style = MaterialTheme.typography.titleMedium)
+        Text("Lời mời kết nối:", style = MaterialTheme.typography.titleMedium)
         if (requests.isEmpty()) {
             Text("Chưa có lời mời nào.", color = MaterialTheme.colorScheme.outline)
         } else {
@@ -67,16 +80,15 @@ fun FamilyScreen(
                 }
             }
         }
-
         Spacer(Modifier.height(24.dp))
 
-        Text("👥 Thành viên gia đình:", style = MaterialTheme.typography.titleMedium)
+        Text("Thành viên gia đình:", style = MaterialTheme.typography.titleMedium)
         if (members.isEmpty()) {
             Text("Chưa có thành viên nào.", color = MaterialTheme.colorScheme.outline)
         } else {
-            LazyColumn {
+            LazyVerticalGrid(columns = GridCells.Fixed(2)) {
                 items(members.size) { i ->
-                    FamilyMemberItem(members[i], onDelete = { viewModel.deleteFamilyMember(members[i].id) })
+                    FamilyMemberItem(member = members[i])
                 }
             }
         }
@@ -85,61 +97,68 @@ fun FamilyScreen(
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
-            title = { Text("Mời thành viên qua Email") },
-            text = {
-                OutlinedTextField(
-                    value = email,
-                    onValueChange = { email = it },
-                    leadingIcon = { Icon(Icons.Default.Email, null) },
-                    label = { Text("Nhập email người cần mời") },
-                    modifier = Modifier.fillMaxWidth()
+            shape = RoundedCornerShape(20.dp),
+            containerColor = Color.White,
+            tonalElevation = 8.dp,
+            title = {
+                Text(
+                    "📧 Mời thành viên qua Email",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF1E1E2D)
+                    )
                 )
             },
+            text = {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = "Nhập địa chỉ email người mà bạn muốn mời vào nhóm gia đình:",
+                        fontSize = 14.sp,
+                        color = Color.Gray
+                    )
+
+                    OutlinedTextField(
+                        value = email,
+                        onValueChange = { email = it },
+                        shape = RoundedCornerShape(26.dp),
+                        leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
+                        label = { Text("Địa chỉ Email") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true
+                    )
+                }
+            },
             confirmButton = {
-                TextButton(onClick = {
-                    if (email.isNotBlank()) {
-                        viewModel.sendConnectionRequest(email)
-                        showDialog = false
-                        email = ""
-                    }
-                }) {
-                    Text("Gửi lời mời")
+                Button(
+                    onClick = {
+                        if (email.isNotBlank()) {
+                            viewModel.sendConnectionRequest(email)
+                            showDialog = false
+                            email = ""
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF3B6EF6)
+                    ),
+                    shape = RoundedCornerShape(24.dp)
+                ) {
+                    Text("Gửi lời mời", color = Color.White, fontWeight = FontWeight.SemiBold)
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showDialog = false }) {
-                    Text("Hủy")
+                TextButton(
+                    onClick = { showDialog = false },
+                    shape = RoundedCornerShape(20.dp)
+                ) {
+                    Text("Hủy", color = Color.Gray)
                 }
             }
         )
     }
 }
 
-@Composable
-fun ConnectionRequestItem(request: ConnectionRequest, onAccept: () -> Unit, onReject: () -> Unit) {
-    Card(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
-        Column(Modifier.padding(12.dp)) {
-            Text("Từ: ${request.fromName} (${request.fromPhone})")
-            Spacer(Modifier.height(8.dp))
-            Row(horizontalArrangement = Arrangement.End) {
-                TextButton(onClick = onAccept) { Text("Chấp nhận") }
-                TextButton(onClick = onReject) { Text("Từ chối", color = MaterialTheme.colorScheme.error) }
-            }
-        }
-    }
-}
-
-@Composable
-fun FamilyMemberItem(member: FamilyMember, onDelete: () -> Unit) {
-    Card(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
-        Row(Modifier.padding(12.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-            Column {
-                Text(member.name, style = MaterialTheme.typography.titleMedium)
-                Text("Email: ${member.phoneNumber}")
-            }
-            IconButton(onClick = onDelete) {
-                Icon(Icons.Default.Delete, contentDescription = "Xóa", tint = MaterialTheme.colorScheme.error)
-            }
-        }
-    }
-}

@@ -5,6 +5,7 @@ data class FamilyMember(
     val name: String = "",
     val relation: String = "",
     val phoneNumber: String = "",
+    val email: String = "",
     val status: String = "pending",
     val inviterId: String = "",
     val invitedUserId: String = ""

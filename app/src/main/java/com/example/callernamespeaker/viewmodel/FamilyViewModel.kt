@@ -24,8 +24,44 @@ class FamilyViewModel : ViewModel() {
     val message: StateFlow<String?> = _message
 
     init {
+        ensureCurrentUserInFamily()
         loadFamilyMembers()
         loadConnectionRequests()
+    }
+
+    /** ✅ Đảm bảo người dùng hiện tại luôn nằm trong danh sách thành viên **/
+    private fun ensureCurrentUserInFamily() {
+        val user = currentUser ?: return
+        val userUid = user.uid
+
+        val userDocRef = db.collection("Users").document(userUid)
+        val familyRef = db.collection("Family").document(userUid)
+            .collection("members")
+            .document(userUid)
+
+        userDocRef.get().addOnSuccessListener { doc ->
+            if (!doc.exists()) return@addOnSuccessListener
+
+            val name = doc.getString("name") ?: user.displayName ?: "Tôi"
+            val email = doc.getString("email") ?: user.email ?: "Không có email"
+            val phone = doc.getString("phoneNumber") ?: "Không có số điện thoại"
+
+            val member = FamilyMember(
+                id = userUid,
+                name = name,
+                phoneNumber = email,
+                relation = "Tôi",
+                status = "accepted",
+                inviterId = userUid,
+                invitedUserId = userUid
+            )
+
+            familyRef.get().addOnSuccessListener { memberDoc ->
+                if (!memberDoc.exists()) {
+                    familyRef.set(member)
+                }
+            }
+        }
     }
 
     /**Tải danh sách thành viên đã kết nối **/
@@ -107,39 +143,49 @@ class FamilyViewModel : ViewModel() {
     fun acceptConnectionRequest(request: ConnectionRequest) {
         val me = currentUser ?: return
 
-        // Cập nhật trạng thái
-        db.collection("Family").document(me.uid)
-            .collection("requests").document(request.id)
-            .update("status", "accepted")
+        // Lấy thông tin của chính người đang chấp nhận (từ collection Users)
+        db.collection("Users").document(me.uid).get()
+            .addOnSuccessListener { meDoc ->
+                val myName = meDoc.getString("name") ?: "Người dùng"
+                val myEmail = meDoc.getString("email") ?: me.email ?: ""
 
-        // Thêm hai bên vào Family list
-        val myMember = FamilyMember(
-            id = request.fromUid,
-            name = request.fromName,
-            relation = "Người thân",
-            phoneNumber = request.fromPhone, // là email
-            status = "accepted",
-            inviterId = request.fromUid,
-            invitedUserId = me.uid
-        )
+                // Cập nhật trạng thái lời mời
+                db.collection("Family").document(me.uid)
+                    .collection("requests").document(request.id)
+                    .update("status", "accepted")
 
-        val theirMember = FamilyMember(
-            id = me.uid,
-            name = me.displayName ?: "Người dùng",
-            relation = "Người thân",
-            phoneNumber = me.email ?: "",
-            status = "accepted",
-            inviterId = me.uid,
-            invitedUserId = request.fromUid
-        )
+                // Tạo bản ghi ở phía người nhận (mình)
+                val myMember = FamilyMember(
+                    id = request.fromUid,
+                    name = request.fromName,
+                    relation = "Người thân",
+                    phoneNumber = request.fromPhone,
+                    status = "accepted",
+                    inviterId = request.fromUid,
+                    invitedUserId = me.uid
+                )
 
-        db.collection("Family").document(me.uid)
-            .collection("members").document(request.fromUid)
-            .set(myMember)
+                // Tạo bản ghi ở phía người gửi (đối phương)
+                val theirMember = FamilyMember(
+                    id = me.uid,
+                    name = myName, // Dùng name từ Firestore, không dùng displayName
+                    relation = "Người thân",
+                    phoneNumber = myEmail,
+                    status = "accepted",
+                    inviterId = me.uid,
+                    invitedUserId = request.fromUid
+                )
 
-        db.collection("Family").document(request.fromUid)
-            .collection("members").document(me.uid)
-            .set(theirMember)
+                // Lưu vào Family/{me.uid}/members
+                db.collection("Family").document(me.uid)
+                    .collection("members").document(request.fromUid)
+                    .set(myMember)
+
+                // Lưu vào Family/{request.fromUid}/members
+                db.collection("Family").document(request.fromUid)
+                    .collection("members").document(me.uid)
+                    .set(theirMember)
+            }
     }
 
     /**Từ chối lời mời **/
