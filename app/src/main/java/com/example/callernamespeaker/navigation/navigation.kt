@@ -24,6 +24,7 @@ import com.example.callernamespeaker.ui.theme.AllNewsScreen
 import com.example.callernamespeaker.ui.theme.CallDetailScreen
 import com.example.callernamespeaker.ui.theme.EmergencyTab
 import com.example.callernamespeaker.ui.theme.ForgotPasswordScreen
+import com.example.callernamespeaker.ui.theme.MemberDetailScreen
 import com.example.callernamespeaker.ui.theme.NewsDetailScreen
 import com.example.callernamespeaker.ui.theme.OtpVerificationScreen
 import com.example.callernamespeaker.ui.theme.ReportScreen
@@ -131,6 +132,10 @@ fun AppNavGraph(
                 blacklistViewModel = blacklistViewModel,
                 notificationViewModel = notificationViewModel
             )
+        }
+        composable("memberDetail/{memberId}") { backStackEntry ->
+            val memberId = backStackEntry.arguments?.getString("memberId") ?: ""
+            MemberDetailScreen(navController, memberId)
         }
     }
 }

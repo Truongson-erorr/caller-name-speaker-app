@@ -94,7 +94,7 @@ fun MainScreen(
         Box(modifier = Modifier.padding(innerPadding)) {
             when (selectedTab) {
                 "home" -> HomeTab(navController = navController)
-                "post" -> FamilyScreen()
+                "post" -> FamilyScreen(navController)
                 "report" -> ReportTab()
                 "notification" -> NotificationScreen()
                 "history" -> HistoryTab(navController, context)

@@ -17,14 +17,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.callernamespeaker.model.ConnectionRequest
-import com.example.callernamespeaker.model.FamilyMember
+import androidx.navigation.NavController
 import com.example.callernamespeaker.ui.theme.ConnectionRequestItem
 import com.example.callernamespeaker.ui.theme.FamilyMemberItem
 import com.example.callernamespeaker.viewmodel.FamilyViewModel
 
 @Composable
 fun FamilyScreen(
+    navController: NavController,
     viewModel: FamilyViewModel = viewModel()
 ) {
     val members by viewModel.familyMembers.collectAsState()
@@ -88,7 +88,10 @@ fun FamilyScreen(
         } else {
             LazyVerticalGrid(columns = GridCells.Fixed(2)) {
                 items(members.size) { i ->
-                    FamilyMemberItem(member = members[i])
+                    FamilyMemberItem(member = members[i],
+                        onMemberClick = { selected ->
+                            navController.navigate("memberDetail/${selected.id}")
+                        })
                 }
             }
         }
