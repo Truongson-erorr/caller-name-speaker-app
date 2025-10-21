@@ -1,14 +1,13 @@
 package com.example.callernamespeaker.ui.theme
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -32,11 +31,12 @@ fun MemberDetailScreen(
     val db = FirebaseFirestore.getInstance()
     val currentUser = FirebaseAuth.getInstance().currentUser
     var member by remember { mutableStateOf<FamilyMember?>(null) }
+    var isRefreshing by remember { mutableStateOf(false) }
 
     val familyId = currentUser?.uid ?: return
 
-    // 🔹 Chỉ lấy dữ liệu một lần, không cần trạng thái loading
-    LaunchedEffect(memberId) {
+    fun fetchMember() {
+        isRefreshing = true
         db.collection("Family")
             .document(familyId)
             .collection("members")
@@ -45,115 +45,137 @@ fun MemberDetailScreen(
             .addOnSuccessListener { snapshot ->
                 member = snapshot.toObject(FamilyMember::class.java)
             }
+            .addOnCompleteListener { isRefreshing = false }
+    }
+
+    LaunchedEffect(memberId) {
+        fetchMember()
     }
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp)
-            .verticalScroll(rememberScrollState()),
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 20.dp, vertical = 18.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(35.dp))
-
-        // 🔙 Header
-        Box(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            contentAlignment = Alignment.Center
+                .padding(bottom = 14.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = "Back",
-                tint = Color.Black,
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .clickable { navController.popBackStack() }
-                    .padding(start = 8.dp)
-                    .size(26.dp)
-            )
+            IconButton(onClick = { navController.popBackStack() }) {
+                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+            }
+            Spacer(modifier = Modifier.width(6.dp))
             Text(
                 text = "Chi tiết thành viên",
-                fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleMedium,
-                color = Color.Black
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f)
             )
+            IconButton(onClick = { fetchMember() }) {
+                if (isRefreshing) {
+                    CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(24.dp))
+                } else {
+                    Icon(imageVector = Icons.Default.Refresh, contentDescription = "Refresh")
+                }
+            }
         }
+        Spacer(modifier = Modifier.height(6.dp))
 
         if (member != null) {
             val it = member!!
 
-            // 🧑 Avatar
-            Box(
-                modifier = Modifier
-                    .size(100.dp)
-                    .clip(CircleShape)
-                    .background(Color(0xFFDEE7FF)),
-                contentAlignment = Alignment.Center
-            ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Box(
+                    modifier = Modifier
+                        .size(110.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFFDEE7FF)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = it.name.firstOrNull()?.uppercase() ?: "?",
+                        fontSize = 44.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF3B6EF6)
+                    )
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+
                 Text(
-                    text = it.name.firstOrNull()?.uppercase() ?: "?",
-                    fontSize = 40.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF3B6EF6)
+                    text = it.name,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                val statusColor = when (it.status.lowercase()) {
+                    "accepted" -> Color(0xFF2E7D32)
+                    "pending" -> Color(0xFFED6C02)
+                    "rejected", "declined" -> Color(0xFFB00020)
+                    else -> Color(0xFF616161)
+                }
+
+                AssistChip(
+                    onClick = {},
+                    label = {
+                        Text(
+                            it.status.capitalize(),
+                            color = if (it.status.lowercase() == "accepted") Color(0xFF1B5E20) else Color.Black,
+                            fontWeight = FontWeight.Bold
+                        )
+                    },
+                    colors = AssistChipDefaults.assistChipColors(
+                        containerColor = if (it.status.lowercase() == "accepted") Color(0xFFC8E6C9)
+                        else statusColor.copy(alpha = 0.12f)
+                    ),
+                    shape = RoundedCornerShape(26.dp),
+                    border = null
                 )
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // 🧾 Thông tin chi tiết
-            Text(
-                text = it.name,
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(18.dp))
 
             Card(
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5)),
-                modifier = Modifier.fillMaxWidth()
+                shape = RoundedCornerShape(14.dp),
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFF8FAFF))
             ) {
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Info(
-                        label = "Email",
-                        value = it.phoneNumber
-                    )
-                    Info(label = "Mối quan hệ", value = it.relation)
-                    Info(label = "Trạng thái", value = it.status)
+                Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.Email, contentDescription = null, tint = Color(0xFF1976D2))
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column {
+                            Text("Email", fontWeight = FontWeight.SemiBold, color = Color.DarkGray)
+                            val contact = if (it.email.isNotBlank()) it.email else it.phoneNumber
+                            Text(contact.ifEmpty { "—" }, fontSize = 15.sp)
+                        }
+                    }
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.Badge, contentDescription = null, tint = Color(0xFF6C63FF))
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column {
+                            Text("Mối quan hệ", fontWeight = FontWeight.SemiBold, color = Color.DarkGray)
+                            Text(it.relation.ifEmpty { "—" }, fontSize = 15.sp)
+                        }
+                    }
                 }
             }
+            Spacer(modifier = Modifier.height(18.dp))
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Text(
+                "Ghi chú: Hệ thống sẽ tự động ghi nhận và gửi cảnh báo khi người thân của bạn nhận cuộc gọi từ số lạ hoặc không xác định, giúp bạn dễ dàng theo dõi và bảo vệ họ khỏi các cuộc gọi đáng ngờ.",
+                fontSize = 12.sp,
+                color = Color.Gray
+            )
+
         } else {
-            Spacer(modifier = Modifier.height(100.dp))
-            Text("Không tìm thấy thông tin thành viên.", color = Color.Gray)
+            Box(modifier = Modifier.fillMaxWidth().padding(top = 36.dp), contentAlignment = Alignment.Center) {
+                Text("Không tìm thấy thông tin thành viên.", color = Color.Gray)
+            }
         }
-    }
-}
-
-@Composable
-fun Info(label: String, value: String) {
-    Column {
-        Text(
-            text = label,
-            fontWeight = FontWeight.SemiBold,
-            color = Color.DarkGray,
-            fontSize = 14.sp
-        )
-        Text(
-            text = value.ifEmpty { "—" },
-            fontSize = 15.sp,
-            color = Color.Black,
-            modifier = Modifier.padding(start = 4.dp)
-        )
     }
 }

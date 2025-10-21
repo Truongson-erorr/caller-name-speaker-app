@@ -203,7 +203,7 @@ fun LoginScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 32.dp)
-                .height(50.dp),
+                .height(47.dp),
             shape = RoundedCornerShape(26.dp),
             enabled = !isLoading,
             colors = ButtonDefaults.buttonColors(

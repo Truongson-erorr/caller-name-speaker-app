@@ -29,7 +29,7 @@ class FamilyViewModel : ViewModel() {
         loadConnectionRequests()
     }
 
-    /** ✅ Đảm bảo người dùng hiện tại luôn nằm trong danh sách thành viên **/
+    /** Đảm bảo người dùng hiện tại luôn nằm trong danh sách thành viên **/
     private fun ensureCurrentUserInFamily() {
         val user = currentUser ?: return
         val userUid = user.uid
@@ -168,7 +168,7 @@ class FamilyViewModel : ViewModel() {
                 // Tạo bản ghi ở phía người gửi (đối phương)
                 val theirMember = FamilyMember(
                     id = me.uid,
-                    name = myName, // Dùng name từ Firestore, không dùng displayName
+                    name = myName,
                     relation = "Người thân",
                     phoneNumber = myEmail,
                     status = "accepted",

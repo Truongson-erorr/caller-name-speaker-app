@@ -19,7 +19,10 @@ import com.example.callernamespeaker.MainScreen
 import com.example.callernamespeaker.model.NewsPost
 import com.example.callernamespeaker.ui.chat.ChatScreen
 import com.example.callernamespeaker.ui.screens.BlockPhoneScreen
+import com.example.callernamespeaker.ui.screens.IntroSplashScreen
 import com.example.callernamespeaker.ui.screens.SearchScreen
+import com.example.callernamespeaker.ui.screens.SmsAnalysisScreen
+import com.example.callernamespeaker.ui.screens.SmsIntroScreen
 import com.example.callernamespeaker.ui.theme.AllNewsScreen
 import com.example.callernamespeaker.ui.theme.CallDetailScreen
 import com.example.callernamespeaker.ui.theme.EmergencyTab
@@ -45,7 +48,7 @@ fun AppNavGraph(
 ) {
     AnimatedNavHost(
         navController = navController,
-        startDestination = "LoginScreen",
+        startDestination = "IntroSplashScreen",
         enterTransition = { slideInHorizontally(initialOffsetX = { 1000 }) + fadeIn() },
         exitTransition = { slideOutHorizontally(targetOffsetX = { -1000 }) + fadeOut() },
         popEnterTransition = { slideInHorizontally(initialOffsetX = { -1000 }) + fadeIn() },
@@ -136,6 +139,15 @@ fun AppNavGraph(
         composable("memberDetail/{memberId}") { backStackEntry ->
             val memberId = backStackEntry.arguments?.getString("memberId") ?: ""
             MemberDetailScreen(navController, memberId)
+        }
+        composable("SmsAnalysisScreen") {
+            SmsAnalysisScreen(navController)
+        }
+        composable("SmsIntroScreen") {
+            SmsIntroScreen(navController)
+        }
+        composable("IntroSplashScreen") {
+            IntroSplashScreen(navController)
         }
     }
 }

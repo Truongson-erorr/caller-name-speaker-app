@@ -118,7 +118,7 @@ fun SearchScreen(
                     containerColor = Color(0xFF1976D2),
                     contentColor = Color.White
                 ),
-                shape = RoundedCornerShape(14.dp),
+                shape = RoundedCornerShape(26.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Kiểm tra")

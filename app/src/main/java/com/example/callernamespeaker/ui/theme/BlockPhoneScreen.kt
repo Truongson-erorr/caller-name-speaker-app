@@ -110,10 +110,8 @@ fun BlockPhoneScreen(
                     fontWeight = FontWeight.Medium
                 )
             }
-
             Spacer(modifier = Modifier.height(24.dp))
 
-            // 🔹 Nút chặn
             Button(
                 onClick = {
                     val phone = cleanedPhone
@@ -141,7 +139,7 @@ fun BlockPhoneScreen(
                     contentColor = Color.White
                 ),
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(14.dp)
+                shape = RoundedCornerShape(26.dp)
             ) {
                 Text("Chặn số này")
             }

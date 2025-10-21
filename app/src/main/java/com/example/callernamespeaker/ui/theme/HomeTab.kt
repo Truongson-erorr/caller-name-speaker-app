@@ -138,7 +138,9 @@ fun HomeTab(navController: NavController) {
             ServiceButton("Tra SDT", Icons.Default.Search, Modifier.weight(1f)) {
                 navController.navigate("SearchScreen")
             }
-            ServiceButton("Danh tính", Icons.Default.PersonSearch, Modifier.weight(1f)) {}
+            ServiceButton("Sms", Icons.Default.PersonSearch, Modifier.weight(1f)) {
+                navController.navigate("SmsIntroScreen")
+            }
             ServiceButton("Lừa đảo", Icons.Default.Report, Modifier.weight(1f)) {}
             ServiceButton("Khẩn cấp", Icons.Default.Wifi, Modifier.weight(1f)) {
                 navController.navigate("EmergencyTab")
@@ -159,7 +161,7 @@ fun HomeTab(navController: NavController) {
             ServiceButton("Website", Icons.Default.Public, Modifier.weight(1f)) {
                 navController.navigate("WebsiteScreen")
             }
-            ServiceButton("Giải đáp AI", Icons.Default.Chat, Modifier.weight(1f)) {
+            ServiceButton("Giải đáp AI", Icons.Default.ChatBubbleOutline, Modifier.weight(1f)) {
                 navController.navigate("ChatScreen")
             }
         }
