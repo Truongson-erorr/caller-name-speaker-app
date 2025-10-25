@@ -23,7 +23,6 @@ import com.example.callernamespeaker.model.Notification
 import com.example.personalexpensetracker.viewmodel.NotificationViewModel
 import com.google.firebase.auth.FirebaseAuth
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationScreen() {
     val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
@@ -43,45 +42,30 @@ fun NotificationScreen() {
         }
     }
 
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = "Thông báo",
-                        style = MaterialTheme.typography.headlineSmall.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp
-                        )
-                    )
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = Color.White,
-                    titleContentColor = Color(0xFF1E1E1E)
-                )
-            )
-        },
-        containerColor = Color(0xFFF9F9FB)
-    ) { paddingValues ->
-        if (notifications.isEmpty()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text(
+            text = "Thông báo",
+            fontSize = 15.sp,
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 12.dp)
+        )
+
+        if (
+            notifications.isEmpty()) {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
+                modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    "Không có thông báo",
-                    color = Color.Gray,
-                    style = MaterialTheme.typography.bodyLarge
-                )
+                Text("Không có thông báo")
             }
         } else {
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(horizontal = 12.dp, vertical = 6.dp)
+                modifier = Modifier.fillMaxSize()
             ) {
                 items(notifications) { notification ->
                     NotificationItem(
@@ -102,38 +86,30 @@ fun NotificationItem(
     onDelete: () -> Unit
 ) {
     var showDeleteConfirm by remember { mutableStateOf(false) }
+    val textWeight = if (!notification.isRead) FontWeight.Bold else FontWeight.Normal
 
-    val backgroundColor =
-        if (!notification.isRead) Color(0xFFE8F0FE) else Color.White // Chưa đọc -> xanh nhạt
-    val textWeight =
-        if (!notification.isRead) FontWeight.SemiBold else FontWeight.Normal
-
-    ElevatedCard(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 6.dp)
             .clickable { onMarkAsRead() },
-        colors = CardDefaults.elevatedCardColors(containerColor = backgroundColor),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        shape = MaterialTheme.shapes.large
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFFEF9E7))
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(14.dp),
+                .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (!notification.isRead) {
                 Icon(
                     imageVector = Icons.Default.Circle,
                     contentDescription = "Chưa đọc",
-                    tint = Color(0xFF1E88E5),
+                    tint = Color.Red,
                     modifier = Modifier
                         .size(12.dp)
                         .padding(end = 8.dp)
                 )
-            } else {
-                Spacer(modifier = Modifier.width(20.dp))
             }
 
             Column(
@@ -142,29 +118,20 @@ fun NotificationItem(
                 Text(
                     text = notification.title,
                     fontWeight = textWeight,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color(0xFF1E1E1E)
+                    style = MaterialTheme.typography.titleMedium
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = notification.message,
                     fontWeight = textWeight,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFF444444)
+                    style = MaterialTheme.typography.bodyMedium
                 )
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = formatTime(notification.timestamp),
-                    fontSize = 12.sp,
+                    fontWeight = textWeight,
+                    style = MaterialTheme.typography.bodySmall,
                     color = Color.Gray
-                )
-            }
-
-            IconButton(onClick = { showDeleteConfirm = true }) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Xoá",
-                    tint = Color(0xFFD32F2F)
                 )
             }
         }
@@ -173,22 +140,21 @@ fun NotificationItem(
     if (showDeleteConfirm) {
         AlertDialog(
             onDismissRequest = { showDeleteConfirm = false },
-            title = { Text("Xác nhận xoá", fontWeight = FontWeight.Bold) },
+            title = { Text("Xác nhận xoá") },
             text = { Text("Bạn có chắc chắn muốn xoá thông báo này không?") },
             confirmButton = {
-                Button(
+                TextButton(
                     onClick = {
                         onDelete()
                         showDeleteConfirm = false
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F))
+                    }
                 ) {
-                    Text("Xoá", color = Color.White)
+                    Text("Xoá", color = Color.Red)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteConfirm = false }) {
-                    Text("Huỷ", color = Color.Gray)
+                    Text("Huỷ")
                 }
             }
         )
