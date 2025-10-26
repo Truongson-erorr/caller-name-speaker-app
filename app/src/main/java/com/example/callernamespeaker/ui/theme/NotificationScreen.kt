@@ -153,7 +153,9 @@ fun NotificationItem(
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showDeleteConfirm = false }) {
+                TextButton(
+                    onClick = { showDeleteConfirm = false }
+                ) {
                     Text("Huỷ")
                 }
             }

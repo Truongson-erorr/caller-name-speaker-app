@@ -17,9 +17,9 @@ class IdentityViewModel : ViewModel() {
     private val _riskLevel = MutableStateFlow("Thấp")
     val riskLevel = _riskLevel.asStateFlow()
 
-    fun analyzeIdentity(input: String) {
-        if (input.isBlank()) {
-            _result.value = "Vui lòng nhập số điện thoại hoặc nội dung để phân tích."
+    fun analyzeIdentity(sms: String) {
+        if (sms.isBlank()) {
+            _result.value = "Vui lòng nhập nội dung tin nhắn để hệ thống phân tích."
             _riskLevel.value = "Thấp"
             return
         }
@@ -28,19 +28,40 @@ class IdentityViewModel : ViewModel() {
             _isLoading.value = true
             delay(1200)
 
+            val lower = sms.lowercase()
+
+            val highRiskKeywords = listOf(
+                "otp", "ngân hàng", "chuyển khoản", "xác minh tài khoản",
+                "mã bảo mật", "trúng thưởng", "nhận quà", "click vào", "bấm vào liên kết",
+                "http://", "https://", "link", "cập nhật thông tin", "tài khoản bị khóa"
+            )
+
+            val mediumRiskKeywords = listOf(
+                "ưu đãi", "khuyến mãi", "giảm giá", "quảng cáo", "thông báo", "dịch vụ"
+            )
+
+            val hasLink = lower.contains("http://") || lower.contains("https://") || lower.contains("bit.ly")
+            val hasMoneyRequest = lower.contains("chuyển tiền") || lower.contains("nạp tiền") || lower.contains("phí dịch vụ")
+
             when {
-                input.contains("OTP", true) || input.contains("chuyển khoản", true)
-                        || input.contains("ngân hàng", true) || input.contains("trúng thưởng", true) -> {
+                highRiskKeywords.any { lower.contains(it) } || hasLink || hasMoneyRequest -> {
                     _riskLevel.value = "Cao"
-                    _result.value = "Hệ thống phát hiện nội dung có dấu hiệu lừa đảo hoặc giả mạo tổ chức tài chính. Vui lòng cảnh giác và không cung cấp thông tin cá nhân."
+                    _result.value =
+                        "Tin nhắn có dấu hiệu **lừa đảo hoặc giả mạo**. Hệ thống phát hiện từ khóa hoặc đường dẫn nghi ngờ. " +
+                                "Không cung cấp mã OTP, thông tin tài khoản hoặc nhấp vào liên kết trong tin nhắn này."
                 }
-                input.length in 10..11 && input.all { it.isDigit() } -> {
-                    _riskLevel.value = "Thấp"
-                    _result.value = "Đây có vẻ là số cá nhân. Không phát hiện dấu hiệu đáng ngờ."
-                }
-                else -> {
+
+                mediumRiskKeywords.any { lower.contains(it) } -> {
                     _riskLevel.value = "Trung bình"
-                    _result.value = "Nội dung có thể thuộc về doanh nghiệp hoặc tổng đài. Chưa phát hiện rủi ro rõ ràng."
+                    _result.value =
+                        "Tin nhắn có nội dung quảng cáo hoặc tiếp thị. Dù không có dấu hiệu lừa đảo rõ ràng, " +
+                                "bạn nên kiểm tra nguồn gửi trước khi tương tác."
+                }
+
+                else -> {
+                    _riskLevel.value = "Thấp"
+                    _result.value =
+                        "Tin nhắn có vẻ an toàn. Không phát hiện từ khóa hoặc dấu hiệu bất thường."
                 }
             }
 
