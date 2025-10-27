@@ -1,16 +1,7 @@
 package com.example.callernamespeaker.ui.theme
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -19,129 +10,99 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Reply
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.ThumbUp
-import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.callernamespeaker.model.Comment
+import com.example.callernamespeaker.model.Reply
 import com.example.callernamespeaker.viewmodel.CommentViewModel
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentSection(postId: String, userName: String, viewModel: CommentViewModel = viewModel()) {
     val comments by viewModel.comments.collectAsState()
+    val replies by viewModel.replies.collectAsState()
     var newComment by remember { mutableStateOf("") }
+    var replyTo by remember { mutableStateOf<Comment?>(null) }
 
     LaunchedEffect(postId) {
         viewModel.fetchComments(postId)
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding( horizontal = 16.dp)
-    ) {
-        Text(
-            text = "Bình luận (${comments.size})",
-            fontWeight = FontWeight.Bold,
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(bottom = 12.dp)
-        )
+    Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+        Text("Bình luận (${comments.size})", fontWeight = FontWeight.Bold)
+        Spacer(Modifier.height(8.dp))
 
-        if (comments.isEmpty()) {
-            Text(
-                text = "Chưa có bình luận nào. Hãy là người đầu tiên!",
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.Gray,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
-                textAlign = TextAlign.Center
-            )
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(max = 300.dp)
-            ) {
-                items(comments) { comment ->
-                    CommentItem(comment = comment)
-                    Divider(
-                        color = Color.Gray.copy(alpha = 0.1f),
-                        thickness = 0.5.dp,
-                        modifier = Modifier.padding(horizontal = 8.dp)
-                    )
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(max = 350.dp)
+        ) {
+            items(comments) { comment ->
+                LaunchedEffect(comment.id) {
+                    viewModel.fetchReplies(postId, comment.id)
                 }
+
+                CommentItem(
+                    comment = comment,
+                    replies = replies[comment.id].orEmpty(),
+                    onReplyClick = { replyTo = comment }
+                )
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
+
+        Spacer(Modifier.height(12.dp))
+
+        if (replyTo != null) {
+            Text(
+                text = "Trả lời ${replyTo!!.userName}",
+                color = Color.Gray,
+                fontSize = 13.sp,
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+        }
 
         TextField(
             value = newComment,
             onValueChange = { newComment = it },
             shape = RoundedCornerShape(30.dp),
-            placeholder = { Text("Thêm bình luận...") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.White),
+            placeholder = { Text(if (replyTo == null) "Thêm bình luận..." else "Trả lời bình luận...") },
+            modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = Color.White,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
             ),
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = ImeAction.Send
-            ),
-            keyboardActions = KeyboardActions(
-                onSend = {
-                    if (newComment.isNotBlank()) {
-                        viewModel.addComment(postId, userName, newComment.trim())
-                        newComment = ""
-                    }
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
+            keyboardActions = KeyboardActions(onSend = {
+                sendCommentOrReply(viewModel, postId, userName, newComment, replyTo) {
+                    newComment = ""
+                    replyTo = null
                 }
-            ),
+            }),
             trailingIcon = {
-                IconButton(
-                    onClick = {
-                        if (newComment.isNotBlank()) {
-                            viewModel.addComment(postId, userName, newComment.trim())
-                            newComment = ""
-                        }
-                    },
-                    enabled = newComment.isNotBlank()
-                ) {
+                IconButton(onClick = {
+                    sendCommentOrReply(viewModel, postId, userName, newComment, replyTo) {
+                        newComment = ""
+                        replyTo = null
+                    }
+                }) {
                     Icon(
                         imageVector = Icons.Default.Send,
-                        contentDescription = "Gửi bình luận",
+                        contentDescription = "Gửi",
                         tint = if (newComment.isNotBlank()) Color.Black else Color.Gray
                     )
                 }
@@ -150,92 +111,82 @@ fun CommentSection(postId: String, userName: String, viewModel: CommentViewModel
     }
 }
 
+private fun sendCommentOrReply(
+    viewModel: CommentViewModel,
+    postId: String,
+    userName: String,
+    content: String,
+    replyTo: Comment?,
+    onDone: () -> Unit
+) {
+    if (content.isBlank()) return
+    if (replyTo == null) {
+        viewModel.addComment(postId, userName, content.trim())
+    } else {
+        viewModel.addReply(postId, replyTo.id, userName, content.trim())
+    }
+    onDone()
+}
+
 @Composable
 fun CommentItem(
     comment: Comment,
-    replyCount: Int = 0,
-    onLikeClick: () -> Unit = {},
-    onReplyClick: () -> Unit = {},
+    replies: List<Reply> = emptyList(),
+    onReplyClick: () -> Unit = {}
 ) {
+    Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+        Row(verticalAlignment = Alignment.Top) {
+            Icon(
+                imageVector = Icons.Default.AccountCircle,
+                contentDescription = null,
+                tint = Color.Gray,
+                modifier = Modifier.size(36.dp).clip(CircleShape)
+            )
+            Spacer(Modifier.width(8.dp))
+            Column {
+                Text(comment.userName, fontWeight = FontWeight.SemiBold)
+                Text(comment.content)
+                Text(
+                    text = formatTimeAgo(comment.timestamp),
+                    fontSize = 11.sp,
+                    color = Color.Gray
+                )
+                TextButton(onClick = onReplyClick) {
+                    Icon(Icons.Default.Reply, contentDescription = null, modifier = Modifier.size(14.dp))
+                    Spacer(Modifier.width(4.dp))
+                    Text("Phản hồi", fontSize = 12.sp)
+                }
+            }
+        }
+
+        if (replies.isNotEmpty()) {
+            Column(modifier = Modifier.padding(start = 48.dp)) {
+                replies.forEach { reply ->
+                    ReplyItem(reply)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ReplyItem(reply: Reply) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp, horizontal = 8.dp),
-        verticalAlignment = Alignment.Top
+            .padding(vertical = 4.dp)
     ) {
         Icon(
             imageVector = Icons.Default.AccountCircle,
-            contentDescription = "User avatar",
+            contentDescription = null,
             tint = Color.Gray,
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .padding(4.dp)
+            modifier = Modifier.size(28.dp)
         )
-        Spacer(modifier = Modifier.width(12.dp))
-
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = comment.userName,
-                    fontWeight = FontWeight.SemiBold,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Black
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = formatTimeAgo(comment.timestamp),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray
-                )
-            }
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(
-                text = comment.content,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Spacer(modifier = Modifier.height(6.dp))
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                TextButton(onClick = {  }) {
-                    Icon(
-                        imageVector = Icons.Default.ThumbUp,
-                        contentDescription = "Like",
-                        modifier = Modifier.size(18.dp),
-                        tint = Color.Gray
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        "Thích",
-                        fontSize = 12.sp,
-                        color = Color.Gray
-                    )
-                }
-
-                TextButton( onClick = onReplyClick) {
-                    Icon(
-                        imageVector = Icons.Default.Reply,
-                        contentDescription = "Reply",
-                        modifier = Modifier.size(18.dp),
-                        tint = Color.Gray
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        "Phản hồi",
-                        fontSize = 12.sp,
-                        color = Color.Gray
-                    )
-                }
-            }
+        Spacer(Modifier.width(8.dp))
+        Column {
+            Text(reply.userName, fontWeight = FontWeight.Medium, fontSize = 13.sp)
+            Text(reply.content, fontSize = 13.sp)
+            Text(formatTimeAgo(reply.timestamp), fontSize = 10.sp, color = Color.Gray)
         }
     }
 }

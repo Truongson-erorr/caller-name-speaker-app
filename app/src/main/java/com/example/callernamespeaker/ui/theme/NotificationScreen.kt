@@ -85,7 +85,6 @@ fun NotificationItem(
     onMarkAsRead: () -> Unit,
     onDelete: () -> Unit
 ) {
-    var showDeleteConfirm by remember { mutableStateOf(false) }
     val textWeight = if (!notification.isRead) FontWeight.Bold else FontWeight.Normal
 
     Card(
@@ -135,31 +134,6 @@ fun NotificationItem(
                 )
             }
         }
-    }
-
-    if (showDeleteConfirm) {
-        AlertDialog(
-            onDismissRequest = { showDeleteConfirm = false },
-            title = { Text("Xác nhận xoá") },
-            text = { Text("Bạn có chắc chắn muốn xoá thông báo này không?") },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        onDelete()
-                        showDeleteConfirm = false
-                    }
-                ) {
-                    Text("Xoá", color = Color.Red)
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { showDeleteConfirm = false }
-                ) {
-                    Text("Huỷ")
-                }
-            }
-        )
     }
 }
 
