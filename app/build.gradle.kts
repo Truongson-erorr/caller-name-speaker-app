@@ -72,6 +72,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose.android)
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.common)
+    implementation(libs.androidx.foundation.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -4,17 +4,15 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Block
-import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.PersonAdd
-import androidx.compose.material.icons.filled.Sms
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,17 +23,27 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.callernamespeaker.CallEntry
+import com.example.callernamespeaker.model.CallReview
+import com.example.callernamespeaker.viewmodel.CommunityReviewViewModel
+import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CallDetailScreen(
     navController: NavController,
-    call: CallEntry
+    call: CallEntry,
+    reviewViewModel: CommunityReviewViewModel = viewModel()
 ) {
     val context = LocalContext.current
     val iconTint = Color(0xFF1976D2)
+    val reviews by remember { derivedStateOf { reviewViewModel.reviews } }
+
+    LaunchedEffect(call.number) {
+        reviewViewModel.loadReviews(call.number)
+    }
 
     Scaffold(
         topBar = {
@@ -58,16 +66,16 @@ fun CallDetailScreen(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent,
                     titleContentColor = MaterialTheme.colorScheme.onSurface
-                ),
-                modifier = Modifier
+                )
             )
         },
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = Color.White
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp, vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -76,7 +84,7 @@ fun CallDetailScreen(
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp)),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    containerColor = Color.White
                 ),
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
@@ -103,7 +111,6 @@ fun CallDetailScreen(
                             )
                         }
                     }
-
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
@@ -113,8 +120,8 @@ fun CallDetailScreen(
                             color = MaterialTheme.colorScheme.onBackground
                         )
                     )
-
                     Spacer(modifier = Modifier.height(24.dp))
+
                     Row(
                         horizontalArrangement = Arrangement.SpaceEvenly,
                         modifier = Modifier
@@ -132,16 +139,15 @@ fun CallDetailScreen(
                         }
 
                         CallActionButton("Lưu", Icons.Default.PersonAdd, iconTint) {
-
+                            // TODO: thêm logic lưu danh bạ
                         }
 
                         CallActionButton("Chặn", Icons.Default.Block, iconTint) {
-
+                            // TODO: thêm logic chặn số
                         }
                     }
                 }
             }
-
             Spacer(modifier = Modifier.height(16.dp))
 
             Card(
@@ -149,7 +155,7 @@ fun CallDetailScreen(
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp)),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    containerColor = Color.White
                 ),
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
@@ -159,29 +165,37 @@ fun CallDetailScreen(
                         .padding(16.dp)
                 ) {
                     InfoRow("Số điện thoại", call.number)
-                    Divider(
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
-                    )
                     InfoRow("Loại", call.type)
-                    Divider(
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
-                    )
                     InfoRow("Ngày", call.date)
-                    Divider(
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
-                    )
                     InfoRow("Thời lượng", "${call.duration} giây")
                 }
             }
+            Spacer(modifier = Modifier.height(16.dp))
+
+            CommunityReviewCard(
+                reviews = reviews,
+                onAddReview = { rating, comment ->
+                    val user = FirebaseAuth.getInstance().currentUser
+                    val name = user?.email?.substringBefore("@") // hoặc displayName
+                    reviewViewModel.addReview(
+                        phoneNumber = call.number,
+                        userName = name,
+                        rating = rating,
+                        comment = comment
+                    )
+                }
+            )
         }
     }
 }
 
 @Composable
-fun CallActionButton(label: String, icon: ImageVector, tint: Color, onClick: () -> Unit) {
+fun CallActionButton(
+    label: String,
+    icon: ImageVector,
+    tint: Color,
+    onClick: () -> Unit
+) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Surface(
             shape = CircleShape,
@@ -191,7 +205,9 @@ fun CallActionButton(label: String, icon: ImageVector, tint: Color, onClick: () 
                 .shadow(4.dp, CircleShape),
             onClick = onClick
         ) {
-            Box(contentAlignment = Alignment.Center) {
+            Box(
+                contentAlignment = Alignment.Center
+            ) {
                 Icon(
                     icon,
                     contentDescription = label,
@@ -208,27 +224,6 @@ fun CallActionButton(label: String, icon: ImageVector, tint: Color, onClick: () 
                 fontWeight = FontWeight.Medium
             ),
             color = MaterialTheme.colorScheme.onBackground
-        )
-    }
-}
-
-@Composable
-fun InfoRow1(label: String, value: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface
         )
     }
 }
