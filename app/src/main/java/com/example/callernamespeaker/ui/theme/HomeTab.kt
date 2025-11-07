@@ -113,13 +113,31 @@ fun HomeTab(navController: NavController) {
             )
         }
 
-        Text(
-            text = "Cẩm nang an toàn thông tin",
-            fontWeight = FontWeight.SemiBold,
-            style = MaterialTheme.typography.bodyMedium,
-            fontSize = 15.sp,
-            modifier = Modifier.padding(bottom = 10.dp)
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "Cẩm nang an toàn thông tin",
+                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.bodyMedium,
+                fontSize = 15.sp
+            )
+
+            Icon(
+                imageVector = Icons.Default.Notifications,
+                contentDescription = "Thông báo",
+                tint = Color.Gray,
+                modifier = Modifier
+                    .size(32.dp)
+                    .clickable {
+                        navController.navigate("NotificationScreen")
+                    }
+            )
+        }
         BannerCarousel()
 
         Text(

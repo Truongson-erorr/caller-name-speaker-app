@@ -20,6 +20,7 @@ import com.example.callernamespeaker.model.NewsPost
 import com.example.callernamespeaker.ui.chat.ChatScreen
 import com.example.callernamespeaker.ui.screens.BlockPhoneScreen
 import com.example.callernamespeaker.ui.screens.IntroSplashScreen
+import com.example.callernamespeaker.ui.screens.NotificationScreen
 import com.example.callernamespeaker.ui.screens.SearchScreen
 import com.example.callernamespeaker.ui.screens.SmsAnalysisScreen
 import com.example.callernamespeaker.ui.screens.SmsIntroScreen
@@ -148,6 +149,9 @@ fun AppNavGraph(
         }
         composable("IntroSplashScreen") {
             IntroSplashScreen(navController)
+        }
+        composable("NotificationScreen") {
+            NotificationScreen(navController)
         }
     }
 }

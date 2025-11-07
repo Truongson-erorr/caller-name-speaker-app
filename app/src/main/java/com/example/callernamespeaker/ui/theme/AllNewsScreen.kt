@@ -14,8 +14,10 @@ import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -39,6 +41,7 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.callernamespeaker.model.NewsPost
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AllNewsScreen(
     navController: NavController,
@@ -53,7 +56,65 @@ fun AllNewsScreen(
     else
         newsList.sortedBy { it.date }
 
-    Scaffold { innerPadding ->
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = "Tin tức trong ngày",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        color = Color.Black
+                    )
+                },
+                navigationIcon = {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color.Black,
+                        modifier = Modifier
+                            .clickable { navController.popBackStack() }
+                            .padding(start = 8.dp)
+                    )
+                },
+                actions = {
+                    var expandedMenu by remember { mutableStateOf(false) }
+
+                    Box {
+                        Icon(
+                            imageVector = Icons.Default.FilterAlt,
+                            contentDescription = "Lọc",
+                            tint = Color.Black,
+                            modifier = Modifier
+                                .padding(end = 8.dp)
+                                .clickable { expandedMenu = true }
+                        )
+
+                        DropdownMenu(
+                            expanded = expandedMenu,
+                            onDismissRequest = { expandedMenu = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Mới nhất") },
+                                onClick = {
+                                    sortDescending = true
+                                    expandedMenu = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Cũ nhất") },
+                                onClick = {
+                                    sortDescending = false
+                                    expandedMenu = false
+                                }
+                            )
+                        }
+                    }
+                }
+            )
+        }
+    ) { innerPadding ->
         LazyColumn(
             contentPadding = innerPadding,
             modifier = Modifier
@@ -61,63 +122,6 @@ fun AllNewsScreen(
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 12.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .align(Alignment.CenterStart)
-                            .clickable { navController.popBackStack() }
-                            .padding(start = 8.dp)
-                    )
-                    Text(
-                        text = "Tin tức trong ngày",
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        textAlign = TextAlign.Center
-                    )
-
-                    Box(
-                        modifier = Modifier.align(Alignment.CenterEnd)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.FilterAlt,
-                            contentDescription = "Lọc",
-                            tint = Color.Black,
-                            modifier = Modifier.clickable { expanded = true }
-                        )
-
-                        DropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false }
-                        ) {
-                            DropdownMenuItem(
-                                text = { Text("Mới nhất") },
-                                onClick = {
-                                    sortDescending = true
-                                    expanded = false
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text("Cũ nhất") },
-                                onClick = {
-                                    sortDescending = false
-                                    expanded = false
-                                }
-                            )
-                        }
-                    }
-                }
-            }
-
             items(filteredNews) { post ->
                 NewsCardItem2(post) {
                     navController.navigate("news_detail/${post.id}")
