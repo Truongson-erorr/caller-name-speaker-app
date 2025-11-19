@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -141,7 +142,8 @@ fun NewsDetailScreen(postId: String, navController: NavController) {
                 Text(
                     text = post!!.description,
                     style = MaterialTheme.typography.bodyLarge,
-                    lineHeight = 22.sp
+                    lineHeight = 22.sp,
+                    textAlign = TextAlign.Justify
                 )
                 Spacer(modifier = Modifier.height(32.dp))
 

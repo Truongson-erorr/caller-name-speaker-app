@@ -66,7 +66,7 @@ fun AppNavGraph(
         }
         composable("UserInfoScreen") {
         UserInfoScreen(navController)
-    }
+        }
         composable(
             "otp_verification/{verificationId}/{phoneNumber}",
             arguments = listOf(

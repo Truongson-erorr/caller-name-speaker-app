@@ -209,7 +209,7 @@ fun ServiceButton(
         Icon(
             imageVector = icon,
             contentDescription = text,
-            tint = Color(0xFF1976D2),
+            tint = Color(0xFF2A2AFC),
             modifier = Modifier.size(22.dp)
         )
         Spacer(modifier = Modifier.height(6.dp))

@@ -48,7 +48,7 @@ fun FamilyScreen(
         Button(
             onClick = { showDialog = true },
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF2575FC),
+                containerColor = Color(0xFF2A2AFC),
                 contentColor = Color.White
             )
         ) {
@@ -146,7 +146,7 @@ fun FamilyScreen(
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF3B6EF6)
+                        containerColor = Color(0xFF2A2AFC)
                     ),
                     shape = RoundedCornerShape(24.dp)
                 ) {

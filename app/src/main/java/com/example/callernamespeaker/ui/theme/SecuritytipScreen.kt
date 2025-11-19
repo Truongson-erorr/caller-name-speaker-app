@@ -152,7 +152,7 @@ fun SecuritytipScreen() {
                             Icon(
                                 imageVector = tip.icon,
                                 contentDescription = null,
-                                tint = Color(0xFF1976D2),
+                                tint = Color(0xFF2A2AFC),
                                 modifier = Modifier.size(28.dp)
                             )
                             Spacer(modifier = Modifier.height(8.dp))
@@ -160,7 +160,7 @@ fun SecuritytipScreen() {
                                 text = tip.text,
                                 style = MaterialTheme.typography.bodySmall,
                                 fontSize = 12.sp,
-                                color = Color(0xFF1976D2),
+                                color = Color.Black,
                                 fontWeight = FontWeight.Medium,
                                 maxLines = 2
                             )

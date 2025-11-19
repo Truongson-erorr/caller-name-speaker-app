@@ -69,7 +69,7 @@ fun ChatScreen(
                 Icon(
                     Icons.Default.SupportAgent,
                     contentDescription = "Support",
-                    tint = Color(0xFF1976D2)
+                    tint = Color(0xFF2A2AFC)
                 )
             }
 

@@ -104,7 +104,7 @@ fun SmsAnalysisScreen(
             Button(
                 onClick = { viewModel.analyzeIdentity(smsContent) },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF1976D2),
+                    containerColor = Color(0xFF2A2AFC),
                     contentColor = Color.White
                 ),
                 modifier = Modifier.fillMaxWidth()

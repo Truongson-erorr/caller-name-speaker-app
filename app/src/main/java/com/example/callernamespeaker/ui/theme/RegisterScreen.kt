@@ -80,7 +80,7 @@ fun RegisterScreen(
             Icon(
                 imageVector = Icons.Default.PersonAdd,
                 contentDescription = null,
-                tint = Color(0xFF2575FC),
+                tint = Color(0xFF2A2AFC),
                 modifier = Modifier.size(92.dp)
             )
 
@@ -88,7 +88,7 @@ fun RegisterScreen(
                 text = "Tạo tài khoản mới",
                 style = MaterialTheme.typography.headlineSmall.copy(
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF2575FC)
+                    color = Color(0xFF2A2AFC)
                 ),
                 textAlign = TextAlign.Center
             )
@@ -113,7 +113,7 @@ fun RegisterScreen(
                     containerColor = Color(0xFFF5F5F5),
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
-                    cursorColor = Color(0xFF2575FC)
+                    cursorColor = Color(0xFF2A2AFC)
                 )
             )
 
@@ -132,7 +132,7 @@ fun RegisterScreen(
                     containerColor = Color(0xFFF5F5F5),
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
-                    cursorColor = Color(0xFF2575FC)
+                    cursorColor = Color(0xFF2A2AFC)
                 )
             )
 
@@ -150,7 +150,7 @@ fun RegisterScreen(
                         containerColor = Color(0xFFF5F5F5),
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        cursorColor = Color(0xFF2575FC)
+                        cursorColor = Color(0xFF2A2AFC)
                     )
                 )
             }
@@ -215,7 +215,7 @@ fun RegisterScreen(
                 shape = RoundedCornerShape(26.dp),
                 enabled = !isLoading,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF2575FC),
+                    containerColor = Color(0xFF2A2AFC),
                     contentColor = Color.White
                 )
             ) {
@@ -240,7 +240,7 @@ fun RegisterScreen(
                 Text(fontSize = 14.sp, text = "Đã có tài khoản? ")
                 Text(
                     "Đăng nhập",
-                    color = Color(0xFF2575FC),
+                    color = Color(0xFF2A2AFC),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.clickable {

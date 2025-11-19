@@ -42,10 +42,9 @@ fun FamilyMemberItem(
                 text = member.name.firstOrNull()?.uppercase() ?: "?",
                 fontSize = 36.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF3B6EF6)
+                color = Color(0xFF2A2AFC)
             )
         }
-
         Spacer(modifier = Modifier.height(6.dp))
 
         Text(

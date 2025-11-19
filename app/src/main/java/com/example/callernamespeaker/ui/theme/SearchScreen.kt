@@ -45,7 +45,7 @@ fun SearchScreen(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(35.dp))
+            Spacer(modifier = Modifier.height(15.dp))
 
             Box(
                 modifier = Modifier
@@ -115,7 +115,7 @@ fun SearchScreen(
                     }
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF1976D2),
+                    containerColor = Color(0xFF2A2AFC),
                     contentColor = Color.White
                 ),
                 shape = RoundedCornerShape(26.dp),

@@ -63,11 +63,11 @@ fun LoginScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             Icon(
                 imageVector = Icons.Default.Security,
                 contentDescription = null,
-                tint = Color(0xFF2575FC),
+                tint = Color(0xFF2A2AFC),
                 modifier = Modifier.size(92.dp)
             )
 
@@ -75,7 +75,7 @@ fun LoginScreen(navController: NavController) {
                 text = "Chào mừng đến BlockSon",
                 style = MaterialTheme.typography.headlineSmall.copy(
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF2575FC)
+                    color = Color(0xFF2A2AFC)
                 ),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = 10.dp)
@@ -138,7 +138,7 @@ fun LoginScreen(navController: NavController) {
                         unfocusedIndicatorColor = Color.Transparent,
                         disabledIndicatorColor = Color.Transparent,
                         errorIndicatorColor = Color.Transparent,
-                        cursorColor = Color(0xFF2575FC),
+                        cursorColor = Color(0xFF2A2AFC),
                     )
                 )
             }
@@ -152,7 +152,7 @@ fun LoginScreen(navController: NavController) {
                 ) {
                     Text(
                         "Quên mật khẩu",
-                        color = Color(0xFF2575FC),
+                        color = Color(0xFF2A2AFC),
                         fontSize = 14.sp
                     )
                 }
@@ -207,7 +207,7 @@ fun LoginScreen(navController: NavController) {
             shape = RoundedCornerShape(26.dp),
             enabled = !isLoading,
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF2575FC),
+                containerColor = Color(0xFF2A2AFC),
                 contentColor = Color.White
             )
         ) {
@@ -232,7 +232,7 @@ fun LoginScreen(navController: NavController) {
             )
             Text(
                 "Đăng ký ngay",
-                color = Color(0xFF2575FC),
+                color = Color(0xFF2A2AFC),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.clickable {

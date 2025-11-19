@@ -64,7 +64,6 @@ class IdentityViewModel : ViewModel() {
                         "Tin nhắn có vẻ an toàn. Không phát hiện từ khóa hoặc dấu hiệu bất thường."
                 }
             }
-
             _isLoading.value = false
         }
     }

@@ -18,12 +18,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -47,8 +43,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -93,21 +87,20 @@ fun OtpVerificationScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(56.dp))
+        Spacer(modifier = Modifier.height(36.dp))
         Icon(
             imageVector = Icons.Default.Lock,
             contentDescription = null,
-            tint = Color(0xFF2575FC),
+            tint = Color(0xFF2A2AFC),
             modifier = Modifier.size(64.dp)
         )
-
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
             text = "Xác minh OTP",
             style = MaterialTheme.typography.headlineSmall.copy(
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF2575FC)
+                color = Color(0xFF2A2AFC)
             ),
             textAlign = TextAlign.Center
         )
@@ -144,7 +137,7 @@ fun OtpVerificationScreen(
                         containerColor = Color(0xFFF5F5F5),
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        cursorColor = Color(0xFF2575FC)
+                        cursorColor = Color(0xFF2A2AFC)
                     )
                 )
             }
@@ -211,7 +204,7 @@ fun OtpVerificationScreen(
             shape = RoundedCornerShape(26.dp),
             enabled = !isLoading,
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF2575FC),
+                containerColor = Color(0xFF2A2AFC),
                 contentColor = Color.White
             )
         ) {
