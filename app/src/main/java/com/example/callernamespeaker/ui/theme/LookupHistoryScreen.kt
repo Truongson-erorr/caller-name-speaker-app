@@ -34,24 +34,25 @@ fun LookupHistoryScreen(
 
     Column(
         modifier = Modifier
-            .padding(12.dp)
+            .background(Color(0xFF0A0F1F)) // xanh đen nền
+            .padding(16.dp)
+            .fillMaxSize()
     ) {
         Text(
             text = "Lịch sử tra cứu số điện thoại",
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(bottom = 8.dp)
+            color = Color.White,
+            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+            modifier = Modifier.padding(bottom = 12.dp)
         )
 
         if (viewModel.history.isEmpty()) {
             Text(
                 text = "Chưa có dữ liệu tra cứu.",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = Color(0xFFB0C4DE),
+                style = MaterialTheme.typography.bodySmall
             )
         } else {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 viewModel.history.forEach { item ->
                     LookupHistoryItem(item)
                 }
@@ -60,45 +61,11 @@ fun LookupHistoryScreen(
     }
 }
 
-fun classifyPhoneNumber(number: String): String {
-    return when {
-        number.startsWith("1900") || number.startsWith("1800") -> "Số tổng đài / cơ quan"
-        number.startsWith("09") || number.startsWith("08") || number.startsWith("03") -> "Số cá nhân nội địa"
-        number.startsWith("+") -> "Số quốc tế"
-        else -> "Không xác định"
-    }
-}
-
-fun getTypeIcon(type: String): ImageVector {
-    return when {
-        type.contains("tổng đài") -> Icons.Default.CellTower
-        type.contains("cá nhân") -> Icons.Default.Person
-        type.contains("quốc tế") -> Icons.Default.Public
-        else -> Icons.Default.Help
-    }
-}
-
-fun getTypeBackgroundColor(type: String): Color {
-    return when {
-        type.contains("tổng đài", ignoreCase = true) || type.contains("cơ quan", ignoreCase = true) -> Color(0xFFBBDEFB) // xanh nước nhạt
-        type.contains("cá nhân", ignoreCase = true) -> Color(0xFFFFE0B2) // cam nhạt
-        type.contains("quốc tế", ignoreCase = true) -> Color(0xFFC8E6C9) // xanh lá nhạt
-        else -> Color(0xFFFFCDD2)
-    }
-}
-
-fun getTypeTextColor(type: String): Color {
-    return when {
-        type.contains("tổng đài", ignoreCase = true) || type.contains("cơ quan", ignoreCase = true) -> Color(0xFF1565C0)
-        type.contains("cá nhân", ignoreCase = true) -> Color(0xFFEF6C00)
-        type.contains("quốc tế", ignoreCase = true) -> Color(0xFF2E7D32)
-        else -> Color(0xFFC62828)
-    }
-}
-
 @Composable
 fun LookupHistoryItem(item: PhoneLookup) {
+
     val icon = getTypeIcon(item.type)
+
     val context = LocalContext.current
     val prefs = context.getSharedPreferences("blocked_numbers", Context.MODE_PRIVATE)
 
@@ -110,73 +77,102 @@ fun LookupHistoryItem(item: PhoneLookup) {
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        shape = RoundedCornerShape(8.dp)
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF101B2D)), // card xanh đen nhạt
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Row(
-            modifier = Modifier
-                .padding(12.dp)
-                .fillMaxWidth(),
+            modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 imageVector = icon,
-                contentDescription = "Loại",
-                tint = Color(0xFF1976D2),
-                modifier = Modifier.size(24.dp)
+                contentDescription = null,
+                tint = Color(0xFF64B5F6), // xanh accent
+                modifier = Modifier.size(26.dp)
             )
 
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(14.dp))
 
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
+            Column(modifier = Modifier.weight(1f)) {
+
+                // Số điện thoại
                 Text(
                     text = item.number,
+                    color = Color.White,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.bodyMedium
                 )
+
+                // Tag loại
                 Text(
                     text = item.type,
+                    color = when {
+                        item.type.contains("tổng đài", true) -> Color(0xFF64B5F6)
+                        item.type.contains("cá nhân", true) -> Color(0xFFFFB74D)
+                        item.type.contains("quốc tế", true) -> Color(0xFF81C784)
+                        else -> Color(0xFFFF8A80)
+                    },
                     style = MaterialTheme.typography.bodySmall,
-                    fontWeight = FontWeight.Bold,
-                    color = getTypeTextColor(item.type),
+                    fontWeight = FontWeight.SemiBold,
                     modifier = Modifier
                         .background(
-                            color = getTypeBackgroundColor(item.type),
-                            shape = RoundedCornerShape(4.dp)
+                            when {
+                                item.type.contains("tổng đài", true) -> Color(0x332197F3)
+                                item.type.contains("cá nhân", true) -> Color(0x33FFA726)
+                                item.type.contains("quốc tế", true) -> Color(0x332ECC71)
+                                else -> Color(0x33E57373)
+                            },
+                            RoundedCornerShape(6.dp)
                         )
-                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                        .padding(horizontal = 8.dp, vertical = 3.dp)
                 )
             }
 
+            // Nút chặn
             if (!isActuallyBlocked) {
                 Button(
                     onClick = {
                         blacklistViewModel.addToBlacklist(item.number, item.type) {
-                            val cleaned = item.number.trim().replace("+84", "0").replace(" ", "")
+                            val cleaned = item.number.replace("+84", "0").replace(" ", "")
                             prefs.edit().putBoolean(cleaned, true).apply()
                             Toast.makeText(context, "Đã thêm vào danh sách chặn", Toast.LENGTH_SHORT).show()
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Red,
+                        containerColor = Color(0xFFE53935),
                         contentColor = Color.White
                     ),
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
                     shape = RoundedCornerShape(26.dp)
                 ) {
-                    Text(text = "Chặn", style = MaterialTheme.typography.labelSmall)
+                    Text("Chặn", style = MaterialTheme.typography.labelSmall)
                 }
             } else {
                 Text(
                     text = "Đã chặn",
-                    color = Color.Gray,
-                    style = MaterialTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Medium
+                    color = Color(0xFFB0C4DE),
+                    style = MaterialTheme.typography.labelSmall
                 )
             }
         }
     }
 }
 
+fun getTypeIcon(type: String): ImageVector {
+    return when {
+        type.contains("tổng đài", ignoreCase = true) -> Icons.Default.CellTower
+        type.contains("cá nhân", ignoreCase = true) -> Icons.Default.Person
+        type.contains("quốc tế", ignoreCase = true) -> Icons.Default.Public
+        else -> Icons.Default.Help
+    }
+}
+
+fun classifyPhoneNumber(number: String): String {
+    return when {
+        number.startsWith("1900") || number.startsWith("1800") -> "Số tổng đài / cơ quan"
+        number.startsWith("09") || number.startsWith("08") || number.startsWith("03") -> "Số cá nhân nội địa"
+        number.startsWith("+") -> "Số quốc tế"
+        else -> "Không xác định"
+    }
+}

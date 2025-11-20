@@ -27,12 +27,19 @@ fun CommunityReviewCard(
     var comment by remember { mutableStateOf("") }
     var rating by remember { mutableStateOf(5) }
 
+    val cardDark = Color(0xFF0D1B2A)
+    val cardSurface = Color(0xFF1B263B)
+    val textPrimary = Color(0xFFE0E5EB)
+    val textSecondary = Color(0xFF9AA5B1)
+    val accentBlue = Color(0xFF4DA3FF)
+    val gold = Color(0xFFFFC107)
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp)),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
+        colors = CardDefaults.cardColors(containerColor = cardSurface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
 
@@ -40,7 +47,8 @@ fun CommunityReviewCard(
                 text = "Đánh giá từ cộng đồng",
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
+                    fontSize = 18.sp,
+                    color = textPrimary
                 )
             )
             Spacer(modifier = Modifier.height(12.dp))
@@ -48,7 +56,7 @@ fun CommunityReviewCard(
             if (reviews.isEmpty()) {
                 Text(
                     text = "Chưa có đánh giá nào cho số này.",
-                    color = Color.Gray,
+                    color = textSecondary,
                     fontSize = 14.sp
                 )
             } else {
@@ -61,14 +69,14 @@ fun CommunityReviewCard(
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(36.dp)
+                                .size(40.dp)
                                 .clip(RoundedCornerShape(50))
-                                .background(Color(0xFFE3F2FD)),
+                                .background(accentBlue.copy(alpha = 0.2f)),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
                                 text = review.userName.take(1).uppercase(),
-                                color = Color(0xFF1976D2),
+                                color = accentBlue,
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -79,7 +87,8 @@ fun CommunityReviewCard(
                                 Text(
                                     text = review.userName,
                                     fontWeight = FontWeight.SemiBold,
-                                    fontSize = 14.sp
+                                    fontSize = 14.sp,
+                                    color = textPrimary
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Row {
@@ -87,7 +96,7 @@ fun CommunityReviewCard(
                                         Icon(
                                             imageVector = Icons.Filled.Star,
                                             contentDescription = null,
-                                            tint = Color(0xFFFFC107),
+                                            tint = gold,
                                             modifier = Modifier.size(14.dp)
                                         )
                                     }
@@ -96,17 +105,24 @@ fun CommunityReviewCard(
                             Text(
                                 text = review.comment,
                                 fontSize = 13.sp,
-                                color = Color.DarkGray,
+                                color = textSecondary,
                                 modifier = Modifier.padding(top = 2.dp)
                             )
                         }
                     }
-                    Divider(color = Color(0xFFF0F0F0), thickness = 1.dp)
+                    Divider(color = Color(0x22FFFFFF), thickness = 1.dp)
                 }
             }
-            Spacer(modifier = Modifier.height(12.dp))
 
-            Text("Chọn số sao:", fontWeight = FontWeight.Medium, fontSize = 14.sp)
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                "Chọn số sao:",
+                fontWeight = FontWeight.Medium,
+                fontSize = 14.sp,
+                color = textPrimary
+            )
+
             Row(
                 modifier = Modifier.padding(vertical = 8.dp),
                 horizontalArrangement = Arrangement.Center,
@@ -116,7 +132,7 @@ fun CommunityReviewCard(
                     Icon(
                         imageVector = if (i <= rating) Icons.Filled.Star else Icons.Outlined.Star,
                         contentDescription = "Star $i",
-                        tint = if (i <= rating) Color(0xFFFFC107) else Color.Gray,
+                        tint = if (i <= rating) gold else textSecondary,
                         modifier = Modifier
                             .size(32.dp)
                             .clickable { rating = i }
@@ -128,16 +144,18 @@ fun CommunityReviewCard(
             TextField(
                 value = comment,
                 onValueChange = { comment = it },
-                label = { Text("Viết bình luận...") },
+                label = { Text("Viết bình luận...", color = textSecondary) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(24.dp),
                 colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color(0xFFF5F5F5),
+                    containerColor = cardDark,
+                    cursorColor = accentBlue,
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent
                 )
             )
-            Spacer(modifier = Modifier.height(8.dp))
+
+            Spacer(modifier = Modifier.height(10.dp))
 
             Button(
                 onClick = {
@@ -148,7 +166,7 @@ fun CommunityReviewCard(
                     }
                 },
                 shape = RoundedCornerShape(24.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1877F2)),
+                colors = ButtonDefaults.buttonColors(containerColor = accentBlue),
                 modifier = Modifier.align(Alignment.End)
             ) {
                 Text("Gửi đánh giá", color = Color.White)

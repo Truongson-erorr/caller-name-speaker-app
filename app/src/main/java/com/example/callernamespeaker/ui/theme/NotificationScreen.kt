@@ -52,6 +52,7 @@ fun NotificationScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color(0xFF0A0F1A))
             .padding(16.dp)
     ) {
         Spacer(modifier = Modifier.height(20.dp))
@@ -64,7 +65,7 @@ fun NotificationScreen(
             Icon(
                 imageVector = Icons.Default.ArrowBack,
                 contentDescription = "Back",
-                tint = Color.Black,
+                tint = Color.White,
                 modifier = Modifier
                     .align(Alignment.CenterStart)
                     .clickable { navController.popBackStack() }
@@ -75,7 +76,7 @@ fun NotificationScreen(
                 text = "Thông báo",
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleMedium,
-                color = Color.Black
+                color = Color.White
             )
         }
 
@@ -84,7 +85,7 @@ fun NotificationScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                Text("Không có thông báo")
+                Text("Không có thông báo", color = Color(0xFF9CA3AF))
             }
         } else {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -95,7 +96,7 @@ fun NotificationScreen(
                         onDelete = { notificationViewModel.deleteNotification(notification.id) }
                     )
                     if (index < notifications.lastIndex) {
-
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
             }
@@ -110,7 +111,9 @@ fun NotificationItem(
     onDelete: () -> Unit
 ) {
     val backgroundColor =
-        if (!notification.isRead) Color(0xFFD2E8FF) else Color.White
+        if (!notification.isRead) Color(0xFF111827) else Color(0xFF1A202C)
+    val textColor = if (!notification.isRead) Color.White else Color(0xFFB0B0B0)
+    val iconColor = if (!notification.isRead) Color(0xFF3B82F6) else Color.Gray
     val textWeight = if (!notification.isRead) FontWeight.Bold else FontWeight.Normal
 
     Card(
@@ -119,8 +122,8 @@ fun NotificationItem(
             .padding(horizontal = 8.dp, vertical = 6.dp)
             .clickable { onMarkAsRead() },
         colors = CardDefaults.cardColors(containerColor = backgroundColor),
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+        shape = RoundedCornerShape(20.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Row(
             modifier = Modifier
@@ -131,7 +134,7 @@ fun NotificationItem(
             Icon(
                 imageVector = Icons.Default.Notifications,
                 contentDescription = "Thông báo",
-                tint = if (!notification.isRead) Color(0xFF1976D2) else Color.Gray,
+                tint = iconColor,
                 modifier = Modifier
                     .size(35.dp)
                     .padding(end = 12.dp)
@@ -141,7 +144,7 @@ fun NotificationItem(
                 Icon(
                     imageVector = Icons.Default.Circle,
                     contentDescription = "Chưa đọc",
-                    tint = Color(0xFF1976D2),
+                    tint = Color(0xFF3B82F6),
                     modifier = Modifier
                         .size(12.dp)
                         .padding(end = 6.dp)
@@ -155,13 +158,15 @@ fun NotificationItem(
                 Text(
                     text = notification.title,
                     fontWeight = textWeight,
-                    fontSize = 15.sp
+                    fontSize = 15.sp,
+                    color = textColor
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = notification.message,
                     fontWeight = textWeight,
-                    fontSize = 14.sp
+                    fontSize = 14.sp,
+                    color = textColor
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(

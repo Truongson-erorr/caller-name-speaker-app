@@ -6,18 +6,18 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.callernamespeaker.viewmodel.WebsiteViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,16 +33,17 @@ fun WebsiteScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color(0xFF0A0F1F))
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp)
-                .align(Alignment.TopCenter)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(35.dp))
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -52,7 +53,7 @@ fun WebsiteScreen(
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
-                    tint = Color.Black,
+                    tint = Color.White,
                     modifier = Modifier
                         .align(Alignment.CenterStart)
                         .clickable { navController.popBackStack() }
@@ -63,30 +64,32 @@ fun WebsiteScreen(
                     text = "Kiểm tra Website",
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleMedium,
-                    color = Color.Black
+                    color = Color.White
                 )
             }
+
             Text(
-                text = "Hãy dán liên kết website bạn muốn kiểm tra vào ô trên, sau đó nhấn nút \"Kiểm tra\" để hệ thống phân tích mức độ an toàn. " +
-                        "Công cụ này sẽ giúp bạn phát hiện các trang web có nguy cơ chứa mã độc, lừa đảo hoặc không đáng tin cậy. " +
-                        "Ví dụ: bạn có thể thử kiểm tra các địa chỉ như https://example.com hoặc http://tenmien.vn để trải nghiệm. " +
-                        "Lưu ý: Chỉ nhập đường dẫn hợp lệ, bao gồm http:// hoặc https:// để kết quả chính xác hơn.",
+                text = "Dán link website bạn muốn kiểm tra vào ô dưới, sau đó nhấn nút \"Kiểm tra\" để hệ thống phân tích mức độ an toàn. " +
+                        "Công cụ giúp phát hiện các trang web nguy cơ chứa mã độc, lừa đảo hoặc không đáng tin cậy.",
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.Gray,
+                color = Color(0xFF9CA3AF),
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
+
             TextField(
                 value = url,
                 onValueChange = { url = it },
-                placeholder = { Text("Dán link website vào đây...") },
+                placeholder = { Text("Dán link website vào đây...", color = Color(0xFF9CA3AF)) },
                 singleLine = true,
                 shape = RoundedCornerShape(14.dp),
                 colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color(0xFFF5F5F5),
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    cursorColor = MaterialTheme.colorScheme.primary
+                    containerColor = Color(0xFF111827),
+                    focusedIndicatorColor = Color(0xFF3B82F6),
+                    unfocusedIndicatorColor = Color(0xFF374151),
+                    cursorColor = Color(0xFF3B82F6),
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -110,13 +113,12 @@ fun WebsiteScreen(
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant
-                    )
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFF111827))
                 ) {
                     Text(
                         text = it,
                         style = MaterialTheme.typography.bodyLarge,
+                        color = Color.White,
                         modifier = Modifier.padding(16.dp)
                     )
                 }
@@ -127,13 +129,10 @@ fun WebsiteScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.5f))
-                    .align(Alignment.Center)
+                    .background(Color.Black.copy(alpha = 0.5f)),
+                contentAlignment = Alignment.Center
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.align(Alignment.Center)
-                ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     CircularProgressIndicator(color = Color.White)
                     Spacer(modifier = Modifier.height(12.dp))
                     Text("AI đang phân tích website...", color = Color.White)

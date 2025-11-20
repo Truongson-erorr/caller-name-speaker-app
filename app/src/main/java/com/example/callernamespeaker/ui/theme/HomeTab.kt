@@ -41,14 +41,11 @@ fun HomeTab(navController: NavController) {
         context.getSharedPreferences("settings", Context.MODE_PRIVATE)
     }
 
-    var enabled by remember {
-        mutableStateOf(prefs.getBoolean("tts_enabled", true))
-    }
+    var enabled by remember { mutableStateOf(prefs.getBoolean("tts_enabled", true)) }
+    var smsTtsEnabled by remember { mutableStateOf(prefs.getBoolean("sms_tts_enabled", true)) }
 
     val currentUser = FirebaseAuth.getInstance().currentUser
     val uid = currentUser?.uid
-
-    var smsTtsEnabled by remember { mutableStateOf(prefs.getBoolean("sms_tts_enabled", true)) }
 
     val scrollState = rememberScrollState()
 
@@ -66,89 +63,97 @@ fun HomeTab(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color(0xFF0A0F1F))
             .padding(10.dp)
             .verticalScroll(scrollState)
     ) {
+
+        // ==== SWITCH SETTINGS =====
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(vertical = 6.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = "Đọc tên người gọi: ${if (enabled) "Bật" else "Tắt"}",
-                style = MaterialTheme.typography.bodySmall,
-                fontWeight = FontWeight.Medium,
-                fontSize = 14.sp
+                color = Color.White,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium
             )
             Switch(
                 checked = enabled,
                 onCheckedChange = {
                     enabled = it
-                    prefs.edit().putBoolean("tts_enabled", enabled).apply()
-                }
+                    prefs.edit().putBoolean("tts_enabled", it).apply()
+                },
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = Color(0xFF64B5F6),
+                    checkedTrackColor = Color(0x3348A0E0)
+                )
             )
         }
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(vertical = 6.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = "Đọc cảnh báo tin nhắn chứa link: ${if (smsTtsEnabled) "Bật" else "Tắt"}",
-                style = MaterialTheme.typography.bodySmall,
-                fontWeight = FontWeight.Medium,
-                fontSize = 14.sp
+                color = Color.White,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium
             )
             Switch(
                 checked = smsTtsEnabled,
                 onCheckedChange = {
                     smsTtsEnabled = it
                     prefs.edit().putBoolean("sms_tts_enabled", it).apply()
-                }
+                },
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = Color(0xFF64B5F6),
+                    checkedTrackColor = Color(0x3348A0E0)
+                )
             )
         }
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(vertical = 10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Cẩm nang an toàn thông tin",
-                fontWeight = FontWeight.SemiBold,
-                style = MaterialTheme.typography.bodyMedium,
-                fontSize = 15.sp
+                "Cẩm nang an toàn thông tin",
+                color = Color.White,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.SemiBold
             )
 
             Icon(
                 imageVector = Icons.Default.Notifications,
                 contentDescription = "Thông báo",
-                tint = Color.Gray,
+                tint = Color(0xFF64B5F6),
                 modifier = Modifier
-                    .size(32.dp)
-                    .clickable {
-                        navController.navigate("NotificationScreen")
-                    }
+                    .size(30.dp)
+                    .clickable { navController.navigate("NotificationScreen") }
             )
         }
         BannerCarousel()
 
         Text(
-            text = "Tra cứu nhanh",
+            "Tra cứu nhanh",
+            color = Color.White,
             fontWeight = FontWeight.SemiBold,
             fontSize = 15.sp,
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(top = 14.dp, bottom = 6.dp)
+            modifier = Modifier.padding(top = 14.dp, bottom = 8.dp)
         )
 
-        Spacer(modifier = Modifier.height(6.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -164,7 +169,7 @@ fun HomeTab(navController: NavController) {
                 navController.navigate("EmergencyTab")
             }
         }
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -183,9 +188,10 @@ fun HomeTab(navController: NavController) {
                 navController.navigate("ChatScreen")
             }
         }
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(14.dp))
         NewsSection(navController)
-        Spacer(modifier = Modifier.height(12.dp))
+
+        Spacer(modifier = Modifier.height(14.dp))
         SecuritytipScreen()
     }
 }
@@ -201,26 +207,25 @@ fun ServiceButton(
         modifier = modifier
             .padding(4.dp)
             .clip(RoundedCornerShape(14.dp))
-            .background(Color(0xFFE3F2FD))
+            .background(Color(0xFF101B2D))
             .clickable(onClick = onClick)
-            .padding(vertical = 6.dp),
+            .padding(vertical = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
             imageVector = icon,
             contentDescription = text,
-            tint = Color(0xFF2A2AFC),
+            tint = Color(0xFF64B5F6),
             modifier = Modifier.size(22.dp)
         )
         Spacer(modifier = Modifier.height(6.dp))
         Text(
             text = text,
-            style = MaterialTheme.typography.bodySmall.copy(
-                color = Color.Black,
-                fontSize = 12.sp
-            ),
+            color = Color.White,
+            fontSize = 12.sp,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(horizontal = 2.dp)
         )
     }
 }
+

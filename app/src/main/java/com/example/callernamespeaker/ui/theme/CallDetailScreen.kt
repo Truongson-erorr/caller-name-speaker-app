@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -26,7 +25,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.callernamespeaker.CallEntry
-import com.example.callernamespeaker.model.CallReview
 import com.example.callernamespeaker.viewmodel.CommunityReviewViewModel
 import com.google.firebase.auth.FirebaseAuth
 
@@ -38,7 +36,12 @@ fun CallDetailScreen(
     reviewViewModel: CommunityReviewViewModel = viewModel()
 ) {
     val context = LocalContext.current
-    val iconTint = Color(0xFF1976D2)
+
+    val backgroundDark = Color(0xFF0A0F1F)
+    val cardDark = Color(0xFF112233)
+    val cyanAccent = Color(0xFF4FC3F7)
+    val textLight = Color(0xFFE3F2FD)
+
     val reviews by remember { derivedStateOf { reviewViewModel.reviews } }
 
     LaunchedEffect(call.number) {
@@ -51,7 +54,10 @@ fun CallDetailScreen(
                 title = {
                     Text(
                         "Chi tiết cuộc gọi",
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = textLight
+                        )
                     )
                 },
                 navigationIcon = {
@@ -59,110 +65,101 @@ fun CallDetailScreen(
                         Icon(
                             Icons.Default.ArrowBack,
                             contentDescription = "Quay lại",
-                            tint = iconTint
+                            tint = cyanAccent
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.onSurface
+                    containerColor = backgroundDark,
+                    titleContentColor = textLight
                 )
             )
         },
-        containerColor = Color.White
+        containerColor = backgroundDark
     ) { paddingValues ->
+
         Column(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp, vertical = 24.dp),
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(16.dp)),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.White
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    .clip(RoundedCornerShape(20.dp)),
+                colors = CardDefaults.cardColors(containerColor = cardDark),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Surface(
                         shape = CircleShape,
-                        color = Color.White,
+                        color = Color(0xFF0D253A),
                         modifier = Modifier
                             .size(120.dp)
-                            .border(2.dp, MaterialTheme.colorScheme.onPrimary, CircleShape)
-                            .shadow(8.dp, CircleShape)
+                            .border(2.dp, cyanAccent, CircleShape)
+                            .shadow(10.dp, CircleShape)
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
                                 imageVector = Icons.Default.Person,
-                                contentDescription = "Default Avatar",
-                                tint = iconTint,
+                                contentDescription = "Avatar",
+                                tint = cyanAccent,
                                 modifier = Modifier.size(60.dp)
                             )
                         }
                     }
+
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
                         text = call.number,
                         style = MaterialTheme.typography.headlineMedium.copy(
                             fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onBackground
+                            color = textLight
                         )
                     )
+
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Row(
                         horizontalArrangement = Arrangement.SpaceEvenly,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp)
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        CallActionButton("Cuộc gọi", Icons.Default.Call, iconTint) {
+                        CallActionButton("Cuộc gọi", Icons.Default.Call, cyanAccent) {
                             val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:${call.number}"))
                             context.startActivity(intent)
                         }
 
-                        CallActionButton("Tin nhắn", Icons.Default.Sms, iconTint) {
+                        CallActionButton("Tin nhắn", Icons.Default.Sms, cyanAccent) {
                             val intent = Intent(Intent.ACTION_VIEW, Uri.parse("sms:${call.number}"))
                             context.startActivity(intent)
                         }
 
-                        CallActionButton("Lưu", Icons.Default.PersonAdd, iconTint) {
-                            // TODO: thêm logic lưu danh bạ
-                        }
-
-                        CallActionButton("Chặn", Icons.Default.Block, iconTint) {
-                            // TODO: thêm logic chặn số
-                        }
+                        CallActionButton("Lưu", Icons.Default.PersonAdd, cyanAccent) {}
+                        CallActionButton("Chặn", Icons.Default.Block, cyanAccent) {}
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(18.dp))
 
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(16.dp)),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.White
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    .clip(RoundedCornerShape(20.dp)),
+                colors = CardDefaults.cardColors(containerColor = cardDark),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
             ) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
+                    modifier = Modifier.padding(20.dp)
                 ) {
                     InfoRow("Số điện thoại", call.number)
                     InfoRow("Loại", call.type)
@@ -170,13 +167,14 @@ fun CallDetailScreen(
                     InfoRow("Thời lượng", "${call.duration} giây")
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             CommunityReviewCard(
                 reviews = reviews,
                 onAddReview = { rating, comment ->
                     val user = FirebaseAuth.getInstance().currentUser
-                    val name = user?.email?.substringBefore("@") // hoặc displayName
+                    val name = user?.email?.substringBefore("@")
+
                     reviewViewModel.addReview(
                         phoneNumber = call.number,
                         userName = name,
@@ -196,13 +194,15 @@ fun CallActionButton(
     tint: Color,
     onClick: () -> Unit
 ) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Surface(
             shape = CircleShape,
-            color = Color.White,
+            color = Color(0xFF0D253A),
             modifier = Modifier
-                .size(56.dp)
-                .shadow(4.dp, CircleShape),
+                .size(60.dp)
+                .shadow(8.dp, CircleShape),
             onClick = onClick
         ) {
             Box(
@@ -212,7 +212,7 @@ fun CallActionButton(
                     icon,
                     contentDescription = label,
                     tint = tint,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(26.dp)
                 )
             }
         }
@@ -220,10 +220,35 @@ fun CallActionButton(
         Text(
             text = label,
             style = MaterialTheme.typography.bodyMedium.copy(
-                fontSize = 12.sp,
+                color = Color(0xFFE3F2FD),
                 fontWeight = FontWeight.Medium
-            ),
-            color = MaterialTheme.colorScheme.onBackground
+            )
         )
     }
 }
+
+@Composable
+fun InfoRow(label: String, value: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium.copy(
+                color = Color.White,
+                fontWeight = FontWeight.Medium
+            )
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyMedium.copy(
+                color = Color.White
+            )
+        )
+    }
+}
+
+

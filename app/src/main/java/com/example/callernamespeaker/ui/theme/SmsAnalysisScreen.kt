@@ -31,7 +31,11 @@ fun SmsAnalysisScreen(
     val riskLevel by viewModel.riskLevel.collectAsState()
     var smsContent by remember { mutableStateOf("") }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF0A0F1A)) // nền tối
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -50,7 +54,7 @@ fun SmsAnalysisScreen(
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
-                    tint = Color.Black,
+                    tint = Color.White,
                     modifier = Modifier
                         .align(Alignment.CenterStart)
                         .clickable { navController.popBackStack() }
@@ -61,7 +65,7 @@ fun SmsAnalysisScreen(
                     text = "Phân tích tin nhắn SMS",
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleMedium,
-                    color = Color.Black
+                    color = Color.White
                 )
             }
 
@@ -70,9 +74,8 @@ fun SmsAnalysisScreen(
                         "đánh giá mức độ an toàn. Công cụ sẽ giúp bạn phát hiện các tin nhắn lừa đảo, giả mạo ngân hàng hoặc chứa đường dẫn độc hại. " +
                         "Ví dụ: bạn có thể thử nhập tin nhắn có nội dung yêu cầu cung cấp mã OTP hoặc truy cập liên kết lạ để kiểm tra độ rủi ro.",
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.Gray,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Start
+                color = Color.LightGray,
+                modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -81,19 +84,22 @@ fun SmsAnalysisScreen(
                         "Không nhấp vào liên kết lạ và không chia sẻ thông tin tài khoản ngân hàng. " +
                         "Nếu nhận được tin nhắn nghi ngờ, hãy báo cáo tại mục “Báo cáo lừa đảo” hoặc liên hệ với nhà mạng để được hỗ trợ.",
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.Gray
+                color = Color.LightGray
             )
             Spacer(modifier = Modifier.height(16.dp))
+
             TextField(
                 value = smsContent,
                 onValueChange = { smsContent = it },
-                placeholder = { Text("Dán nội dung tin nhắn cần phân tích...") },
+                placeholder = { Text("Dán nội dung tin nhắn cần phân tích...", color = Color.Gray) },
                 shape = RoundedCornerShape(14.dp),
                 colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color(0xFFF5F5F5),
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    cursorColor = MaterialTheme.colorScheme.primary
+                    containerColor = Color(0xFF111827),
+                    focusedIndicatorColor = Color(0xFF3B82F6),
+                    unfocusedIndicatorColor = Color(0xFF374151),
+                    cursorColor = Color(0xFF3B82F6),
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -118,7 +124,7 @@ fun SmsAnalysisScreen(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                        containerColor = Color(0xFF1A202C)
                     )
                 ) {
                     Column(
@@ -128,7 +134,7 @@ fun SmsAnalysisScreen(
                         Text(
                             text = "Kết quả phân tích:",
                             fontWeight = FontWeight.Bold,
-                            color = Color.Black
+                            color = Color.White
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
@@ -144,7 +150,7 @@ fun SmsAnalysisScreen(
                         Text(
                             text = it,
                             style = MaterialTheme.typography.bodyLarge,
-                            color = Color.DarkGray
+                            color = Color.LightGray
                         )
                     }
                 }
@@ -169,3 +175,4 @@ fun SmsAnalysisScreen(
         }
     }
 }
+

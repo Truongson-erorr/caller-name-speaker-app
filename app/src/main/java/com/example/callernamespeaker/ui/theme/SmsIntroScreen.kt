@@ -26,7 +26,7 @@ fun SmsIntroScreen(navController: NavController) {
             .fillMaxSize()
             .background(
                 brush = Brush.verticalGradient(
-                    listOf(Color(0xFF1565C0), Color(0xFF42A5F5))
+                    listOf(Color(0xFF0D1C3B), Color(0xFF1A2A5C))
                 )
             )
             .padding(24.dp)

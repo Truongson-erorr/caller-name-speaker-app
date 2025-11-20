@@ -28,9 +28,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.*
-
 @Composable
 fun NewsDetailScreen(postId: String, navController: NavController) {
+
     val firestore = FirebaseFirestore.getInstance()
     var post by remember { mutableStateOf<NewsPost?>(null) }
 
@@ -58,6 +58,7 @@ fun NewsDetailScreen(postId: String, navController: NavController) {
                 val dateStr = timestamp?.toDate()?.let {
                     SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(it)
                 } ?: ""
+
                 post = NewsPost(
                     id = doc.id,
                     title = doc.getString("title") ?: "",
@@ -71,84 +72,96 @@ fun NewsDetailScreen(postId: String, navController: NavController) {
 
     if (post == null) {
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFF0A0F1A)),
             contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator()
+            CircularProgressIndicator(color = Color(0xFF3B82F6))
         }
-    } else {
+        return
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF0A0F1A))
+            .padding(horizontal = 16.dp)
+    ) {
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = "Quay lại",
+                tint = Color.White,
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .size(26.dp)
+                    .clickable { navController.popBackStack() }
+            )
+
+            Text(
+                text = "Chi tiết bài viết",
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleMedium,
+                fontSize = 18.sp,
+                color = Color.White
+            )
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp)
+                .verticalScroll(rememberScrollState())
         ) {
-            Spacer(modifier = Modifier.height(20.dp))
-            Box(
+
+            Text(
+                text = post!!.title,
+                color = Color.White,
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold,
+                lineHeight = 26.sp,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+
+            Text(
+                text = post!!.date,
+                color = Color(0xFF9CA3AF),
+                fontSize = 13.sp,
+                modifier = Modifier.padding(bottom = 14.dp)
+            )
+
+            Image(
+                painter = rememberAsyncImagePainter(post!!.imageUrl),
+                contentDescription = post!!.title,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Quay lại",
-                    tint = Color.Black,
-                    modifier = Modifier
-                        .align(Alignment.CenterStart)
-                        .clickable { navController.popBackStack() }
-                        .padding(start = 8.dp)
-                        .size(26.dp)
-                )
-                Text(
-                    text = "Chi tiết bài viết",
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color.Black
-                )
-            }
+                    .height(210.dp)
+                    .clip(RoundedCornerShape(14.dp)),
+                contentScale = ContentScale.Crop
+            )
+            Spacer(modifier = Modifier.height(16.dp))
 
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-            ) {
-                Text(
-                    text = post!!.title,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
+            Text(
+                text = post!!.description,
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color(0xFFE5E7EB),
+                lineHeight = 22.sp,
+                textAlign = TextAlign.Justify
+            )
+            Spacer(modifier = Modifier.height(32.dp))
 
-                Text(
-                    text = post!!.date,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = Color.Gray,
-                    modifier = Modifier.padding(bottom = 12.dp)
-                )
-
-                Image(
-                    painter = rememberAsyncImagePainter(post!!.imageUrl),
-                    contentDescription = post!!.title,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .clip(RoundedCornerShape(12.dp)),
-                    contentScale = ContentScale.Crop
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Text(
-                    text = post!!.description,
-                    style = MaterialTheme.typography.bodyLarge,
-                    lineHeight = 22.sp,
-                    textAlign = TextAlign.Justify
-                )
-                Spacer(modifier = Modifier.height(32.dp))
-
-                CommentSection(postId = post!!.id, userName = currentUserName)
-            }
+            CommentSection(
+                postId = post!!.id,
+                userName = currentUserName
+            )
         }
     }
 }

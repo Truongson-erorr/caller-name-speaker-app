@@ -39,7 +39,6 @@ class MainActivity : ComponentActivity() {
                 ) { permissions ->
                     val granted = permissions.all { it.value }
                     if (granted) {
-                        // ✅ Chỉ load CallLog khi có quyền
                         callList = CallLogHelper.getCallHistory(this)
                     } else {
                         Toast.makeText(

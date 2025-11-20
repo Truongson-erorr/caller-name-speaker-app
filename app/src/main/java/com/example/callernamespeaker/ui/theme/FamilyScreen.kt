@@ -1,5 +1,6 @@
 package com.example.callernamespeaker.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -22,6 +23,7 @@ import com.example.callernamespeaker.ui.theme.ConnectionRequestItem
 import com.example.callernamespeaker.ui.theme.FamilyMemberItem
 import com.example.callernamespeaker.viewmodel.FamilyViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FamilyScreen(
     navController: NavController,
@@ -35,11 +37,15 @@ fun FamilyScreen(
     var showDialog by remember { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF0A0F1F))
+            .padding(16.dp)
     ) {
         Text(
             "Kết nối thành viên",
             fontSize = 14.sp,
+            color = Color.White,
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.headlineSmall
         )
@@ -52,23 +58,20 @@ fun FamilyScreen(
                 contentColor = Color.White
             )
         ) {
-            Icon(
-                Icons.Default.PersonAdd,
-                contentDescription = null
-            )
+            Icon(Icons.Default.PersonAdd, contentDescription = null)
             Spacer(Modifier.width(6.dp))
             Text("Mời qua Email")
         }
 
         if (message != null) {
-            Text(message ?: "", color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(top = 8.dp))
+            Text(message ?: "", color = Color.White, modifier = Modifier.padding(top = 8.dp))
         }
 
         Spacer(Modifier.height(24.dp))
 
-        Text("Lời mời kết nối:", style = MaterialTheme.typography.titleMedium)
+        Text("Lời mời kết nối:", color = Color.White, style = MaterialTheme.typography.titleMedium)
         if (requests.isEmpty()) {
-            Text("Chưa có lời mời nào.", color = MaterialTheme.colorScheme.outline)
+            Text("Chưa có lời mời nào.", color = Color.White)
         } else {
             LazyColumn {
                 items(requests.size) { i ->
@@ -80,11 +83,12 @@ fun FamilyScreen(
                 }
             }
         }
+
         Spacer(Modifier.height(24.dp))
 
-        Text("Thành viên gia đình:", style = MaterialTheme.typography.titleMedium)
+        Text("Thành viên gia đình:", color = Color.White, style = MaterialTheme.typography.titleMedium)
         if (members.isEmpty()) {
-            Text("Chưa có thành viên nào.", color = MaterialTheme.colorScheme.outline)
+            Text("Chưa có thành viên nào.", color = Color.White.copy(alpha = 0.7f))
         } else {
             LazyVerticalGrid(columns = GridCells.Fixed(2)) {
                 items(members.size) { i ->
@@ -101,28 +105,26 @@ fun FamilyScreen(
         AlertDialog(
             onDismissRequest = { showDialog = false },
             shape = RoundedCornerShape(20.dp),
-            containerColor = Color.White,
+            containerColor = Color(0xFF1E1E2D),
             tonalElevation = 8.dp,
             title = {
                 Text(
                     "📧 Mời thành viên qua Email",
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1E1E2D)
+                        color = Color.White
                     )
                 )
             },
             text = {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp),
+                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text(
                         text = "Nhập địa chỉ email người mà bạn muốn mời vào nhóm gia đình:",
                         fontSize = 14.sp,
-                        color = Color.Gray
+                        color = Color.White.copy(alpha = 0.7f)
                     )
 
                     OutlinedTextField(
@@ -130,9 +132,14 @@ fun FamilyScreen(
                         onValueChange = { email = it },
                         shape = RoundedCornerShape(26.dp),
                         leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
-                        label = { Text("Địa chỉ Email") },
+                        label = { Text("Địa chỉ Email", color = Color.White.copy(alpha = 0.7f)) },
                         modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
+                        singleLine = true,
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            cursorColor = Color.White,
+                            focusedBorderColor = Color(0xFF2A2AFC),
+                            unfocusedBorderColor = Color.Gray,
+                        )
                     )
                 }
             },
@@ -164,4 +171,5 @@ fun FamilyScreen(
         )
     }
 }
+
 

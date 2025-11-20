@@ -5,17 +5,15 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Security
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -37,6 +35,7 @@ fun LoginScreen(navController: NavController) {
     val phone = remember { mutableStateOf("") }
     val auth = FirebaseAuth.getInstance()
     var isLoading by remember { mutableStateOf(false) }
+
     val countryCodes = listOf(
         CountryCode("🇻🇳", "+84", "Việt Nam"),
         CountryCode("🇺🇸", "+1", "Mỹ"),
@@ -51,7 +50,7 @@ fun LoginScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(Color(0xFF0A0F1A)) // Nền tối
             .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
@@ -92,7 +91,7 @@ fun LoginScreen(navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
-                    .background(Color(0xFFF5F5F5), RoundedCornerShape(12.dp))
+                    .background(Color(0xFF1A1F2C), RoundedCornerShape(12.dp)) // Background tối
                     .clip(RoundedCornerShape(12.dp))
             ) {
                 Box(
@@ -105,7 +104,7 @@ fun LoginScreen(navController: NavController) {
                 ) {
                     Text(
                         text = "${selectedCountry.value.emoji} ${selectedCountry.value.code}",
-                        style = MaterialTheme.typography.bodyLarge.copy(color = Color.Black)
+                        style = MaterialTheme.typography.bodyLarge.copy(color = Color.White)
                     )
                     DropdownMenu(
                         expanded = expanded.value,
@@ -126,7 +125,7 @@ fun LoginScreen(navController: NavController) {
                 TextField(
                     value = phone.value,
                     onValueChange = { phone.value = it },
-                    placeholder = { Text("Số điện thoại") },
+                    placeholder = { Text("Số điện thoại", color = Color.Gray) },
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight(),
@@ -138,6 +137,7 @@ fun LoginScreen(navController: NavController) {
                         unfocusedIndicatorColor = Color.Transparent,
                         disabledIndicatorColor = Color.Transparent,
                         errorIndicatorColor = Color.Transparent,
+                        focusedTextColor = Color.White,
                         cursorColor = Color(0xFF2A2AFC),
                     )
                 )
@@ -148,7 +148,7 @@ fun LoginScreen(navController: NavController) {
                 horizontalArrangement = Arrangement.End
             ) {
                 TextButton(
-                    onClick = {  navController.navigate("ForgotPasswordScreen") }
+                    onClick = { navController.navigate("ForgotPasswordScreen") }
                 ) {
                     Text(
                         "Quên mật khẩu",
@@ -192,7 +192,10 @@ fun LoginScreen(navController: NavController) {
                             Toast.makeText(context, "Lỗi: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
                         }
 
-                        override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
+                        override fun onCodeSent(
+                            verificationId: String,
+                            token: PhoneAuthProvider.ForceResendingToken
+                        ) {
                             isLoading = false
                             navController.navigate("otp_verification/${verificationId}/${fullPhoneNumber}")
                         }
@@ -228,7 +231,8 @@ fun LoginScreen(navController: NavController) {
         ) {
             Text(
                 fontSize = 14.sp,
-                text = "Chưa có tài khoản? "
+                text = "Chưa có tài khoản? ",
+                color = Color.Gray
             )
             Text(
                 "Đăng ký ngay",

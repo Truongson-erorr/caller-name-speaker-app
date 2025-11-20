@@ -16,9 +16,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,10 +39,12 @@ fun ForgotPasswordScreen(navController: NavController) {
     val selectedCountry = remember { mutableStateOf(countryCodes[0]) }
     val expanded = remember { mutableStateOf(false) }
 
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(Color(0xFF0A0F1A)) // Nền tối
             .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -56,7 +59,7 @@ fun ForgotPasswordScreen(navController: NavController) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
-                    tint = Color.Black
+                    tint = Color.White
                 )
             }
         }
@@ -73,7 +76,7 @@ fun ForgotPasswordScreen(navController: NavController) {
             text = "Quên mật khẩu",
             style = MaterialTheme.typography.headlineSmall.copy(
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF2A2AFC)
+                color = Color.White
             ),
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(top = 10.dp)
@@ -91,7 +94,7 @@ fun ForgotPasswordScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
-                .background(Color(0xFFF5F5F5), RoundedCornerShape(12.dp))
+                .background(Color(0xFF1A1F2C), RoundedCornerShape(12.dp)) // nền tối ô nhập
                 .clip(RoundedCornerShape(12.dp))
         ) {
             Box(
@@ -104,7 +107,7 @@ fun ForgotPasswordScreen(navController: NavController) {
             ) {
                 Text(
                     text = "${selectedCountry.value.emoji} ${selectedCountry.value.code}",
-                    style = MaterialTheme.typography.bodyLarge.copy(color = Color.Black)
+                    style = MaterialTheme.typography.bodyLarge.copy(color = Color.White)
                 )
                 DropdownMenu(
                     expanded = expanded.value,
@@ -125,7 +128,7 @@ fun ForgotPasswordScreen(navController: NavController) {
             TextField(
                 value = phone.value,
                 onValueChange = { phone.value = it },
-                placeholder = { Text("Số điện thoại") },
+                placeholder = { Text("Số điện thoại", color = Color.Gray) },
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight(),
@@ -135,9 +138,8 @@ fun ForgotPasswordScreen(navController: NavController) {
                     containerColor = Color.Transparent,
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent,
-                    errorIndicatorColor = Color.Transparent,
                     cursorColor = Color(0xFF2A2AFC),
+                    focusedTextColor = Color.White,
                 )
             )
         }

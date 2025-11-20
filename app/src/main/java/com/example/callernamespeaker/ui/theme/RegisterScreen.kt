@@ -50,7 +50,7 @@ fun RegisterScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(Color(0xFF0A0F1A))
             .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
@@ -72,7 +72,7 @@ fun RegisterScreen(
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Back",
-                        tint = Color.Black
+                        tint = Color.White
                     )
                 }
             }
@@ -88,7 +88,7 @@ fun RegisterScreen(
                 text = "Tạo tài khoản mới",
                 style = MaterialTheme.typography.headlineSmall.copy(
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF2A2AFC)
+                    color = Color.White
                 ),
                 textAlign = TextAlign.Center
             )
@@ -102,7 +102,7 @@ fun RegisterScreen(
             TextField(
                 value = name.value,
                 onValueChange = { name.value = it },
-                placeholder = { Text("Họ và tên") },
+                placeholder = { Text("Họ và tên", color = Color.Gray) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
@@ -110,17 +110,18 @@ fun RegisterScreen(
                 enabled = !isCodeSent,
                 shape = RoundedCornerShape(12.dp),
                 colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color(0xFFF5F5F5),
+                    containerColor = Color(0xFF1A1F2C),
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
-                    cursorColor = Color(0xFF2A2AFC)
+                    cursorColor = Color(0xFF2A2AFC),
+                    focusedTextColor = Color.White,
                 )
             )
 
             TextField(
                 value = phone.value,
                 onValueChange = { phone.value = it },
-                placeholder = { Text("Số điện thoại (vd: +84987654321)") },
+                placeholder = { Text("Số điện thoại (vd: +84987654321)", color = Color.Gray) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -129,10 +130,11 @@ fun RegisterScreen(
                 enabled = !isCodeSent,
                 shape = RoundedCornerShape(12.dp),
                 colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color(0xFFF5F5F5),
+                    containerColor = Color(0xFF1A1F2C),
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
-                    cursorColor = Color(0xFF2A2AFC)
+                    cursorColor = Color(0xFF2A2AFC),
+                    focusedTextColor = Color.White,
                 )
             )
 
@@ -140,74 +142,25 @@ fun RegisterScreen(
                 TextField(
                     value = otp.value,
                     onValueChange = { otp.value = it },
-                    placeholder = { Text("Nhập mã OTP") },
+                    placeholder = { Text("Nhập mã OTP", color = Color.Gray) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
                     singleLine = true,
                     colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color(0xFFF5F5F5),
+                        containerColor = Color(0xFF1A1F2C),
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        cursorColor = Color(0xFF2A2AFC)
+                        cursorColor = Color(0xFF2A2AFC),
+                        focusedTextColor = Color.White,
                     )
                 )
             }
 
             Button(
                 onClick = {
-                    if (!isCodeSent) {
-                        if (name.value.isBlank() || phone.value.isBlank()) {
-                            Toast.makeText(context, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show()
-                            return@Button
-                        }
-                        isLoading = true
-                        val options = PhoneAuthOptions.newBuilder(auth)
-                            .setPhoneNumber(phone.value)
-                            .setTimeout(60L, TimeUnit.SECONDS)
-                            .setActivity(context as Activity)
-                            .setCallbacks(object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-                                override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-                                    auth.signInWithCredential(credential)
-                                        .addOnCompleteListener { task ->
-                                            if (task.isSuccessful) {
-                                                saveUserToFirestore(name.value, phone.value, context, navController)
-                                            }
-                                        }
-                                }
 
-                                override fun onVerificationFailed(e: FirebaseException) {
-                                    isLoading = false
-                                    Toast.makeText(context, "Gửi OTP thất bại: ${e.message}", Toast.LENGTH_SHORT).show()
-                                }
-
-                                override fun onCodeSent(
-                                    vid: String,
-                                    token: PhoneAuthProvider.ForceResendingToken
-                                ) {
-                                    isLoading = false
-                                    isCodeSent = true
-                                    verificationId = vid
-                                    Toast.makeText(context, "Đã gửi mã OTP!", Toast.LENGTH_SHORT).show()
-                                }
-                            })
-                            .build()
-
-                        PhoneAuthProvider.verifyPhoneNumber(options)
-                    } else {
-                        val credential = PhoneAuthProvider.getCredential(verificationId, otp.value)
-                        isLoading = true
-                        auth.signInWithCredential(credential)
-                            .addOnCompleteListener { task ->
-                                isLoading = false
-                                if (task.isSuccessful) {
-                                    saveUserToFirestore(name.value, phone.value, context, navController)
-                                } else {
-                                    Toast.makeText(context, "Xác thực thất bại", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -237,7 +190,7 @@ fun RegisterScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                Text(fontSize = 14.sp, text = "Đã có tài khoản? ")
+                Text(fontSize = 14.sp, text = "Đã có tài khoản? ", color = Color.White)
                 Text(
                     "Đăng nhập",
                     color = Color(0xFF2A2AFC),

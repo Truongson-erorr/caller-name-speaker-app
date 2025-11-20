@@ -32,7 +32,11 @@ import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CommentSection(postId: String, userName: String, viewModel: CommentViewModel = viewModel()) {
+fun CommentSection(
+    postId: String,
+    userName: String,
+    viewModel: CommentViewModel = viewModel()
+) {
     val comments by viewModel.comments.collectAsState()
     val replies by viewModel.replies.collectAsState()
     var newComment by remember { mutableStateOf("") }
@@ -43,7 +47,12 @@ fun CommentSection(postId: String, userName: String, viewModel: CommentViewModel
     }
 
     Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
-        Text("Bình luận (${comments.size})", fontWeight = FontWeight.Bold)
+        Text(
+            "Bình luận (${comments.size})",
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            fontSize = 16.sp
+        )
         Spacer(Modifier.height(8.dp))
 
         LazyColumn(
@@ -55,12 +64,9 @@ fun CommentSection(postId: String, userName: String, viewModel: CommentViewModel
                 LaunchedEffect(comment.id) {
                     viewModel.fetchReplies(postId, comment.id)
                 }
-
-                CommentItem(
-                    comment = comment,
-                    replies = replies[comment.id].orEmpty(),
-                    onReplyClick = { replyTo = comment }
-                )
+                CommentItem(comment, replies[comment.id].orEmpty()) {
+                    replyTo = comment
+                }
             }
         }
 
@@ -69,7 +75,7 @@ fun CommentSection(postId: String, userName: String, viewModel: CommentViewModel
         if (replyTo != null) {
             Text(
                 text = "Trả lời ${replyTo!!.userName}",
-                color = Color.Gray,
+                color = Color(0xFF9CA3AF),
                 fontSize = 13.sp,
                 modifier = Modifier.padding(bottom = 4.dp)
             )
@@ -79,12 +85,20 @@ fun CommentSection(postId: String, userName: String, viewModel: CommentViewModel
             value = newComment,
             onValueChange = { newComment = it },
             shape = RoundedCornerShape(30.dp),
-            placeholder = { Text(if (replyTo == null) "Thêm bình luận..." else "Trả lời bình luận...") },
+            placeholder = {
+                Text(
+                    text = if (replyTo == null) "Thêm bình luận..." else "Trả lời bình luận...",
+                    color = Color(0xFF9CA3AF)
+                )
+            },
             modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color.White,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
+                containerColor = Color(0xFF1A202C),
+                cursorColor = Color(0xFF3B82F6),
+                focusedIndicatorColor = Color(0xFF3B82F6),
+                unfocusedIndicatorColor = Color(0xFF374151),
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White
             ),
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
             keyboardActions = KeyboardActions(onSend = {
@@ -103,7 +117,7 @@ fun CommentSection(postId: String, userName: String, viewModel: CommentViewModel
                     Icon(
                         imageVector = Icons.Default.Send,
                         contentDescription = "Gửi",
-                        tint = if (newComment.isNotBlank()) Color.Black else Color.Gray
+                        tint = if (newComment.isNotBlank()) Color(0xFF3B82F6) else Color.Gray
                     )
                 }
             }
@@ -134,27 +148,38 @@ fun CommentItem(
     replies: List<Reply> = emptyList(),
     onReplyClick: () -> Unit = {}
 ) {
-    Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .background(Color(0xFF111827), RoundedCornerShape(12.dp))
+            .padding(8.dp)
+    ) {
         Row(verticalAlignment = Alignment.Top) {
             Icon(
                 imageVector = Icons.Default.AccountCircle,
                 contentDescription = null,
-                tint = Color.Gray,
-                modifier = Modifier.size(36.dp).clip(CircleShape)
+                tint = Color(0xFF9CA3AF),
+                modifier = Modifier.size(36.dp)
             )
             Spacer(Modifier.width(8.dp))
             Column {
-                Text(comment.userName, fontWeight = FontWeight.SemiBold)
-                Text(comment.content)
+                Text(comment.userName, fontWeight = FontWeight.SemiBold, color = Color.White)
+                Text(comment.content, color = Color(0xFFE5E7EB))
                 Text(
                     text = formatTimeAgo(comment.timestamp),
                     fontSize = 11.sp,
-                    color = Color.Gray
+                    color = Color(0xFF9CA3AF)
                 )
                 TextButton(onClick = onReplyClick) {
-                    Icon(Icons.Default.Reply, contentDescription = null, modifier = Modifier.size(14.dp))
+                    Icon(
+                        Icons.Default.Reply,
+                        contentDescription = null,
+                        modifier = Modifier.size(14.dp),
+                        tint = Color(0xFF3B82F6)
+                    )
                     Spacer(Modifier.width(4.dp))
-                    Text("Phản hồi", fontSize = 12.sp)
+                    Text("Phản hồi", fontSize = 12.sp, color = Color(0xFF3B82F6))
                 }
             }
         }
@@ -179,14 +204,14 @@ fun ReplyItem(reply: Reply) {
         Icon(
             imageVector = Icons.Default.AccountCircle,
             contentDescription = null,
-            tint = Color.Gray,
+            tint = Color(0xFF9CA3AF),
             modifier = Modifier.size(28.dp)
         )
         Spacer(Modifier.width(8.dp))
         Column {
-            Text(reply.userName, fontWeight = FontWeight.Medium, fontSize = 13.sp)
-            Text(reply.content, fontSize = 13.sp)
-            Text(formatTimeAgo(reply.timestamp), fontSize = 10.sp, color = Color.Gray)
+            Text(reply.userName, fontWeight = FontWeight.Medium, fontSize = 13.sp, color = Color.White)
+            Text(reply.content, fontSize = 13.sp, color = Color(0xFFE5E7EB))
+            Text(formatTimeAgo(reply.timestamp), fontSize = 10.sp, color = Color(0xFF9CA3AF))
         }
     }
 }

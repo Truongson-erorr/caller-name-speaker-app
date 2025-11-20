@@ -1,6 +1,7 @@
 package com.example.callernamespeaker.ui.theme
 
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -14,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -34,12 +36,15 @@ fun ReportScreen(
     var reportPhone by remember { mutableStateOf("") }
     var reportReason by remember { mutableStateOf("") }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF0A0F1A))
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp)
-                .align(Alignment.TopCenter)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -53,7 +58,7 @@ fun ReportScreen(
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
-                    tint = Color.Black,
+                    tint = Color.White,
                     modifier = Modifier
                         .align(Alignment.CenterStart)
                         .clickable { navController.popBackStack() }
@@ -64,7 +69,7 @@ fun ReportScreen(
                     text = "Báo cáo số điện thoại",
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleMedium,
-                    color = Color.Black
+                    color = Color.White
                 )
             }
 
@@ -73,43 +78,54 @@ fun ReportScreen(
                         "Thông tin sẽ giúp hệ thống cải thiện khả năng phát hiện số nguy hiểm. " +
                         "Ví dụ: bạn có thể nhập số 090xxxxxxx và lý do như 'Giả mạo ngân hàng', 'Gọi quảng cáo liên tục' v.v.",
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.Gray,
+                color = Color(0xFF9CA3AF),
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            OutlinedTextField(
+            TextField(
                 value = reportPhone,
                 onValueChange = { reportPhone = it },
-                label = { Text("Số điện thoại") },
-                singleLine = true,
-                shape = RoundedCornerShape(14.dp),
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color(0xFFF5F5F5),
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    cursorColor = MaterialTheme.colorScheme.primary
-                ),
+                shape = RoundedCornerShape(30.dp),
+                placeholder = {
+                    Text(
+                        text = "Nhập số điện thoại...",
+                        color = Color(0xFF9CA3AF)
+                    )
+                },
+                textStyle = TextStyle(color = Color.White),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(60.dp)
+                    .height(60.dp),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    containerColor = Color(0xFF111827),
+                    cursorColor = Color(0xFF3B82F6),
+                    focusedBorderColor = Color(0xFF3B82F6),
+                    unfocusedBorderColor = Color(0xFF374151),
+                    focusedLabelColor = Color(0xFF3B82F6),
+                    unfocusedLabelColor = Color(0xFF9CA3AF)
+                ),
+                singleLine = true
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            OutlinedTextField(
+            TextField(
                 value = reportReason,
                 onValueChange = { reportReason = it },
-                label = { Text("Lý do báo cáo") },
-                shape = RoundedCornerShape(14.dp),
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color(0xFFF5F5F5),
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    cursorColor = MaterialTheme.colorScheme.primary
-                ),
+                shape = RoundedCornerShape(16.dp),
+                placeholder = {
+                    Text("Nhập lý do báo cáo...", color = Color(0xFF9CA3AF))
+                },
+                textStyle = TextStyle(color = Color.White),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(min = 260.dp)
+                    .heightIn(min = 260.dp),
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = Color(0xFF1A202C),
+                    cursorColor = Color(0xFF3B82F6),
+                    focusedIndicatorColor = Color(0xFF3B82F6),
+                    unfocusedIndicatorColor = Color(0xFF374151)
+                )
             )
             Spacer(modifier = Modifier.height(24.dp))
 

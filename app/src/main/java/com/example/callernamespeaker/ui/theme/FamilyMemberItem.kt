@@ -50,6 +50,7 @@ fun FamilyMemberItem(
         Text(
             text = if (member.id == currentUserId) "Tôi" else member.name,
             fontSize = 14.sp,
+            color = Color.White,
             fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Center
         )
@@ -57,7 +58,7 @@ fun FamilyMemberItem(
         Text(
             text = member.phoneNumber,
             fontSize = 12.sp,
-            color = Color.Gray,
+            color = Color.LightGray,
             textAlign = TextAlign.Center
         )
     }

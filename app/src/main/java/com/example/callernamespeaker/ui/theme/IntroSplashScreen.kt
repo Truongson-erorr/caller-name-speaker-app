@@ -44,9 +44,9 @@ fun IntroSplashScreen(navController: NavController) {
             .background(
                 brush = Brush.verticalGradient(
                     listOf(
-                        Color(0xFF0D47A1),
-                        Color(0xFF1976D2),
-                        Color(0xFF42A5F5)
+                        Color(0xFF0B3C91),
+                        Color(0xFF1565C0),
+                        Color(0xFF1E88E5)
                     )
                 )
             ),

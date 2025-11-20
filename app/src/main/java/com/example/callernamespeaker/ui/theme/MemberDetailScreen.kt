@@ -55,10 +55,12 @@ fun MemberDetailScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color(0xFF0A0F1F))
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 20.dp, vertical = 18.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // HEADER
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -66,116 +68,146 @@ fun MemberDetailScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = { navController.popBackStack() }) {
-                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    tint = Color.White,
+                    contentDescription = "Back"
+                )
             }
             Spacer(modifier = Modifier.width(6.dp))
             Text(
                 text = "Chi tiết thành viên",
+                color = Color.White,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f)
             )
             IconButton(onClick = { fetchMember() }) {
                 if (isRefreshing) {
-                    CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(24.dp))
+                    CircularProgressIndicator(
+                        strokeWidth = 2.dp,
+                        modifier = Modifier.size(24.dp),
+                        color = Color(0xFF64B5F6)
+                    )
                 } else {
-                    Icon(imageVector = Icons.Default.Refresh, contentDescription = "Refresh")
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        tint = Color.White,
+                        contentDescription = "Refresh"
+                    )
                 }
             }
         }
-        Spacer(modifier = Modifier.height(6.dp))
 
         if (member != null) {
             val it = member!!
 
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Box(
-                    modifier = Modifier
-                        .size(110.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFFDEE7FF)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = it.name.firstOrNull()?.uppercase() ?: "?",
-                        fontSize = 44.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF3B6EF6)
-                    )
-                }
-                Spacer(modifier = Modifier.height(10.dp))
-
+            Box(
+                modifier = Modifier
+                    .size(110.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFF101B2D)),
+                contentAlignment = Alignment.Center
+            ) {
                 Text(
-                    text = it.name,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-
-                val statusColor = when (it.status.lowercase()) {
-                    "accepted" -> Color(0xFF2E7D32)
-                    "pending" -> Color(0xFFED6C02)
-                    "rejected", "declined" -> Color(0xFFB00020)
-                    else -> Color(0xFF616161)
-                }
-
-                AssistChip(
-                    onClick = {},
-                    label = {
-                        Text(
-                            it.status.capitalize(),
-                            color = if (it.status.lowercase() == "accepted") Color(0xFF1B5E20) else Color.Black,
-                            fontWeight = FontWeight.Bold
-                        )
-                    },
-                    colors = AssistChipDefaults.assistChipColors(
-                        containerColor = if (it.status.lowercase() == "accepted") Color(0xFFC8E6C9)
-                        else statusColor.copy(alpha = 0.12f)
-                    ),
-                    shape = RoundedCornerShape(26.dp),
-                    border = null
+                    text = it.name.firstOrNull()?.uppercase() ?: "?",
+                    fontSize = 44.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF64B5F6)
                 )
             }
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Text(
+                text = it.name,
+                color = Color.White,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // STATUS CHIP (đổi tone dark)
+            val statusColor = when (it.status.lowercase()) {
+                "accepted" -> Color(0xFF81C784)
+                "pending" -> Color(0xFFFFB74D)
+                "rejected", "declined" -> Color(0xFFFF8A80)
+                else -> Color(0xFFB0C4DE)
+            }
+
+            AssistChip(
+                onClick = {},
+                label = {
+                    Text(it.status.replaceFirstChar { it.uppercase() },
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                colors = AssistChipDefaults.assistChipColors(
+                    containerColor = statusColor.copy(alpha = 0.25f)
+                ),
+                shape = RoundedCornerShape(26.dp)
+            )
+
             Spacer(modifier = Modifier.height(18.dp))
 
+            // 🔹 CARD THÔNG TIN – giống tone LookupHistoryItem
             Card(
-                shape = RoundedCornerShape(14.dp),
                 modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFF8FAFF))
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFF101B2D)),
+                elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
             ) {
-                Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.Email, contentDescription = null, tint = Color(0xFF1976D2))
+                        Icon(
+                            Icons.Default.Email,
+                            contentDescription = null,
+                            tint = Color(0xFF64B5F6)
+                        )
                         Spacer(modifier = Modifier.width(10.dp))
                         Column {
-                            Text("Email", fontWeight = FontWeight.SemiBold, color = Color.DarkGray)
+                            Text("Email", color = Color(0xFFB0C4DE))
                             val contact = if (it.email.isNotBlank()) it.email else it.phoneNumber
-                            Text(contact.ifEmpty { "—" }, fontSize = 15.sp)
+                            Text(contact.ifEmpty { "—" }, color = Color.White)
                         }
                     }
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.Badge, contentDescription = null, tint = Color(0xFF6C63FF))
+                        Icon(
+                            Icons.Default.Badge,
+                            contentDescription = null,
+                            tint = Color(0xFF64B5F6)
+                        )
                         Spacer(modifier = Modifier.width(10.dp))
                         Column {
-                            Text("Mối quan hệ", fontWeight = FontWeight.SemiBold, color = Color.DarkGray)
-                            Text(it.relation.ifEmpty { "—" }, fontSize = 15.sp)
+                            Text("Mối quan hệ", color = Color(0xFFB0C4DE))
+                            Text(it.relation.ifEmpty { "—" }, color = Color.White)
                         }
                     }
                 }
             }
+
             Spacer(modifier = Modifier.height(18.dp))
 
             Text(
-                "Ghi chú: Hệ thống sẽ tự động ghi nhận và gửi cảnh báo khi người thân của bạn nhận cuộc gọi từ số lạ hoặc không xác định, giúp bạn dễ dàng theo dõi và bảo vệ họ khỏi các cuộc gọi đáng ngờ.",
+                "Ghi chú: Hệ thống sẽ cảnh báo khi người thân nhận cuộc gọi từ số lạ.",
                 fontSize = 12.sp,
-                color = Color.Gray
+                color = Color(0xFFB0C4DE)
             )
 
         } else {
-            Box(modifier = Modifier.fillMaxWidth().padding(top = 36.dp), contentAlignment = Alignment.Center) {
-                Text("Không tìm thấy thông tin thành viên.", color = Color.Gray)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 36.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("Không tìm thấy thông tin thành viên.", color = Color(0xFFB0C4DE))
             }
         }
     }
 }
+

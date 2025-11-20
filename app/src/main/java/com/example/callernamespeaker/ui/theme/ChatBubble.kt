@@ -1,9 +1,7 @@
 package com.example.callernamespeaker.ui.theme
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,8 +18,9 @@ import java.util.Locale
 
 @Composable
 fun ChatBubble(message: Message) {
-    val bubbleColor = if (message.isUser) Color(0xFF1976D2) else Color(0xFFE0E0E0)
-    val textColor = if (message.isUser) Color.White else Color.Black
+    val bubbleColor = if (message.isUser) Color(0xFF3B82F6) else Color(0xFF1E293B)
+    val textColor = if (message.isUser) Color.White else Color(0xFFE5E7EB)
+    val timeColor = Color(0xFF9CA3AF)
 
     val timeFormat = remember { SimpleDateFormat("HH:mm", Locale.getDefault()) }
     val timeText = timeFormat.format(Date(message.timestamp))
@@ -45,7 +44,7 @@ fun ChatBubble(message: Message) {
         Text(
             text = timeText,
             fontSize = MaterialTheme.typography.bodySmall.fontSize,
-            color = Color.Gray,
+            color = timeColor,
             modifier = Modifier.padding(top = 2.dp, start = 4.dp, end = 4.dp)
         )
     }

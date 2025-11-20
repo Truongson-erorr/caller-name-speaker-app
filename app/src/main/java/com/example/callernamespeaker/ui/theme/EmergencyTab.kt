@@ -44,7 +44,7 @@ fun EmergencyTab(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF8FAFC))
+            .background(Color(0xFF0A0F1A))
             .padding(horizontal = 16.dp)
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.Start
@@ -60,7 +60,7 @@ fun EmergencyTab(navController: NavController) {
             Icon(
                 imageVector = Icons.Default.ArrowBack,
                 contentDescription = "Back",
-                tint = Color.Black,
+                tint = Color.White,
                 modifier = Modifier
                     .clickable { navController.popBackStack() }
                     .padding(end = 8.dp)
@@ -70,33 +70,33 @@ fun EmergencyTab(navController: NavController) {
                 text = "Số khẩn cấp tại Việt Nam",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.Black
+                color = Color.White
             )
         }
 
         Spacer(modifier = Modifier.height(10.dp))
         Surface(
-            shape = RoundedCornerShape(8.dp),
-            color = Color(0xFFBBDEFB),
+            shape = RoundedCornerShape(12.dp),
+            color = Color(0xFF374151),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
         ) {
             Row(
-                modifier = Modifier.padding(10.dp),
+                modifier = Modifier.padding(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     imageVector = Icons.Default.Info,
                     contentDescription = null,
-                    tint = Color(0xFF0D47A1),
+                    tint = Color(0xFF60A5FA),
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "Chỉ gọi trong trường hợp thật sự khẩn cấp",
                     style = MaterialTheme.typography.bodySmall.copy(
-                        color = Color(0xFF0D47A1)
+                        color = Color.White
                     )
                 )
             }
@@ -128,12 +128,12 @@ fun EmergencyNumberCard(number: EmergencyNumber, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White,
-            contentColor = Color.Black
+            containerColor = Color(0xFF111827),
+            contentColor = Color.White
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Row(
             modifier = Modifier
@@ -145,7 +145,7 @@ fun EmergencyNumberCard(number: EmergencyNumber, onClick: () -> Unit) {
             Icon(
                 imageVector = number.icon,
                 contentDescription = null,
-                tint = Color(0xFF2196F3),
+                tint = Color(0xFF3B82F6),
                 modifier = Modifier.size(32.dp)
             )
 
@@ -154,21 +154,21 @@ fun EmergencyNumberCard(number: EmergencyNumber, onClick: () -> Unit) {
                     text = number.label,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 15.sp,
-                    color = Color.Black
+                    color = Color.White
                 )
                 Text(
                     text = "Sẵn sàng hỗ trợ 24/7",
                     fontSize = 12.sp,
-                    color = Color(0xFF2E7D32),
+                    color = Color(0xFF22C55E),
                     modifier = Modifier
-                        .background(Color(0xFFC8E6C9), shape = RoundedCornerShape(4.dp))
+                        .background(Color(0xFF164E2B), shape = RoundedCornerShape(6.dp))
                         .padding(horizontal = 6.dp, vertical = 2.dp)
                 )
             }
 
             Surface(
-                shape = RoundedCornerShape(6.dp),
-                color = Color.Red,
+                shape = RoundedCornerShape(12.dp),
+                color = Color(0xFFD32F2F),
                 modifier = Modifier.padding(start = 4.dp)
             ) {
                 Text(
@@ -176,7 +176,7 @@ fun EmergencyNumberCard(number: EmergencyNumber, onClick: () -> Unit) {
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
-                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
                 )
             }
         }

@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
@@ -50,25 +51,27 @@ fun NewsSection(navController: NavController) {
         ) {
             Text(
                 text = "Tin tức, cảnh báo",
-                fontWeight = FontWeight.SemiBold,
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.bodyLarge
             )
 
             Text(
                 text = "Xem tất cả",
-                color = Color(0xFF1565C0),
-                style = MaterialTheme.typography.bodyMedium,
+                color = Color(0xFF4A9CFF),
+                fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.clickable {
                     navController.navigate("all_news")
                 }
             )
         }
         Spacer(modifier = Modifier.height(10.dp))
+
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(180.dp)
+                .height(190.dp)
         ) {
             items(newsList) { post ->
                 NewsCardItem(post) {
@@ -81,14 +84,18 @@ fun NewsSection(navController: NavController) {
 
 @Composable
 fun NewsCardItem(post: NewsPost, onClick: () -> Unit = {}) {
+
+    val cardColor = Color(0xFF111829)
+    val textPrimary = Color.White
+    val textSecondary = Color(0xFFB7C8FF)
+
     Card(
         modifier = Modifier
             .width(230.dp)
-            .wrapContentHeight()
             .clickable { onClick() },
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(4.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        shape = RoundedCornerShape(14.dp),
+        colors = CardDefaults.cardColors(containerColor = cardColor),
+        elevation = CardDefaults.cardElevation(6.dp)
     ) {
         Column {
             Image(
@@ -99,24 +106,30 @@ fun NewsCardItem(post: NewsPost, onClick: () -> Unit = {}) {
                     .height(90.dp),
                 contentScale = ContentScale.Crop
             )
-            Column(modifier = Modifier.padding(8.dp)) {
+
+            Column(modifier = Modifier.padding(10.dp)) {
                 Text(
                     text = post.title,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 2
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 2,
+                    color = textPrimary,
+                    lineHeight = 18.sp
                 )
+                Spacer(Modifier.height(4.dp))
                 Text(
                     text = post.shortDescription,
-                    style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 2
+                    maxLines = 2,
+                    color = textSecondary,
+                    lineHeight = 16.sp
                 )
+                Spacer(Modifier.height(6.dp))
                 Text(
                     text = post.date,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = Color.Gray
+                    color = Color(0xFF7A8DA6),
+                    style = MaterialTheme.typography.labelSmall
                 )
             }
         }
     }
 }
+

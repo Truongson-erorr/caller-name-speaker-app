@@ -2,49 +2,23 @@ package com.example.callernamespeaker.ui.theme
 
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthProvider
@@ -60,12 +34,11 @@ fun OtpVerificationScreen(
     val auth = FirebaseAuth.getInstance()
     val otpValues = remember { List(6) { mutableStateOf("") } }
     var isLoading by remember { mutableStateOf(false) }
-    var navigateToMain by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(Color(0xFF0A0F1A)) // Nền tối
             .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
@@ -82,7 +55,7 @@ fun OtpVerificationScreen(
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Quay lại",
-                    tint = Color.Black,
+                    tint = Color.White,
                 )
             }
         }
@@ -100,7 +73,7 @@ fun OtpVerificationScreen(
             text = "Xác minh OTP",
             style = MaterialTheme.typography.headlineSmall.copy(
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF2A2AFC)
+                color = Color.White
             ),
             textAlign = TextAlign.Center
         )
@@ -129,16 +102,19 @@ fun OtpVerificationScreen(
                         .height(64.dp),
                     singleLine = true,
                     textStyle = MaterialTheme.typography.headlineMedium.copy(
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        color = Color.White
                     ),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     shape = RoundedCornerShape(12.dp),
                     colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color(0xFFF5F5F5),
+                        containerColor = Color(0xFF1A1F2C), // nền tối ô OTP
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        cursorColor = Color(0xFF2A2AFC)
-                    )
+                        cursorColor = Color(0xFF2A2AFC),
+                        focusedTextColor = Color.White,
+                    ),
+                    placeholder = { Text("", color = Color.Gray) }
                 )
             }
         }
@@ -158,42 +134,13 @@ fun OtpVerificationScreen(
                 val credential = PhoneAuthProvider.getCredential(verificationId, otp)
                 auth.signInWithCredential(credential)
                     .addOnCompleteListener { task ->
+                        isLoading = false
                         if (task.isSuccessful) {
-                            val currentUser = auth.currentUser
-                            val uid = currentUser?.uid
-
-                            if (uid != null) {
-                                val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
-                                db.collection("Users").document(uid).get()
-                                    .addOnSuccessListener { document ->
-                                        isLoading = false
-                                        if (document != null && document.exists()) {
-                                            val name = document.getString("name")
-                                            if (!name.isNullOrBlank()) {
-                                                navController.navigate("main") {
-                                                    popUpTo("otp_verification") { inclusive = true }
-                                                }
-                                            } else {
-                                                navController.navigate("UserInfoScreen") {
-                                                    popUpTo("otp_verification") { inclusive = true }
-                                                }
-                                            }
-                                        } else {
-                                            navController.navigate("UserInfoScreen") {
-                                                popUpTo("otp_verification") { inclusive = true }
-                                            }
-                                        }
-                                    }
-                                    .addOnFailureListener {
-                                        isLoading = false
-                                        Toast.makeText(context, "Lỗi kiểm tra hồ sơ: ${it.message}", Toast.LENGTH_SHORT).show()
-                                    }
-                            } else {
-                                isLoading = false
-                                Toast.makeText(context, "Không thể lấy thông tin người dùng", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
+                            navController.navigate("main") {
+                                popUpTo("otp_verification") { inclusive = true }
                             }
                         } else {
-                            isLoading = false
                             Toast.makeText(context, "Sai mã OTP", Toast.LENGTH_SHORT).show()
                         }
                     }
@@ -220,21 +167,5 @@ fun OtpVerificationScreen(
         }
 
         Spacer(modifier = Modifier.height(40.dp))
-
-        if (navigateToMain) {
-            LaunchedEffect(Unit) {
-                kotlinx.coroutines.delay(2500)
-                isLoading = false
-                Toast.makeText(context, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
-                navController.navigate("UserInfoScreen") {
-                    popUpTo("otp_verification") { inclusive = true }
-                }
-            }
-        }
     }
 }
-
-
-
-
-

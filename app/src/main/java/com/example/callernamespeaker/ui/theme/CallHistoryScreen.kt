@@ -3,17 +3,7 @@ package com.example.callernamespeaker.ui.theme
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -41,6 +31,12 @@ import com.example.callernamespeaker.CallLogHelper
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 
+val bgDark = Color(0xFF0A0F1F)
+val cardDark = Color(0xFF101B2D)
+val textWhite = Color(0xFFFFFFFF)
+val textSecondary = Color(0xFFB0C4DE)
+val accentBlue = Color(0xFF64B5F6)
+
 @Composable
 fun CallHistoryScreen(
     navController: NavController,
@@ -48,15 +44,18 @@ fun CallHistoryScreen(
 ) {
     val callList = remember { CallLogHelper.getCallHistory(context) }
 
-    LazyColumn(
+    Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(bgDark)
             .padding(16.dp)
     ) {
-        items(callList) { call ->
-            CallHistoryItem(call = call) {
-                val index = callList.indexOf(call)
-                navController.navigate("call_detail/$index")
+        LazyColumn {
+            items(callList) { call ->
+                CallHistoryItem(call = call) {
+                    val index = callList.indexOf(call)
+                    navController.navigate("call_detail/$index")
+                }
             }
         }
     }
@@ -72,7 +71,9 @@ fun CallHistoryItem(
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable { onClick() },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        colors = CardDefaults.cardColors(containerColor = cardDark),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        shape = RoundedCornerShape(20.dp)
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
@@ -82,22 +83,34 @@ fun CallHistoryItem(
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
-                    .background(Color.White),
+                    .background(bgDark),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = "Avatar",
-                    tint = Color(0xFF2196F3),
+                    tint = accentBlue,
                     modifier = Modifier.size(28.dp)
                 )
             }
             Spacer(modifier = Modifier.width(16.dp))
 
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = call.number, style = MaterialTheme.typography.titleMedium)
-                Text(text = call.type, style = MaterialTheme.typography.bodyMedium)
-                Text(text = "${call.date} • ${call.duration}", style = MaterialTheme.typography.bodySmall)
+                Text(
+                    text = call.number,
+                    color = textWhite,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                )
+                Text(
+                    text = call.type,
+                    color = textSecondary,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Text(
+                    text = "${call.date} • ${call.duration} giây",
+                    color = textSecondary,
+                    style = MaterialTheme.typography.bodySmall
+                )
             }
 
             val icon = when (call.type) {
@@ -110,32 +123,14 @@ fun CallHistoryItem(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = if (call.type == "Bị nhỡ") Color.Red else Color.Black,
+                tint = when (call.type) {
+                    "Bị nhỡ" -> Color(0xFFFF6B6B)
+                    "Gọi đi" -> accentBlue
+                    "Gọi đến" -> Color(0xFF81C784)
+                    else -> accentBlue
+                },
                 modifier = Modifier.size(24.dp)
             )
         }
-    }
-}
-
-@Composable
-fun InfoRow(
-    label: String,
-    value: String
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Medium
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyLarge
-        )
     }
 }

@@ -2,6 +2,7 @@ package com.example.callernamespeaker.ui.screens
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -36,12 +37,15 @@ fun SearchScreen(
     var phoneInput by remember { mutableStateOf("") }
     var resultMessage by remember { mutableStateOf("") }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF0A0F1A))
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp)
-                .align(Alignment.TopCenter)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -56,7 +60,7 @@ fun SearchScreen(
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
-                    tint = Color.Black,
+                    tint = Color.White,
                     modifier = Modifier
                         .align(Alignment.CenterStart)
                         .clickable { navController.popBackStack() }
@@ -67,7 +71,7 @@ fun SearchScreen(
                     text = "Tra cứu số điện thoại",
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleMedium,
-                    color = Color.Black
+                    color = Color.White
                 )
             }
 
@@ -75,24 +79,26 @@ fun SearchScreen(
                 text = "Nhập số điện thoại bạn muốn kiểm tra để xem có nằm trong danh sách chặn hay không. " +
                         "Ví dụ: 090xxxxxxx hoặc +8490xxxxxxx.",
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.Gray,
+                color = Color(0xFF9CA3AF),
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            OutlinedTextField(
+            TextField(
                 value = phoneInput,
                 onValueChange = { phoneInput = it },
-                label = { Text("Số điện thoại") },
+                placeholder = { Text("Nhập số điện thoại...", color = Color(0xFF9CA3AF)) },
+                shape = RoundedCornerShape(30.dp),
                 singleLine = true,
-                shape = RoundedCornerShape(14.dp),
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color(0xFFF5F5F5),
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    cursorColor = MaterialTheme.colorScheme.primary
-                ),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = Color(0xFF111827),
+                    focusedIndicatorColor = Color(0xFF3B82F6),
+                    unfocusedIndicatorColor = Color(0xFF374151),
+                    cursorColor = Color(0xFF3B82F6),
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(60.dp)
@@ -127,13 +133,13 @@ fun SearchScreen(
             if (resultMessage.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(24.dp))
                 Card(
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFFF3F9FF)),
-                    shape = RoundedCornerShape(14.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFF111827)),
+                    shape = RoundedCornerShape(20.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
                         text = resultMessage,
-                        color = Color.Black,
+                        color = Color.White,
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(16.dp)
                     )

@@ -2,6 +2,7 @@ package com.example.callernamespeaker.ui.screens
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -16,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -39,12 +41,15 @@ fun BlockPhoneScreen(
     val cleanedPhone = blockPhoneInput.trim().replace("+84", "0").replace(" ", "")
     val isBlocked = prefs.getBoolean(cleanedPhone, false)
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF0A0F1A))
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp)
-                .align(Alignment.TopCenter)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -59,7 +64,7 @@ fun BlockPhoneScreen(
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
-                    tint = Color.Black,
+                    tint = Color.White,
                     modifier = Modifier
                         .align(Alignment.CenterStart)
                         .clickable { navController.popBackStack() }
@@ -70,7 +75,7 @@ fun BlockPhoneScreen(
                     text = "Chặn số điện thoại",
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleMedium,
-                    color = Color.Black
+                    color = Color.White
                 )
             }
 
@@ -78,27 +83,34 @@ fun BlockPhoneScreen(
                 text = "Nếu bạn muốn chặn các cuộc gọi hoặc tin nhắn từ số điện thoại nghi ngờ, hãy nhập số vào ô bên dưới. " +
                         "Sau khi chặn, hệ thống sẽ không hiển thị thông báo hoặc cảnh báo từ số này nữa.",
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.Gray,
+                color = Color(0xFF9CA3AF),
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            OutlinedTextField(
+            // TextField nhập số điện thoại
+            TextField(
                 value = blockPhoneInput,
                 onValueChange = { blockPhoneInput = it },
-                label = { Text("Số điện thoại cần chặn") },
+                placeholder = {
+                    Text(
+                        text = "Nhập số điện thoại...",
+                        color = Color(0xFF9CA3AF)
+                    )
+                },
+                textStyle = TextStyle(color = Color.White),
                 singleLine = true,
-                shape = RoundedCornerShape(14.dp),
+                shape = RoundedCornerShape(30.dp),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color(0xFFF5F5F5),
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    cursorColor = MaterialTheme.colorScheme.primary
-                ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(60.dp)
+                    .height(60.dp),
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = Color(0xFF111827),
+                    cursorColor = Color(0xFF3B82F6),
+                    focusedIndicatorColor = Color(0xFF3B82F6),
+                    unfocusedIndicatorColor = Color(0xFF374151)
+                )
             )
 
             if (isBlocked && cleanedPhone.isNotBlank()) {

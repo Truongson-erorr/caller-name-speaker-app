@@ -22,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -47,7 +48,7 @@ fun AllNewsScreen(
     navController: NavController,
     viewModel: NewsViewModel = viewModel()
 ) {
-    var expanded by remember { mutableStateOf(false) }
+    var expandedMenu by remember { mutableStateOf(false) }
     var sortDescending by remember { mutableStateOf(true) }
 
     val newsList by viewModel.newsPosts.collectAsState()
@@ -57,35 +58,35 @@ fun AllNewsScreen(
         newsList.sortedBy { it.date }
 
     Scaffold(
+        containerColor = Color(0xFF0A0F1A),
         topBar = {
             CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = Color(0xFF0A0F1A),
+                    titleContentColor = Color.White,
+                    navigationIconContentColor = Color.White,
+                    actionIconContentColor = Color(0xFF3B82F6) // xanh accent
+                ),
                 title = {
                     Text(
                         text = "Tin tức trong ngày",
-                        style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        color = Color.Black
+                        fontSize = 18.sp
                     )
                 },
                 navigationIcon = {
                     Icon(
-                        imageVector = Icons.Default.ArrowBack,
+                        imageVector = Icons.Default.ArrowBackIosNew,
                         contentDescription = "Back",
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .clickable { navController.popBackStack() }
-                            .padding(start = 8.dp)
+                        modifier = Modifier.clickable { navController.popBackStack() }
                     )
                 },
                 actions = {
-                    var expandedMenu by remember { mutableStateOf(false) }
-
                     Box {
                         Icon(
-                            imageVector = Icons.Default.FilterAlt,
-                            contentDescription = "Lọc",
-                            tint = Color.Black,
+                            imageVector = Icons.Default.FilterList,
+                            contentDescription = "Filter",
+                            tint = Color(0xFF3B82F6),
                             modifier = Modifier
                                 .padding(end = 8.dp)
                                 .clickable { expandedMenu = true }
@@ -120,7 +121,7 @@ fun AllNewsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             items(filteredNews) { post ->
                 NewsCardItem2(post) {
@@ -141,9 +142,11 @@ fun NewsCardItem2(
             .fillMaxWidth()
             .wrapContentHeight()
             .clickable { onClick() },
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(4.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        shape = RoundedCornerShape(14.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFF111827)
+        ),
+        elevation = CardDefaults.cardElevation(6.dp)
     ) {
         Column {
             Image(
@@ -151,27 +154,35 @@ fun NewsCardItem2(
                 contentDescription = post.title,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(140.dp),
+                    .height(150.dp),
                 contentScale = ContentScale.Crop
             )
+
             Column(modifier = Modifier.padding(12.dp)) {
+
                 Text(
                     text = post.title,
-                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.White,
                     fontWeight = FontWeight.SemiBold,
+                    fontSize = 16.sp,
                     maxLines = 2
                 )
-                Spacer(modifier = Modifier.height(4.dp))
+
+                Spacer(modifier = Modifier.height(6.dp))
+
                 Text(
                     text = post.shortDescription,
-                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color(0xFFB0C4DE),
+                    fontSize = 14.sp,
                     maxLines = 2
                 )
-                Spacer(modifier = Modifier.height(4.dp))
+
+                Spacer(modifier = Modifier.height(6.dp))
+
                 Text(
                     text = post.date,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = Color.Gray
+                    color = Color(0xFF6B7280),
+                    fontSize = 12.sp
                 )
             }
         }

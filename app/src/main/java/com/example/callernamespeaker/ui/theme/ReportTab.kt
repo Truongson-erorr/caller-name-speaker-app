@@ -47,9 +47,11 @@ fun ReportTab(
     LaunchedEffect(Unit) {
         viewModel.loadBlockedNumbers()
     }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color(0xFF0A0F1F))
             .padding(horizontal = 16.dp)
     ) {
         Row(
@@ -65,13 +67,13 @@ fun ReportTab(
                 style = MaterialTheme.typography.headlineSmall.copy(
                     fontWeight = FontWeight.SemiBold
                 ),
-                color = MaterialTheme.colorScheme.onSurface
+                color = Color.White
             )
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Badge(
-                    containerColor = Color(0xFFD0F5D4),
-                    contentColor = Color(0xFF2E7D32)
+                    containerColor = Color(0xFF2E7D32), // xanh lá đậm
+                    contentColor = Color.White
                 ) {
                     Text(text = "Tổng: ${list.size} số")
                 }
@@ -86,9 +88,9 @@ fun ReportTab(
                     }
                 }) {
                     Icon(
-                        imageVector = Icons.Default.LocalPrintshop,
+                        imageVector = Icons.Default.Share,
                         contentDescription = "Chia sẻ danh sách",
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = Color.White
                     )
                 }
             }
@@ -108,24 +110,24 @@ fun ReportTab(
                     Icon(
                         imageVector = Icons.Default.Block,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = Color.Gray,
                         modifier = Modifier.size(48.dp)
                     )
                     Text(
                         "Chưa có số nào bị chặn",
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = Color.Gray
                     )
                     Text(
                         "Số điện thoại bị chặn sẽ xuất hiện ở đây",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.outline
+                        color = Color.LightGray
                     )
                 }
             }
         } else {
             LazyColumn(
-                modifier = Modifier.fillMaxSize() .background(Color.White),
+                modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(list.size) { index ->
@@ -135,7 +137,7 @@ fun ReportTab(
                             .fillMaxWidth()
                             .animateItemPlacement(),
                         colors = CardDefaults.elevatedCardColors(
-                            containerColor = Color.White
+                            containerColor = Color(0xFF1A2030) // card tối hơn nền
                         )
                     ) {
                         Row(
@@ -154,25 +156,25 @@ fun ReportTab(
                                     style = MaterialTheme.typography.bodyMedium.copy(
                                         fontWeight = FontWeight.Medium
                                     ),
-                                    color = MaterialTheme.colorScheme.onSurface
+                                    color = Color.White
                                 )
 
                                 if (item.type.isNotBlank()) {
                                     Text(
                                         text = item.type,
                                         style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        color = Color.LightGray
                                     )
                                 }
 
                                 Text(
                                     text = "Đã chặn",
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.error,
+                                    color = Color(0xFFFF6B6B), // đỏ nổi bật
                                     modifier = Modifier
                                         .padding(top = 4.dp)
                                         .background(
-                                            color = MaterialTheme.colorScheme.error.copy(alpha = 0.1f),
+                                            color = Color(0xFFFF6B6B).copy(alpha = 0.1f),
                                             shape = MaterialTheme.shapes.extraSmall
                                         )
                                         .padding(horizontal = 6.dp, vertical = 2.dp)
@@ -186,7 +188,7 @@ fun ReportTab(
                                 Icon(
                                     imageVector = Icons.Default.Block,
                                     contentDescription = "Bỏ chặn",
-                                    tint = MaterialTheme.colorScheme.error,
+                                    tint = Color(0xFFFF6B6B),
                                     modifier = Modifier.size(20.dp)
                                 )
                             }
@@ -195,11 +197,12 @@ fun ReportTab(
                 }
             }
         }
+
         showUnblockDialog?.let { number ->
             AlertDialog(
                 onDismissRequest = { showUnblockDialog = null },
-                title = { Text("Xác nhận") },
-                text = { Text("Bạn có chắc muốn bỏ chặn số $number?") },
+                title = { Text("Xác nhận", color = Color.White) },
+                text = { Text("Bạn có chắc muốn bỏ chặn số $number?", color = Color.LightGray) },
                 confirmButton = {
                     TextButton(
                         onClick = {
@@ -214,16 +217,17 @@ fun ReportTab(
                             }
                         }
                     ) {
-                        Text("Đồng ý", color = MaterialTheme.colorScheme.primary)
+                        Text("Đồng ý", color = Color(0xFFFFD700))
                     }
                 },
                 dismissButton = {
                     TextButton(
                         onClick = { showUnblockDialog = null }
                     ) {
-                        Text("Hủy", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text("Hủy", color = Color.LightGray)
                     }
-                }
+                },
+                containerColor = Color(0xFF0A0F1F)
             )
         }
     }
