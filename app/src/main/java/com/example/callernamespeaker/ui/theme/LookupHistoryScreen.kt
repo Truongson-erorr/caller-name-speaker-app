@@ -34,7 +34,7 @@ fun LookupHistoryScreen(
 
     Column(
         modifier = Modifier
-            .background(Color(0xFF0A0F1F)) // xanh đen nền
+            .background(Color(0xFF0A0F1F))
             .padding(16.dp)
             .fillMaxSize()
     ) {
@@ -88,15 +88,13 @@ fun LookupHistoryItem(item: PhoneLookup) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = Color(0xFF64B5F6), // xanh accent
+                tint = Color(0xFF64B5F6),
                 modifier = Modifier.size(26.dp)
             )
-
             Spacer(modifier = Modifier.width(14.dp))
 
             Column(modifier = Modifier.weight(1f)) {
 
-                // Số điện thoại
                 Text(
                     text = item.number,
                     color = Color.White,
@@ -104,7 +102,6 @@ fun LookupHistoryItem(item: PhoneLookup) {
                     style = MaterialTheme.typography.bodyMedium
                 )
 
-                // Tag loại
                 Text(
                     text = item.type,
                     color = when {
@@ -129,7 +126,6 @@ fun LookupHistoryItem(item: PhoneLookup) {
                 )
             }
 
-            // Nút chặn
             if (!isActuallyBlocked) {
                 Button(
                     onClick = {

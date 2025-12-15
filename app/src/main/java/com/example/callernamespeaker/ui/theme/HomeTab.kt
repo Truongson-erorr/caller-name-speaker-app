@@ -68,7 +68,6 @@ fun HomeTab(navController: NavController) {
             .verticalScroll(scrollState)
     ) {
 
-        // ==== SWITCH SETTINGS =====
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -209,7 +208,7 @@ fun ServiceButton(
             .clip(RoundedCornerShape(14.dp))
             .background(Color(0xFF101B2D))
             .clickable(onClick = onClick)
-            .padding(vertical = 10.dp),
+            .padding(vertical = 6.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(

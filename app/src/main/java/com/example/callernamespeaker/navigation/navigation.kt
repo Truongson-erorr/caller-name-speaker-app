@@ -31,6 +31,7 @@ import com.example.callernamespeaker.ui.theme.AllNewsScreen
 import com.example.callernamespeaker.ui.theme.CallDetailScreen
 import com.example.callernamespeaker.ui.theme.EmergencyTab
 import com.example.callernamespeaker.ui.theme.ForgotPasswordScreen
+import com.example.callernamespeaker.ui.theme.HomeTab
 import com.example.callernamespeaker.ui.theme.MemberDetailScreen
 import com.example.callernamespeaker.ui.theme.NewsDetailScreen
 import com.example.callernamespeaker.ui.theme.OtpVerificationScreen
@@ -52,15 +53,18 @@ fun AppNavGraph(
 ) {
     AnimatedNavHost(
         navController = navController,
-        startDestination = "IntroSplashScreen",
+        startDestination = "HomeTab",
         modifier = Modifier.background(Color(0xFF0A0F1A)),
         enterTransition = { slideInHorizontally(initialOffsetX = { 1000 }) + fadeIn() },
         exitTransition = { slideOutHorizontally(targetOffsetX = { -1000 }) + fadeOut() },
         popEnterTransition = { slideInHorizontally(initialOffsetX = { -1000 }) + fadeIn() },
         popExitTransition = { slideOutHorizontally(targetOffsetX = { 1000 }) + fadeOut() }
     ) {
-        composable("LoginScreen") {
+        composable("main") {
             LoginScreen(navController)
+        }
+        composable("HomeTab") {
+            HomeTab(navController)
         }
         composable("RegisterScreen") {
             RegisterScreen(navController)
@@ -82,7 +86,7 @@ fun AppNavGraph(
             val phoneNumber = backStackEntry.arguments?.getString("phoneNumber")!!
             OtpVerificationScreen(navController, verificationId, phoneNumber)
         }
-        composable("main") {
+        composable("MainScreen") {
             MainScreen(navController)
         }
         composable("WebsiteScreen") {

@@ -34,7 +34,7 @@ fun MainScreen(navController: NavController) {
     Scaffold(
         bottomBar = {
             NavigationBar(
-                containerColor = Color(0xFF070B18),
+                containerColor = Color(0xFF1A2030),
                 contentColor = selectedColor
             ) {
                 @Composable
