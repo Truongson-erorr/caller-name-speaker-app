@@ -53,7 +53,7 @@ fun AppNavGraph(
 ) {
     AnimatedNavHost(
         navController = navController,
-        startDestination = "HomeTab",
+        startDestination = "MainScreen",
         modifier = Modifier.background(Color(0xFF0A0F1A)),
         enterTransition = { slideInHorizontally(initialOffsetX = { 1000 }) + fadeIn() },
         exitTransition = { slideOutHorizontally(targetOffsetX = { -1000 }) + fadeOut() },

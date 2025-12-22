@@ -43,21 +43,10 @@ fun HomeTab(navController: NavController) {
 
     var enabled by remember { mutableStateOf(prefs.getBoolean("tts_enabled", true)) }
     var smsTtsEnabled by remember { mutableStateOf(prefs.getBoolean("sms_tts_enabled", true)) }
-
-    val currentUser = FirebaseAuth.getInstance().currentUser
-    val uid = currentUser?.uid
-
     val scrollState = rememberScrollState()
 
-    LaunchedEffect(uid) {
-        if (uid == null) {
-            Toast.makeText(context, "Chưa đăng nhập", Toast.LENGTH_SHORT).show()
-            navController.navigate("LoginScreen") {
-                popUpTo("main") { inclusive = true }
-            }
-        } else {
-            viewModel.fetchHistory()
-        }
+    LaunchedEffect(Unit) {
+        viewModel.fetchHistory()
     }
 
     Column(
