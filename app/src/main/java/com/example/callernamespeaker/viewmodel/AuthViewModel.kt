@@ -17,9 +17,6 @@ class AuthViewModel : ViewModel() {
     private val auth = FirebaseAuth.getInstance()
     private val firestore = FirebaseFirestore.getInstance()
 
-    /**
-     * Gửi OTP về số điện thoại người dùng
-     */
     fun sendOtp(
         activity: Activity,
         phoneNumber: String,
@@ -55,9 +52,6 @@ class AuthViewModel : ViewModel() {
         PhoneAuthProvider.verifyPhoneNumber(options)
     }
 
-    /**
-     * Xác thực OTP, tạo user (provider = phone) và lưu Firestore
-     */
     fun verifyOtp(
         context: Context,
         name: String?,

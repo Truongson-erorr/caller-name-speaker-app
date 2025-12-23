@@ -2,13 +2,11 @@ package com.example.callernamespeaker.ui.theme
 
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -17,13 +15,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,10 +38,21 @@ fun HomeTab(navController: NavController) {
 
     var enabled by remember { mutableStateOf(prefs.getBoolean("tts_enabled", true)) }
     var smsTtsEnabled by remember { mutableStateOf(prefs.getBoolean("sms_tts_enabled", true)) }
+
+    val currentUser = FirebaseAuth.getInstance().currentUser
+    val uid = currentUser?.uid
+
     val scrollState = rememberScrollState()
 
-    LaunchedEffect(Unit) {
-        viewModel.fetchHistory()
+    LaunchedEffect(uid) {
+        if (uid == null) {
+            Toast.makeText(context, "Chưa đăng nhập", Toast.LENGTH_SHORT).show()
+            navController.navigate("LoginScreen") {
+                popUpTo(0) { inclusive = true }
+            }
+        } else {
+            viewModel.fetchHistory()
+        }
     }
 
     Column(
@@ -57,6 +63,7 @@ fun HomeTab(navController: NavController) {
             .verticalScroll(scrollState)
     ) {
 
+        // ===== Switch đọc tên người gọi =====
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -83,6 +90,7 @@ fun HomeTab(navController: NavController) {
             )
         }
 
+        // ===== Switch đọc cảnh báo SMS =====
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -109,6 +117,7 @@ fun HomeTab(navController: NavController) {
             )
         }
 
+        // ===== Header =====
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -129,9 +138,13 @@ fun HomeTab(navController: NavController) {
                 tint = Color(0xFF64B5F6),
                 modifier = Modifier
                     .size(30.dp)
-                    .clickable { navController.navigate("NotificationScreen") }
+                    .clickable {
+                        navController.navigate("NotificationScreen")
+                    }
             )
         }
+
+        // ===== Banner =====
         BannerCarousel()
 
         Text(
@@ -142,6 +155,7 @@ fun HomeTab(navController: NavController) {
             modifier = Modifier.padding(top = 14.dp, bottom = 8.dp)
         )
 
+        // ===== Hàng 1 =====
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -157,8 +171,10 @@ fun HomeTab(navController: NavController) {
                 navController.navigate("EmergencyTab")
             }
         }
+
         Spacer(modifier = Modifier.height(8.dp))
 
+        // ===== Hàng 2 =====
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -176,6 +192,7 @@ fun HomeTab(navController: NavController) {
                 navController.navigate("ChatScreen")
             }
         }
+
         Spacer(modifier = Modifier.height(14.dp))
         NewsSection(navController)
 
@@ -216,4 +233,3 @@ fun ServiceButton(
         )
     }
 }
-

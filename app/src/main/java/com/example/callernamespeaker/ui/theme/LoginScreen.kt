@@ -182,7 +182,9 @@ fun LoginScreen(navController: NavController) {
                                     isLoading = false
                                     if (task.isSuccessful) {
                                         Toast.makeText(context, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
-                                        navController.navigate("main")
+                                        navController.navigate("MainScreen") {
+                                            popUpTo("LoginScreen") { inclusive = true }
+                                        }
                                     }
                                 }
                         }

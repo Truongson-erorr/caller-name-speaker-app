@@ -35,6 +35,7 @@ import com.example.callernamespeaker.ui.theme.HomeTab
 import com.example.callernamespeaker.ui.theme.MemberDetailScreen
 import com.example.callernamespeaker.ui.theme.NewsDetailScreen
 import com.example.callernamespeaker.ui.theme.OtpVerificationScreen
+import com.example.callernamespeaker.ui.theme.ProfileScreen
 import com.example.callernamespeaker.ui.theme.ReportScreen
 import com.example.callernamespeaker.ui.theme.UserInfoScreen
 import com.example.callernamespeaker.ui.theme.WebsiteScreen
@@ -51,30 +52,47 @@ fun AppNavGraph(
     navController: NavHostController,
     callList: List<CallEntry>
 ) {
+    val user = FirebaseAuth.getInstance().currentUser
+    val startDestination = if (user == null) "LoginScreen" else "MainScreen"
+
     AnimatedNavHost(
         navController = navController,
-        startDestination = "MainScreen",
+        startDestination = startDestination,
         modifier = Modifier.background(Color(0xFF0A0F1A)),
         enterTransition = { slideInHorizontally(initialOffsetX = { 1000 }) + fadeIn() },
         exitTransition = { slideOutHorizontally(targetOffsetX = { -1000 }) + fadeOut() },
         popEnterTransition = { slideInHorizontally(initialOffsetX = { -1000 }) + fadeIn() },
         popExitTransition = { slideOutHorizontally(targetOffsetX = { 1000 }) + fadeOut() }
     ) {
-        composable("main") {
+
+        composable("LoginScreen") {
             LoginScreen(navController)
         }
-        composable("HomeTab") {
-            HomeTab(navController)
-        }
+
         composable("RegisterScreen") {
             RegisterScreen(navController)
         }
+
+        composable("MainScreen") {
+            MainScreen(navController)
+        }
+
+        composable("HomeTab") {
+            HomeTab(navController)
+        }
+
+        composable("ProfileScreen") {
+            ProfileScreen(navController)
+        }
+
         composable("EmergencyTab") {
             EmergencyTab(navController)
         }
+
         composable("UserInfoScreen") {
-        UserInfoScreen(navController)
+            UserInfoScreen(navController)
         }
+
         composable(
             "otp_verification/{verificationId}/{phoneNumber}",
             arguments = listOf(
@@ -86,12 +104,11 @@ fun AppNavGraph(
             val phoneNumber = backStackEntry.arguments?.getString("phoneNumber")!!
             OtpVerificationScreen(navController, verificationId, phoneNumber)
         }
-        composable("MainScreen") {
-            MainScreen(navController)
-        }
+
         composable("WebsiteScreen") {
             WebsiteScreen(navController)
         }
+
         composable(
             route = "news_detail/{id}",
             arguments = listOf(navArgument("id") { type = NavType.StringType })
@@ -99,9 +116,11 @@ fun AppNavGraph(
             val id = backStackEntry.arguments?.getString("id") ?: ""
             NewsDetailScreen(postId = id, navController)
         }
+
         composable("all_news") {
             AllNewsScreen(navController)
         }
+
         composable(
             route = "call_detail/{index}",
             arguments = listOf(navArgument("index") { type = NavType.IntType })
@@ -112,12 +131,15 @@ fun AppNavGraph(
                 CallDetailScreen(navController, call)
             }
         }
+
         composable("ForgotPasswordScreen") {
             ForgotPasswordScreen(navController)
         }
+
         composable("ChatScreen") {
             ChatScreen(navController)
         }
+
         composable("report") {
             val reportViewModel: ReportViewModel = viewModel()
             val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
@@ -130,9 +152,11 @@ fun AppNavGraph(
                 notificationViewModel = notificationViewModel
             )
         }
+
         composable("SearchScreen") {
             SearchScreen(navController)
         }
+
         composable("block_phone") {
             val blacklistViewModel: BlacklistViewModel = viewModel()
             val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
@@ -145,19 +169,24 @@ fun AppNavGraph(
                 notificationViewModel = notificationViewModel
             )
         }
+
         composable("memberDetail/{memberId}") { backStackEntry ->
             val memberId = backStackEntry.arguments?.getString("memberId") ?: ""
             MemberDetailScreen(navController, memberId)
         }
+
         composable("SmsAnalysisScreen") {
             SmsAnalysisScreen(navController)
         }
+
         composable("SmsIntroScreen") {
             SmsIntroScreen(navController)
         }
+
         composable("IntroSplashScreen") {
             IntroSplashScreen(navController)
         }
+
         composable("NotificationScreen") {
             NotificationScreen(navController)
         }
