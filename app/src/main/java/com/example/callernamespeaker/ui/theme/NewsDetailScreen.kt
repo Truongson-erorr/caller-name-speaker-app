@@ -5,8 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
@@ -18,7 +18,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -28,9 +27,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.*
-@Composable
-fun NewsDetailScreen(postId: String, navController: NavController) {
 
+@Composable
+fun NewsDetailScreen(
+    postId: String,
+    navController: NavController
+) {
     val firestore = FirebaseFirestore.getInstance()
     var post by remember { mutableStateOf<NewsPost?>(null) }
 
@@ -42,9 +44,8 @@ fun NewsDetailScreen(postId: String, navController: NavController) {
             firestore.collection("Users").document(it)
                 .get()
                 .addOnSuccessListener { doc ->
-                    val name = doc.getString("name")
-                    if (!name.isNullOrBlank()) {
-                        currentUserName = name
+                    doc.getString("name")?.takeIf { it.isNotBlank() }?.let {
+                        currentUserName = it
                     }
                 }
         }
@@ -54,8 +55,7 @@ fun NewsDetailScreen(postId: String, navController: NavController) {
         firestore.collection("Posts").document(postId)
             .get()
             .addOnSuccessListener { doc ->
-                val timestamp = doc.getTimestamp("date")
-                val dateStr = timestamp?.toDate()?.let {
+                val dateStr = doc.getTimestamp("date")?.toDate()?.let {
                     SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(it)
                 } ?: ""
 
@@ -86,20 +86,18 @@ fun NewsDetailScreen(postId: String, navController: NavController) {
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFF0A0F1A))
-            .padding(horizontal = 16.dp)
     ) {
 
-        Spacer(modifier = Modifier.height(20.dp))
-
+        // ===== HEADER =====
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp),
+                .padding(16.dp),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = Icons.Default.ArrowBack,
-                contentDescription = "Quay lại",
+                contentDescription = "Back",
                 tint = Color.White,
                 modifier = Modifier
                     .align(Alignment.CenterStart)
@@ -109,17 +107,18 @@ fun NewsDetailScreen(postId: String, navController: NavController) {
 
             Text(
                 text = "Chi tiết bài viết",
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.titleMedium,
+                color = Color.White,
                 fontSize = 18.sp,
-                color = Color.White
+                fontWeight = FontWeight.Bold
             )
         }
 
+        // ===== CONTENT =====
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
+                .padding(16.dp) // ⭐ CHÌA KHÓA Ở ĐÂY
         ) {
 
             Text(
@@ -127,41 +126,48 @@ fun NewsDetailScreen(postId: String, navController: NavController) {
                 color = Color.White,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
-                lineHeight = 26.sp,
-                modifier = Modifier.padding(bottom = 8.dp)
+                lineHeight = 26.sp
             )
+
+            Spacer(Modifier.height(6.dp))
 
             Text(
                 text = post!!.date,
                 color = Color(0xFF9CA3AF),
-                fontSize = 13.sp,
-                modifier = Modifier.padding(bottom = 14.dp)
+                fontSize = 13.sp
             )
+
+            Spacer(Modifier.height(14.dp))
 
             Image(
                 painter = rememberAsyncImagePainter(post!!.imageUrl),
                 contentDescription = post!!.title,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(210.dp)
-                    .clip(RoundedCornerShape(14.dp)),
+                    .height(220.dp)
+                    .clip(RoundedCornerShape(16.dp)),
                 contentScale = ContentScale.Crop
             )
-            Spacer(modifier = Modifier.height(16.dp))
+
+            Spacer(Modifier.height(18.dp))
 
             Text(
                 text = post!!.description,
-                style = MaterialTheme.typography.bodyLarge,
                 color = Color(0xFFE5E7EB),
+                fontSize = 15.sp,
                 lineHeight = 22.sp,
                 textAlign = TextAlign.Justify
             )
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(Modifier.height(28.dp))
+            Divider(color = Color(0xFF1F2937))
+            Spacer(Modifier.height(20.dp))
 
             CommentSection(
                 postId = post!!.id,
                 userName = currentUserName
             )
+
+            Spacer(Modifier.height(40.dp))
         }
     }
 }

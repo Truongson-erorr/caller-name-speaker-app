@@ -117,7 +117,6 @@ fun CallDetailScreen(
                             )
                         }
                     }
-
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
@@ -127,7 +126,6 @@ fun CallDetailScreen(
                             color = textLight
                         )
                     )
-
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Row(

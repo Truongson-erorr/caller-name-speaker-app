@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -71,7 +71,7 @@ fun NewsSection(navController: NavController) {
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(190.dp)
+                .height(240.dp)
         ) {
             items(newsList) { post ->
                 NewsCardItem(post) {
@@ -85,16 +85,12 @@ fun NewsSection(navController: NavController) {
 @Composable
 fun NewsCardItem(post: NewsPost, onClick: () -> Unit = {}) {
 
-    val cardColor = Color(0xFF111829)
-    val textPrimary = Color.White
-    val textSecondary = Color(0xFFB7C8FF)
-
     Card(
         modifier = Modifier
-            .width(230.dp)
+            .width(240.dp)
             .clickable { onClick() },
-        shape = RoundedCornerShape(14.dp),
-        colors = CardDefaults.cardColors(containerColor = cardColor),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF111829)),
         elevation = CardDefaults.cardElevation(6.dp)
     ) {
         Column {
@@ -103,33 +99,38 @@ fun NewsCardItem(post: NewsPost, onClick: () -> Unit = {}) {
                 contentDescription = post.title,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(90.dp),
+                    .height(110.dp),
                 contentScale = ContentScale.Crop
             )
 
-            Column(modifier = Modifier.padding(10.dp)) {
+            Column(modifier = Modifier.padding(12.dp)) {
                 Text(
                     text = post.title,
                     fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
                     maxLines = 2,
-                    color = textPrimary,
+                    overflow = TextOverflow.Ellipsis,
+                    color = Color.White,
                     lineHeight = 18.sp
                 )
-                Spacer(Modifier.height(4.dp))
+                Spacer(Modifier.height(6.dp))
+
                 Text(
-                    text = post.shortDescription,
+                    text = post.description,
+                    fontSize = 12.sp,
                     maxLines = 2,
-                    color = textSecondary,
+                    overflow = TextOverflow.Ellipsis,
+                    color = Color(0xFFB7C8FF),
                     lineHeight = 16.sp
                 )
-                Spacer(Modifier.height(6.dp))
+                Spacer(Modifier.height(8.dp))
+
                 Text(
                     text = post.date,
                     color = Color(0xFF7A8DA6),
-                    style = MaterialTheme.typography.labelSmall
+                    fontSize = 11.sp
                 )
             }
         }
     }
 }
-

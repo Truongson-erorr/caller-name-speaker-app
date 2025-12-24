@@ -32,13 +32,6 @@ fun HomeTab(navController: NavController) {
     val viewModel: PhoneLookupViewModel = viewModel()
     val context = LocalContext.current
 
-    val prefs = remember {
-        context.getSharedPreferences("settings", Context.MODE_PRIVATE)
-    }
-
-    var enabled by remember { mutableStateOf(prefs.getBoolean("tts_enabled", true)) }
-    var smsTtsEnabled by remember { mutableStateOf(prefs.getBoolean("sms_tts_enabled", true)) }
-
     val currentUser = FirebaseAuth.getInstance().currentUser
     val uid = currentUser?.uid
 
@@ -62,62 +55,6 @@ fun HomeTab(navController: NavController) {
             .padding(10.dp)
             .verticalScroll(scrollState)
     ) {
-
-        // ===== Switch đọc tên người gọi =====
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 6.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Đọc tên người gọi: ${if (enabled) "Bật" else "Tắt"}",
-                color = Color.White,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium
-            )
-            Switch(
-                checked = enabled,
-                onCheckedChange = {
-                    enabled = it
-                    prefs.edit().putBoolean("tts_enabled", it).apply()
-                },
-                colors = SwitchDefaults.colors(
-                    checkedThumbColor = Color(0xFF64B5F6),
-                    checkedTrackColor = Color(0x3348A0E0)
-                )
-            )
-        }
-
-        // ===== Switch đọc cảnh báo SMS =====
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 6.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Đọc cảnh báo tin nhắn chứa link: ${if (smsTtsEnabled) "Bật" else "Tắt"}",
-                color = Color.White,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium
-            )
-            Switch(
-                checked = smsTtsEnabled,
-                onCheckedChange = {
-                    smsTtsEnabled = it
-                    prefs.edit().putBoolean("sms_tts_enabled", it).apply()
-                },
-                colors = SwitchDefaults.colors(
-                    checkedThumbColor = Color(0xFF64B5F6),
-                    checkedTrackColor = Color(0x3348A0E0)
-                )
-            )
-        }
-
-        // ===== Header =====
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -144,9 +81,7 @@ fun HomeTab(navController: NavController) {
             )
         }
 
-        // ===== Banner =====
         BannerCarousel()
-
         Text(
             "Tra cứu nhanh",
             color = Color.White,
@@ -155,7 +90,6 @@ fun HomeTab(navController: NavController) {
             modifier = Modifier.padding(top = 14.dp, bottom = 8.dp)
         )
 
-        // ===== Hàng 1 =====
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -171,10 +105,8 @@ fun HomeTab(navController: NavController) {
                 navController.navigate("EmergencyTab")
             }
         }
-
         Spacer(modifier = Modifier.height(8.dp))
 
-        // ===== Hàng 2 =====
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -192,7 +124,6 @@ fun HomeTab(navController: NavController) {
                 navController.navigate("ChatScreen")
             }
         }
-
         Spacer(modifier = Modifier.height(14.dp))
         NewsSection(navController)
 

@@ -167,16 +167,14 @@ fun NewsCardItem2(
                     fontSize = 16.sp,
                     maxLines = 2
                 )
-
                 Spacer(modifier = Modifier.height(6.dp))
 
                 Text(
-                    text = post.shortDescription,
-                    color = Color(0xFFB0C4DE),
-                    fontSize = 14.sp,
+                    text = post.description,
+                    color = Color.LightGray,
+                    fontSize = 13.sp,
                     maxLines = 2
                 )
-
                 Spacer(modifier = Modifier.height(6.dp))
 
                 Text(
