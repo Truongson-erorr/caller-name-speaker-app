@@ -33,7 +33,6 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 var callList by remember { mutableStateOf<List<CallEntry>>(emptyList()) }
 
-                // ⚡ Đăng ký xin quyền
                 val requestPermissions = rememberLauncherForActivityResult(
                     ActivityResultContracts.RequestMultiplePermissions()
                 ) { permissions ->

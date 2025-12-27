@@ -47,18 +47,54 @@ class CallTTSService : Service() {
             startForeground(1, notification)
         }
 
-        val callerName = intent?.getStringExtra("text_to_speak") ?: return START_NOT_STICKY
+        val callerName =
+            intent?.getStringExtra("text_to_speak") ?: return START_NOT_STICKY
+
+        val prefs = getSharedPreferences("call_tts_prefs", Context.MODE_PRIVATE)
+
+        val keyCount = "call_count_$callerName"
+        val keyTime = "last_call_time_$callerName"
+
+        val now = System.currentTimeMillis()
+        val lastTime = prefs.getLong(keyTime, 0L)
+
+        val callCount =
+            if (now - lastTime > 24 * 60 * 60 * 1000) {
+                1
+            } else {
+                prefs.getInt(keyCount, 0) + 1
+            }
+
+        prefs.edit()
+            .putInt(keyCount, callCount)
+            .putLong(keyTime, now)
+            .apply()
+
+        val speakText = when (callCount) {
+            1 -> "Cuộc gọi đến từ $callerName"
+            2 -> "Cuộc gọi lần thứ hai từ $callerName"
+            else -> "Cuộc gọi nhiều lần từ $callerName, hãy cẩn thận"
+        }
 
         tts = TextToSpeech(this) { status ->
             if (status == TextToSpeech.SUCCESS) {
                 tts?.language = Locale.getDefault()
 
                 Handler(Looper.getMainLooper()).post {
-                    Toast.makeText(this, "Cuộc gọi đến từ: $callerName", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        this,
+                        "[$callCount lần] $speakText",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
 
                 Handler(Looper.getMainLooper()).postDelayed({
-                    tts?.speak("Cuộc gọi đến từ $callerName", TextToSpeech.QUEUE_FLUSH, null, null)
+                    tts?.speak(
+                        speakText,
+                        TextToSpeech.QUEUE_FLUSH,
+                        null,
+                        null
+                    )
                 }, 1000)
             }
         }

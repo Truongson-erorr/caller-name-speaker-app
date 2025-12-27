@@ -93,8 +93,9 @@ fun SearchScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                 colors = TextFieldDefaults.textFieldColors(
                     containerColor = Color(0xFF111827),
-                    focusedIndicatorColor = Color(0xFF3B82F6),
-                    unfocusedIndicatorColor = Color(0xFF374151),
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
                     cursorColor = Color(0xFF3B82F6),
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White,

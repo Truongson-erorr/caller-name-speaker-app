@@ -20,17 +20,14 @@ object CallLogHelper {
     fun getCallHistory(context: Context?): List<CallEntry> {
         val callList = mutableListOf<CallEntry>()
 
-        // 1️⃣ Check null
         if (context == null) return callList
 
-        // 2️⃣ Kiểm tra quyền trước khi đọc CallLog
         val hasPermission = ContextCompat.checkSelfPermission(
             context,
             Manifest.permission.READ_CALL_LOG
         ) == PackageManager.PERMISSION_GRANTED
 
         if (!hasPermission) {
-            // Nếu chưa có quyền thì trả về danh sách trống
             return callList
         }
 
@@ -65,9 +62,9 @@ object CallLogHelper {
                 }
             }
         } catch (e: SecurityException) {
-            e.printStackTrace() // Thiếu quyền
+            e.printStackTrace()
         } catch (e: Exception) {
-            e.printStackTrace() // Lỗi khác
+            e.printStackTrace()
         }
 
         return callList

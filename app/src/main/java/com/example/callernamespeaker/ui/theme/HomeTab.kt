@@ -155,6 +155,7 @@ fun ServiceButton(
             modifier = Modifier.size(22.dp)
         )
         Spacer(modifier = Modifier.height(6.dp))
+
         Text(
             text = text,
             color = Color.White,
