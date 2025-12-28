@@ -53,7 +53,7 @@ fun BlockPhoneScreen(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(35.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             Box(
                 modifier = Modifier
@@ -88,7 +88,6 @@ fun BlockPhoneScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            // TextField nhập số điện thoại
             TextField(
                 value = blockPhoneInput,
                 onValueChange = { blockPhoneInput = it },
@@ -107,9 +106,9 @@ fun BlockPhoneScreen(
                     .height(60.dp),
                 colors = TextFieldDefaults.textFieldColors(
                     containerColor = Color(0xFF111827),
-                    cursorColor = Color(0xFF3B82F6),
-                    focusedIndicatorColor = Color(0xFF3B82F6),
-                    unfocusedIndicatorColor = Color(0xFF374151)
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
                 )
             )
 

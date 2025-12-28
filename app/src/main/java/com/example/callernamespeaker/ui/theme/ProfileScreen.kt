@@ -137,8 +137,15 @@ fun ProfileScreen(navController: NavController) {
             fontSize = 15.sp,
             fontWeight = FontWeight.SemiBold
         )
-
         Spacer(modifier = Modifier.height(6.dp))
+
+        SettingSwitch(
+            title = "Chế độ dành cho người lớn tuổi",
+            enabled = autoBlockScam
+        ) {
+            autoBlockScam = it
+            prefs.edit().putBoolean("auto_block_scam", it).apply()
+        }
 
         SettingSwitch(
             title = "Tự động chặn số lừa đảo",

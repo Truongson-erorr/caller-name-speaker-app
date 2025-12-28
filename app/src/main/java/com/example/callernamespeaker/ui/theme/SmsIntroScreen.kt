@@ -20,7 +20,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 @Composable
-fun SmsIntroScreen(navController: NavController) {
+fun SmsIntroScreen(
+    navController: NavController
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()

@@ -14,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -29,12 +28,13 @@ fun SmsAnalysisScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     val result by viewModel.result.collectAsState()
     val riskLevel by viewModel.riskLevel.collectAsState()
+
     var smsContent by remember { mutableStateOf("") }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF0A0F1A)) // nền tối
+            .background(Color(0xFF0A0F1A))
     ) {
         Column(
             modifier = Modifier
@@ -43,7 +43,7 @@ fun SmsAnalysisScreen(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(35.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             Box(
                 modifier = Modifier
@@ -58,9 +58,9 @@ fun SmsAnalysisScreen(
                     modifier = Modifier
                         .align(Alignment.CenterStart)
                         .clickable { navController.popBackStack() }
-                        .padding(start = 8.dp)
                         .size(26.dp)
                 )
+
                 Text(
                     text = "Phân tích tin nhắn SMS",
                     fontWeight = FontWeight.Bold,
@@ -70,19 +70,18 @@ fun SmsAnalysisScreen(
             }
 
             Text(
-                text = "Hãy dán nội dung tin nhắn SMS bạn muốn kiểm tra vào ô bên dưới, sau đó nhấn nút \"Phân tích\" để hệ thống AI " +
-                        "đánh giá mức độ an toàn. Công cụ sẽ giúp bạn phát hiện các tin nhắn lừa đảo, giả mạo ngân hàng hoặc chứa đường dẫn độc hại. " +
-                        "Ví dụ: bạn có thể thử nhập tin nhắn có nội dung yêu cầu cung cấp mã OTP hoặc truy cập liên kết lạ để kiểm tra độ rủi ro.",
+                text = "Hãy dán nội dung tin nhắn SMS bạn muốn kiểm tra vào ô bên dưới, sau đó nhấn nút \"Phân tích\". " +
+                        "Hệ thống AI sẽ đánh giá mức độ an toàn và phát hiện các tin nhắn lừa đảo, giả mạo ngân hàng hoặc chứa liên kết độc hại.",
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.LightGray,
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(16.dp))
+
+            Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = "Và luôn cảnh giác với các tin nhắn yêu cầu cung cấp thông tin cá nhân, mật khẩu hoặc mã OTP. " +
-                        "Không nhấp vào liên kết lạ và không chia sẻ thông tin tài khoản ngân hàng. " +
-                        "Nếu nhận được tin nhắn nghi ngờ, hãy báo cáo tại mục “Báo cáo lừa đảo” hoặc liên hệ với nhà mạng để được hỗ trợ.",
+                text = "⚠️ Không cung cấp mã OTP, mật khẩu hay thông tin cá nhân qua SMS. " +
+                        "Không nhấp vào liên kết lạ để tránh bị chiếm đoạt tài khoản.",
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.LightGray
             )
@@ -91,24 +90,33 @@ fun SmsAnalysisScreen(
             TextField(
                 value = smsContent,
                 onValueChange = { smsContent = it },
-                placeholder = { Text("Dán nội dung tin nhắn cần phân tích...", color = Color.Gray) },
+                placeholder = {
+                    Text(
+                        "Dán nội dung tin nhắn cần phân tích...",
+                        color = Color.Gray
+                    )
+                },
                 shape = RoundedCornerShape(14.dp),
                 colors = TextFieldDefaults.textFieldColors(
                     containerColor = Color(0xFF111827),
-                    focusedIndicatorColor = Color(0xFF3B82F6),
-                    unfocusedIndicatorColor = Color(0xFF374151),
-                    cursorColor = Color(0xFF3B82F6),
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White,
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(150.dp)
+                    .height(170.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(
-                onClick = { viewModel.analyzeIdentity(smsContent) },
+                onClick = {
+                    if (smsContent.isNotBlank()) {
+                        viewModel.analyzeIdentity(smsContent)
+                    }
+                },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF2A2AFC),
                     contentColor = Color.White
@@ -119,7 +127,7 @@ fun SmsAnalysisScreen(
             }
             Spacer(modifier = Modifier.height(24.dp))
 
-            result?.let {
+            result?.let { analysis ->
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
@@ -128,27 +136,29 @@ fun SmsAnalysisScreen(
                     )
                 ) {
                     Column(
-                        modifier = Modifier.padding(16.dp),
-                        horizontalAlignment = Alignment.Start
+                        modifier = Modifier.padding(16.dp)
                     ) {
                         Text(
-                            text = "Kết quả phân tích:",
+                            text = "Kết quả phân tích",
                             fontWeight = FontWeight.Bold,
                             color = Color.White
                         )
                         Spacer(modifier = Modifier.height(8.dp))
+
                         Text(
                             text = "Mức độ rủi ro: $riskLevel",
+                            fontWeight = FontWeight.SemiBold,
                             color = when (riskLevel) {
                                 "Cao" -> Color.Red
                                 "Trung bình" -> Color(0xFFFF9800)
                                 else -> Color(0xFF2E7D32)
-                            },
-                            fontWeight = FontWeight.SemiBold
+                            }
                         )
+
                         Spacer(modifier = Modifier.height(8.dp))
+
                         Text(
-                            text = it,
+                            text = analysis,
                             style = MaterialTheme.typography.bodyLarge,
                             color = Color.LightGray
                         )
@@ -161,18 +171,18 @@ fun SmsAnalysisScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.5f))
+                    .background(Color.Black.copy(alpha = 0.5f)),
+                contentAlignment = Alignment.Center
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.align(Alignment.Center)
-                ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     CircularProgressIndicator(color = Color.White)
                     Spacer(modifier = Modifier.height(12.dp))
-                    Text("AI đang phân tích tin nhắn...", color = Color.White)
+                    Text(
+                        text = "AI đang phân tích tin nhắn...",
+                        color = Color.White
+                    )
                 }
             }
         }
     }
 }
-

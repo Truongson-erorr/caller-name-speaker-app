@@ -25,7 +25,9 @@ class CallReceiver : BroadcastReceiver() {
                     Toast.makeText(context, "⚠️ $warningText", Toast.LENGTH_LONG).show()
 
                     val speakIntent = Intent(context, CallTTSService::class.java).apply {
-                        putExtra("text_to_speak", warningText)
+                        putExtra("phone_number", cleanedNumber)
+                        putExtra("display_name", warningText)
+                        putExtra("is_in_contacts", true)
                     }
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -36,7 +38,6 @@ class CallReceiver : BroadcastReceiver() {
                     return
                 }
 
-                // Kiểm tra xem số này có bị báo cáo không
                 FirebaseFirestore.getInstance()
                     .collection("Reports")
                     .document(cleanedNumber)
@@ -55,7 +56,9 @@ class CallReceiver : BroadcastReceiver() {
                             Toast.makeText(context, "⚠️ $warningText", Toast.LENGTH_LONG).show()
 
                             val speakIntent = Intent(context, CallTTSService::class.java).apply {
-                                putExtra("text_to_speak", warningText)
+                                putExtra("phone_number", cleanedNumber)
+                                putExtra("display_name", warningText)
+                                putExtra("is_in_contacts", true)
                             }
 
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -64,12 +67,10 @@ class CallReceiver : BroadcastReceiver() {
                                 context.startService(speakIntent)
                             }
                         } else {
-                            // Nếu không có báo cáo → đọc tên hoặc "số lạ"
                             speakCallerNormally(context, number)
                         }
                     }
                     .addOnFailureListener {
-                        // Nếu truy vấn Firestore lỗi, vẫn đọc như bình thường
                         speakCallerNormally(context, number)
                     }
             }
@@ -104,10 +105,13 @@ class CallReceiver : BroadcastReceiver() {
         if (!prefs.getBoolean("tts_enabled", true)) return
 
         val contactName = getContactName(context, phoneNumber)
-        val nameToSpeak = contactName ?: "số lạ: ${phoneNumber.toCharArray().joinToString(" ") { it.toString() }}"
+        val isInContacts = contactName != null
+        val displayName = contactName ?: phoneNumber
 
         val speakIntent = Intent(context, CallTTSService::class.java).apply {
-            putExtra("text_to_speak", nameToSpeak)
+            putExtra("phone_number", phoneNumber)
+            putExtra("display_name", displayName)
+            putExtra("is_in_contacts", isInContacts)
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

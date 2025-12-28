@@ -1,9 +1,9 @@
 package com.example.callernamespeaker
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -21,10 +21,11 @@ import com.example.callernamespeaker.ui.theme.ReportTab
 
 @Composable
 fun MainScreen(navController: NavController) {
+
     var selectedTab by remember { mutableStateOf("home") }
     val context = LocalContext.current
 
-    val selectedColor = Color(0xFFFFD700)
+    val selectedColor = Color(0xFF64B5F6)
     val unselectedColor = Color.White
 
     Scaffold(
@@ -32,18 +33,18 @@ fun MainScreen(navController: NavController) {
             NavigationBar(
                 containerColor = Color(0xFF1A2030)
             ) {
-
                 @Composable
                 fun NavItem(
                     selected: Boolean,
-                    icon: ImageVector,
+                    selectedIcon: ImageVector,
+                    unselectedIcon: ImageVector,
                     label: String,
                     key: String
                 ) {
                     NavigationBarItem(
                         icon = {
                             Icon(
-                                imageVector = icon,
+                                imageVector = if (selected) selectedIcon else unselectedIcon,
                                 contentDescription = label,
                                 tint = if (selected) selectedColor else unselectedColor,
                                 modifier = Modifier.size(24.dp)
@@ -66,35 +67,40 @@ fun MainScreen(navController: NavController) {
 
                 NavItem(
                     selected = selectedTab == "home",
-                    icon = Icons.Default.Home,
+                    selectedIcon = Icons.Filled.Home,
+                    unselectedIcon = Icons.Outlined.Home,
                     label = "Trang chủ",
                     key = "home"
                 )
 
                 NavItem(
                     selected = selectedTab == "post",
-                    icon = Icons.Default.FamilyRestroom,
+                    selectedIcon = Icons.Filled.FamilyRestroom,
+                    unselectedIcon = Icons.Outlined.FamilyRestroom,
                     label = "Gia đình",
                     key = "post"
                 )
 
                 NavItem(
                     selected = selectedTab == "report",
-                    icon = Icons.Default.List,
+                    selectedIcon = Icons.Filled.Block,
+                    unselectedIcon = Icons.Outlined.Block,
                     label = "Chặn số",
                     key = "report"
                 )
 
                 NavItem(
                     selected = selectedTab == "history",
-                    icon = Icons.Default.History,
+                    selectedIcon = Icons.Filled.History,
+                    unselectedIcon = Icons.Outlined.History,
                     label = "Lịch sử",
                     key = "history"
                 )
 
                 NavItem(
                     selected = selectedTab == "profile",
-                    icon = Icons.Default.Person,
+                    selectedIcon = Icons.Filled.Person,
+                    unselectedIcon = Icons.Outlined.Person,
                     label = "Tài khoản",
                     key = "profile"
                 )
