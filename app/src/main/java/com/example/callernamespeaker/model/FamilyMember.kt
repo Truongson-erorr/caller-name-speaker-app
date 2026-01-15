@@ -8,5 +8,6 @@ data class FamilyMember(
     val email: String = "",
     val status: String = "pending",
     val inviterId: String = "",
-    val invitedUserId: String = ""
+    val invitedUserId: String = "",
+    val nickname: String = ""
 )

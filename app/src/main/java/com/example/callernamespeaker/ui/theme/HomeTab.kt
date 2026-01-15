@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -55,32 +56,6 @@ fun HomeTab(navController: NavController) {
             .padding(10.dp)
             .verticalScroll(scrollState)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 10.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                "Cẩm nang an toàn thông tin",
-                color = Color.White,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.SemiBold
-            )
-
-            Icon(
-                imageVector = Icons.Default.Notifications,
-                contentDescription = "Thông báo",
-                tint = Color(0xFF64B5F6),
-                modifier = Modifier
-                    .size(30.dp)
-                    .clickable {
-                        navController.navigate("NotificationScreen")
-                    }
-            )
-        }
-
         BannerCarousel()
         Text(
             "Tra cứu nhanh",

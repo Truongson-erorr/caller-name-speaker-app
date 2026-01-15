@@ -24,6 +24,14 @@ fun FamilyMemberItem(
 ) {
     val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
 
+    val displayName = when {
+        member.id == currentUserId -> "Tôi"
+        member.nickname.isNotBlank() -> member.nickname
+        else -> member.name
+    }
+
+    val avatarChar = displayName.firstOrNull()?.uppercase() ?: "?"
+
     Column(
         modifier = Modifier
             .width(90.dp)
@@ -39,7 +47,7 @@ fun FamilyMemberItem(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = member.name.firstOrNull()?.uppercase() ?: "?",
+                text = avatarChar,
                 fontSize = 36.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF2A2AFC)
@@ -48,19 +56,20 @@ fun FamilyMemberItem(
         Spacer(modifier = Modifier.height(6.dp))
 
         Text(
-            text = if (member.id == currentUserId) "Tôi" else member.name,
+            text = displayName,
             fontSize = 14.sp,
             color = Color.White,
             fontWeight = FontWeight.SemiBold,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            maxLines = 1
         )
 
         Text(
             text = member.phoneNumber,
             fontSize = 12.sp,
             color = Color.LightGray,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            maxLines = 1
         )
     }
 }
-

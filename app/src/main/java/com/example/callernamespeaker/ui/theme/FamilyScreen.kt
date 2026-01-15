@@ -83,10 +83,15 @@ fun FamilyScreen(
                 }
             }
         }
-
         Spacer(Modifier.height(24.dp))
 
-        Text("Thành viên gia đình:", color = Color.White, style = MaterialTheme.typography.titleMedium)
+        Text(
+            "Thành viên gia đình:",
+            color = Color.White,
+            style = MaterialTheme.typography.titleMedium
+        )
+        Spacer(Modifier.height(10.dp))
+
         if (members.isEmpty()) {
             Text("Chưa có thành viên nào.", color = Color.White.copy(alpha = 0.7f))
         } else {

@@ -65,7 +65,7 @@ fun AllNewsScreen(
                     containerColor = Color(0xFF0A0F1A),
                     titleContentColor = Color.White,
                     navigationIconContentColor = Color.White,
-                    actionIconContentColor = Color(0xFF3B82F6) // xanh accent
+                    actionIconContentColor = Color(0xFF3B82F6)
                 ),
                 title = {
                     Text(
@@ -76,7 +76,7 @@ fun AllNewsScreen(
                 },
                 navigationIcon = {
                     Icon(
-                        imageVector = Icons.Default.ArrowBackIosNew,
+                        imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Back",
                         modifier = Modifier.clickable { navController.popBackStack() }
                     )

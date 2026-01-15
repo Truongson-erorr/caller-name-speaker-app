@@ -39,10 +39,25 @@ fun ProfileScreen(navController: NavController) {
     var ttsEnabled by remember { mutableStateOf(prefs.getBoolean("tts_enabled", true)) }
     var smsTtsEnabled by remember { mutableStateOf(prefs.getBoolean("sms_tts_enabled", true)) }
 
-    var autoBlockScam by remember { mutableStateOf(prefs.getBoolean("auto_block_scam", false)) }
-    var warnUnknownCall by remember { mutableStateOf(prefs.getBoolean("warn_unknown_call", false)) }
-    var ttsContactName by remember { mutableStateOf(prefs.getBoolean("tts_contact_name", false)) }
-    var ttsRingingWarning by remember { mutableStateOf(prefs.getBoolean("tts_ringing_warning", false)) }
+    var elderlyModeEnabled by remember {
+        mutableStateOf(prefs.getBoolean("elderly_mode_enabled", false))
+    }
+
+    var autoBlockScam by remember {
+        mutableStateOf(prefs.getBoolean("auto_block_scam", false))
+    }
+
+    var warnUnknownCall by remember {
+        mutableStateOf(prefs.getBoolean("warn_unknown_call", false))
+    }
+
+    var ttsContactName by remember {
+        mutableStateOf(prefs.getBoolean("tts_contact_name", false))
+    }
+
+    var ttsRingingWarning by remember {
+        mutableStateOf(prefs.getBoolean("tts_ringing_warning", false))
+    }
 
     var userProfile by remember { mutableStateOf<User?>(null) }
     var isLoading by remember { mutableStateOf(true) }
@@ -74,11 +89,8 @@ fun ProfileScreen(navController: NavController) {
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            "Thông tin cá nhân",
-            color = Color.White,
-            fontSize = 20.sp
-        )
+
+        Text("Thông tin cá nhân", color = Color.White, fontSize = 20.sp)
         Spacer(modifier = Modifier.height(24.dp))
 
         Box(
@@ -90,7 +102,7 @@ fun ProfileScreen(navController: NavController) {
         ) {
             Icon(
                 imageVector = Icons.Default.Person,
-                contentDescription = "Avatar",
+                contentDescription = null,
                 tint = Color.LightGray,
                 modifier = Modifier.size(48.dp)
             )
@@ -112,7 +124,7 @@ fun ProfileScreen(navController: NavController) {
                 fontSize = 14.sp
             )
         }
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         SettingSwitch(
             title = "Đọc tên người gọi",
@@ -137,14 +149,14 @@ fun ProfileScreen(navController: NavController) {
             fontSize = 15.sp,
             fontWeight = FontWeight.SemiBold
         )
-        Spacer(modifier = Modifier.height(6.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         SettingSwitch(
             title = "Chế độ dành cho người lớn tuổi",
-            enabled = autoBlockScam
+            enabled = elderlyModeEnabled
         ) {
-            autoBlockScam = it
-            prefs.edit().putBoolean("auto_block_scam", it).apply()
+            elderlyModeEnabled = it
+            prefs.edit().putBoolean("elderly_mode_enabled", it).apply()
         }
 
         SettingSwitch(
@@ -189,11 +201,12 @@ fun ProfileScreen(navController: NavController) {
                 }
             },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F)),
-            shape = RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(26.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
             Icon(Icons.Default.Logout, contentDescription = null, tint = Color.White)
             Spacer(modifier = Modifier.width(8.dp))
+
             Text("Đăng xuất", color = Color.White)
         }
     }

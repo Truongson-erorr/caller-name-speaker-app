@@ -29,7 +29,6 @@ class FamilyViewModel : ViewModel() {
         loadConnectionRequests()
     }
 
-    /** Đảm bảo người dùng hiện tại luôn nằm trong danh sách thành viên **/
     private fun ensureCurrentUserInFamily() {
         val user = currentUser ?: return
         val userUid = user.uid
@@ -49,7 +48,9 @@ class FamilyViewModel : ViewModel() {
             val member = FamilyMember(
                 id = userUid,
                 name = name,
-                phoneNumber = email,
+                nickname = "Tôi",
+                phoneNumber = phone,
+                email = email,
                 relation = "Tôi",
                 status = "accepted",
                 inviterId = userUid,
@@ -64,7 +65,6 @@ class FamilyViewModel : ViewModel() {
         }
     }
 
-    /**Tải danh sách thành viên đã kết nối **/
     fun loadFamilyMembers() {
         val uid = currentUser?.uid ?: return
         db.collection("Family").document(uid)
@@ -77,7 +77,6 @@ class FamilyViewModel : ViewModel() {
             }
     }
 
-    /**Gửi lời mời kết nối qua email **/
     fun sendConnectionRequest(targetEmail: String) {
         val sender = currentUser ?: return
 
@@ -122,8 +121,7 @@ class FamilyViewModel : ViewModel() {
             }
     }
 
-    /**Tải danh sách lời mời đến **/
-    fun loadConnectionRequests() {
+    private fun loadConnectionRequests() {
         val uid = currentUser?.uid ?: return
         db.collection("Family").document(uid)
             .collection("requests")
@@ -139,22 +137,18 @@ class FamilyViewModel : ViewModel() {
             }
     }
 
-    /**Chấp nhận lời mời **/
     fun acceptConnectionRequest(request: ConnectionRequest) {
         val me = currentUser ?: return
 
-        // Lấy thông tin của chính người đang chấp nhận (từ collection Users)
         db.collection("Users").document(me.uid).get()
             .addOnSuccessListener { meDoc ->
                 val myName = meDoc.getString("name") ?: "Người dùng"
                 val myEmail = meDoc.getString("email") ?: me.email ?: ""
 
-                // Cập nhật trạng thái lời mời
                 db.collection("Family").document(me.uid)
                     .collection("requests").document(request.id)
                     .update("status", "accepted")
 
-                // Tạo bản ghi ở phía người nhận (mình)
                 val myMember = FamilyMember(
                     id = request.fromUid,
                     name = request.fromName,
@@ -165,7 +159,6 @@ class FamilyViewModel : ViewModel() {
                     invitedUserId = me.uid
                 )
 
-                // Tạo bản ghi ở phía người gửi (đối phương)
                 val theirMember = FamilyMember(
                     id = me.uid,
                     name = myName,
@@ -176,19 +169,16 @@ class FamilyViewModel : ViewModel() {
                     invitedUserId = request.fromUid
                 )
 
-                // Lưu vào Family/{me.uid}/members
                 db.collection("Family").document(me.uid)
                     .collection("members").document(request.fromUid)
                     .set(myMember)
 
-                // Lưu vào Family/{request.fromUid}/members
                 db.collection("Family").document(request.fromUid)
                     .collection("members").document(me.uid)
                     .set(theirMember)
             }
     }
 
-    /**Từ chối lời mời **/
     fun rejectConnectionRequest(requestId: String) {
         val uid = currentUser?.uid ?: return
         db.collection("Family").document(uid)
@@ -196,11 +186,21 @@ class FamilyViewModel : ViewModel() {
             .update("status", "rejected")
     }
 
-    /** Xóa thành viên **/
     fun deleteFamilyMember(memberId: String) {
         val uid = currentUser?.uid ?: return
         db.collection("Family").document(uid)
             .collection("members").document(memberId)
             .delete()
     }
+
+    fun updateNickname(memberId: String, nickname: String) {
+        val uid = currentUser?.uid ?: return
+
+        db.collection("Family")
+            .document(uid)
+            .collection("members")
+            .document(memberId)
+            .update("nickname", nickname)
+    }
+
 }

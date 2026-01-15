@@ -32,9 +32,11 @@ import androidx.compose.animation.slideOutHorizontally
 @Composable
 fun BannerCarousel() {
     val images = listOf(
-        "https://res.cloudinary.com/dq64aidpx/image/upload/v1750863841/yvs2jacr2afus1y1spfn.jpg",
-        "https://res.cloudinary.com/dq64aidpx/image/upload/v1754394786/istockphoto-1412282189-612x612_pjohig.jpg",
-        "https://res.cloudinary.com/dq64aidpx/image/upload/v1750685133/hydr9m9vdyzqioxsbvw4.jpg"
+        "https://ss-images.saostar.vn/2019/03/05/4711548/f3.jpg",
+        "https://image.plo.vn/1200x630/Uploaded/2026/qjfsm/2024_04_06/dai-hoc-thu-dau-mot-1-8046.jpg",
+        "https://res.cloudinary.com/dq64aidpx/image/upload/v1750685133/hydr9m9vdyzqioxsbvw4.jpg",
+        "https://cdnphoto.dantri.com.vn/yIxJPfv4bXBVrvY6qzJueUXqdzA=/thumb_w/1020/2024/03/20/vv11-1710893833500.jpg",
+        "https://ss-images.saostar.vn/2019/03/05/4711548/f7.jpg"
     )
     var currentIndex by remember { mutableStateOf(0) }
 
