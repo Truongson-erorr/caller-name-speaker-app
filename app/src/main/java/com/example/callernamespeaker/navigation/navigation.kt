@@ -19,6 +19,7 @@ import com.example.callernamespeaker.CallEntry
 import com.example.callernamespeaker.ui.theme.RegisterScreen
 import com.example.callernamespeaker.ui.theme.LoginScreen
 import com.example.callernamespeaker.MainScreen
+import com.example.callernamespeaker.admin.AdminMainScreen
 import com.example.callernamespeaker.model.NewsPost
 import com.example.callernamespeaker.ui.chat.ChatScreen
 import com.example.callernamespeaker.ui.screens.BlockPhoneScreen
@@ -189,6 +190,10 @@ fun AppNavGraph(
 
         composable("NotificationScreen") {
             NotificationScreen(navController)
+        }
+
+        composable("AdminMainScreen") {
+            AdminMainScreen(navController)
         }
     }
 }

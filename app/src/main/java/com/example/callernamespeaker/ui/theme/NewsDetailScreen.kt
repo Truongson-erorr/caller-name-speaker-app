@@ -87,8 +87,7 @@ fun NewsDetailScreen(
             .fillMaxSize()
             .background(Color(0xFF0A0F1A))
     ) {
-
-        // ===== HEADER =====
+        Spacer(modifier = Modifier.height(20.dp))
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -104,7 +103,6 @@ fun NewsDetailScreen(
                     .size(26.dp)
                     .clickable { navController.popBackStack() }
             )
-
             Text(
                 text = "Chi tiết bài viết",
                 color = Color.White,
@@ -113,12 +111,11 @@ fun NewsDetailScreen(
             )
         }
 
-        // ===== CONTENT =====
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp) // ⭐ CHÌA KHÓA Ở ĐÂY
+                .padding(16.dp)
         ) {
 
             Text(
@@ -128,7 +125,6 @@ fun NewsDetailScreen(
                 fontWeight = FontWeight.Bold,
                 lineHeight = 26.sp
             )
-
             Spacer(Modifier.height(6.dp))
 
             Text(
@@ -136,7 +132,6 @@ fun NewsDetailScreen(
                 color = Color(0xFF9CA3AF),
                 fontSize = 13.sp
             )
-
             Spacer(Modifier.height(14.dp))
 
             Image(
@@ -148,7 +143,6 @@ fun NewsDetailScreen(
                     .clip(RoundedCornerShape(16.dp)),
                 contentScale = ContentScale.Crop
             )
-
             Spacer(Modifier.height(18.dp))
 
             Text(
@@ -159,6 +153,7 @@ fun NewsDetailScreen(
                 textAlign = TextAlign.Justify
             )
             Spacer(Modifier.height(28.dp))
+
             Divider(color = Color(0xFF1F2937))
             Spacer(Modifier.height(20.dp))
 
@@ -166,7 +161,6 @@ fun NewsDetailScreen(
                 postId = post!!.id,
                 userName = currentUserName
             )
-
             Spacer(Modifier.height(40.dp))
         }
     }

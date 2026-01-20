@@ -29,7 +29,6 @@ class AuthViewModel : ViewModel() {
             .setActivity(activity)
             .setCallbacks(object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
                 override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-                    // Trường hợp auto-verify (Android tự xác thực)
                     auth.signInWithCredential(credential)
                         .addOnSuccessListener { user ->
                             Toast.makeText(activity, "Đăng ký thành công!", Toast.LENGTH_SHORT).show()

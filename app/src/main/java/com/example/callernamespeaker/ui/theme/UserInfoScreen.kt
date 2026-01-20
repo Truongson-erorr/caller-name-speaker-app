@@ -20,153 +20,167 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserInfoScreen(navController: NavController) {
     val context = LocalContext.current
     val auth = FirebaseAuth.getInstance()
-    val db = com.google.firebase.Firebase.firestore
+    val db = FirebaseFirestore.getInstance()
 
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
+    var error by remember { mutableStateOf<String?>(null) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(Color(0xFF0A0F1A))
             .padding(24.dp)
     ) {
+
         IconButton(onClick = { navController.popBackStack() }) {
-            Icon(Icons.Default.ArrowBack, contentDescription = "Quay lại", tint = Color(0xFF1976D2))
+            Icon(
+                Icons.Default.ArrowBack,
+                contentDescription = null,
+                tint = Color.White
+            )
         }
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = "Hoàn tất hồ sơ",
-            fontSize = 24.sp,
+            "Hoàn tất hồ sơ",
+            fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.DarkGray,
+            color = Color.White,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
-
+        Text(
+            "Vui lòng nhập thông tin để tiếp tục",
+            fontSize = 13.sp,
+            color = Color.Gray,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(top = 4.dp)
+        )
         Spacer(modifier = Modifier.height(32.dp))
-
-        fun Modifier.formModifier() = this
-            .fillMaxWidth()
-            .padding(bottom = 12.dp)
 
         TextField(
             value = name,
             onValueChange = { name = it },
-            placeholder = { Text("Họ và tên", fontSize = 13.sp) },
+            placeholder = { Text("Họ và tên", color = Color.Gray) },
             leadingIcon = {
-                Icon(Icons.Default.Person, contentDescription = null, tint = Color(0xFF1976D2))
+                Icon(Icons.Default.Person, null, tint = Color(0xFF2A2AFC))
             },
             singleLine = true,
-            shape = RoundedCornerShape(10.dp),
-            modifier = Modifier.formModifier(),
+            shape = RoundedCornerShape(14.dp),
+            modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color(0xFFE3F2FD),
-                cursorColor = Color(0xFF1976D2),
+                containerColor = Color(0xFF1A1F2C),
                 focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
+                unfocusedIndicatorColor = Color.Transparent,
+                cursorColor = Color(0xFF2A2AFC),
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                disabledTextColor = Color.Gray
             )
         )
+        Spacer(modifier = Modifier.height(14.dp))
 
         TextField(
             value = email,
             onValueChange = { email = it },
-            placeholder = { Text("Email", fontSize = 13.sp) },
+            placeholder = { Text("Email", color = Color.Gray) },
             leadingIcon = {
-                Icon(Icons.Default.Email, contentDescription = null, tint = Color(0xFF1976D2))
+                Icon(Icons.Default.Email, null, tint = Color(0xFF2A2AFC))
             },
             singleLine = true,
-            shape = RoundedCornerShape(10.dp),
-            modifier = Modifier.formModifier(),
+            shape = RoundedCornerShape(14.dp),
+            modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color(0xFFE3F2FD),
-                cursorColor = Color(0xFF1976D2),
+                containerColor = Color(0xFF1A1F2C),
                 focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
+                unfocusedIndicatorColor = Color.Transparent,
+                cursorColor = Color(0xFF2A2AFC),
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                disabledTextColor = Color.Gray
             )
         )
 
-        errorMessage?.let {
+        error?.let {
+            Spacer(modifier = Modifier.height(10.dp))
             Text(
-                text = it,
+                it,
                 color = MaterialTheme.colorScheme.error,
-                fontSize = 12.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
+                fontSize = 12.sp
             )
         }
-
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(36.dp))
 
         Button(
             onClick = {
                 val uid = auth.currentUser?.uid
                 if (uid.isNullOrBlank()) {
-                    errorMessage = "Không tìm thấy tài khoản người dùng"
+                    error = "Không tìm thấy người dùng"
                     return@Button
                 }
-                if (name.isBlank()) {
-                    errorMessage = "Vui lòng nhập họ tên"
-                    return@Button
-                }
-                if (email.isBlank()) {
-                    errorMessage = "Vui lòng nhập email"
+                if (name.isBlank() || email.isBlank()) {
+                    error = "Vui lòng nhập đầy đủ thông tin"
                     return@Button
                 }
 
                 isLoading = true
-                errorMessage = null
+                error = null
 
-                val userData = hashMapOf(
+                val data = hashMapOf(
                     "uid" to uid,
                     "name" to name,
                     "email" to email,
-                    "role" to "user"
+                    "phoneNumber" to auth.currentUser?.phoneNumber,
+                    "createdAt" to FieldValue.serverTimestamp()
                 )
 
                 db.collection("Users").document(uid)
-                    .set(userData)
+                    .set(data, SetOptions.merge())
                     .addOnSuccessListener {
                         isLoading = false
-                        Toast.makeText(context, "Đăng ký thành công", Toast.LENGTH_SHORT).show()
-                        navController.navigate("main") {
-                            popUpTo("user_info") { inclusive = true }
+                        Toast.makeText(context, "Hoàn tất hồ sơ", Toast.LENGTH_SHORT).show()
+                        navController.navigate("MainScreen") {
+                            popUpTo("UserInfoScreen") { inclusive = true }
                         }
                     }
                     .addOnFailureListener {
                         isLoading = false
-                        errorMessage = "Lỗi khi lưu dữ liệu: ${it.localizedMessage}"
+                        error = it.localizedMessage
                     }
             },
-            enabled = !isLoading,
-            shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF1976D2),
-                contentColor = Color.White,
-                disabledContainerColor = Color(0xFF90CAF9)
-            ),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(44.dp)
+                .height(46.dp),
+            enabled = !isLoading,
+            shape = RoundedCornerShape(26.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF2A2AFC),
+                contentColor = Color.White
+            )
         ) {
             if (isLoading) {
                 CircularProgressIndicator(
                     color = Color.White,
-                    modifier = Modifier.size(18.dp)
+                    strokeWidth = 2.dp,
+                    modifier = Modifier.size(20.dp)
                 )
             } else {
-                Text("HOÀN TẤT", fontSize = 14.sp)
+                Text(
+                    "HOÀN TẤT",
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }

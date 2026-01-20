@@ -1,6 +1,7 @@
 package com.example.callernamespeaker
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -56,18 +57,8 @@ fun MainScreen(navController: NavController) {
                             fontWeight = FontWeight.SemiBold
                         )
                     },
-                    navigationIcon = {
-                        IconButton(
-                            onClick = { scope.launch { drawerState.open() } }
-                        ) {
-                            Icon(
-                                Icons.Default.Menu,
-                                contentDescription = "Menu",
-                                tint = Color.White
-                            )
-                        }
-                    },
                     actions = {
+
                         IconButton(
                             onClick = {
                                 navController.navigate("NotificationScreen")
@@ -77,6 +68,16 @@ fun MainScreen(navController: NavController) {
                                 Icons.Outlined.Notifications,
                                 contentDescription = "Thông báo",
                                 tint = Color(0xFF64B5F6)
+                            )
+                        }
+
+                        IconButton(
+                            onClick = { scope.launch { drawerState.open() } }
+                        ) {
+                            Icon(
+                                Icons.Default.Menu,
+                                contentDescription = "Menu",
+                                tint = Color.White
                             )
                         }
                     }
@@ -115,27 +116,41 @@ fun DrawerContent(
 
         Text(
             text = "MENU",
-            color = Color(0xFF2A2AFC),
-            fontSize = 13.sp,
+            color = Color.White,
+            fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(start = 16.dp, bottom = 16.dp)
         )
 
-        DrawerItem("Trang chủ", Icons.Outlined.Home, selectedTab == "home") {
-            onItemClick("home")
-        }
-        DrawerItem("Gia đình", Icons.Outlined.FamilyRestroom, selectedTab == "post") {
-            onItemClick("post")
-        }
-        DrawerItem("Chặn số", Icons.Outlined.Block, selectedTab == "report") {
-            onItemClick("report")
-        }
-        DrawerItem("Lịch sử", Icons.Outlined.History, selectedTab == "history") {
-            onItemClick("history")
-        }
-        DrawerItem("Tài khoản", Icons.Outlined.Person, selectedTab == "profile") {
-            onItemClick("profile")
-        }
+        DrawerItem(
+            label = "Trang chủ",
+            icon = Icons.Outlined.Home,
+            selected = selectedTab == "home"
+        ) { onItemClick("home") }
+
+        DrawerItem(
+            label = "Gia đình",
+            icon = Icons.Outlined.FamilyRestroom,
+            selected = selectedTab == "post"
+        ) { onItemClick("post") }
+
+        DrawerItem(
+            label = "Chặn số",
+            icon = Icons.Outlined.Block,
+            selected = selectedTab == "report"
+        ) { onItemClick("report") }
+
+        DrawerItem(
+            label = "Lịch sử",
+            icon = Icons.Outlined.History,
+            selected = selectedTab == "history"
+        ) { onItemClick("history") }
+
+        DrawerItem(
+            label = "Tài khoản",
+            icon = Icons.Outlined.Person,
+            selected = selectedTab == "profile"
+        ) { onItemClick("profile") }
     }
 }
 
@@ -146,31 +161,42 @@ fun DrawerItem(
     selected: Boolean,
     onClick: () -> Unit
 ) {
-    val selectedColor = Color(0xFF2A2AFC)
-    val unselectedColor = Color.White
+    val selectedColor = Color(0xFF64B5F6)
+    val backgroundColor =
+        if (selected) Color(0xFF24304A) else Color.Transparent
 
-    NavigationDrawerItem(
-        selected = selected,
-        onClick = onClick,
-        icon = {
-            Icon(
-                imageVector = icon,
-                contentDescription = label,
-                tint = if (selected) selectedColor else unselectedColor
-            )
-        },
-        label = {
-            Text(
-                text = label,
-                color = if (selected) selectedColor else unselectedColor,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Bold
-            )
-        },
-        colors = NavigationDrawerItemDefaults.colors(
-            selectedContainerColor = Color.Transparent,
-            unselectedContainerColor = Color.Transparent
-        ),
-        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-    )
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(52.dp)
+            .background(backgroundColor)
+            .clickable { onClick() }
+            .padding(horizontal = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        Box(
+            modifier = Modifier
+                .width(4.dp)
+                .fillMaxHeight()
+                .background(if (selected) selectedColor else Color.Transparent)
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+
+        Icon(
+            imageVector = icon,
+            contentDescription = label,
+            tint = if (selected) selectedColor else Color.White,
+            modifier = Modifier.size(22.dp)
+        )
+        Spacer(modifier = Modifier.width(20.dp))
+
+        Text(
+            text = label,
+            color = if (selected) selectedColor else Color.White,
+            fontSize = 14.sp,
+            fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium
+        )
+    }
 }
+

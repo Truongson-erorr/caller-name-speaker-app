@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,69 +33,60 @@ fun OtpVerificationScreen(
 ) {
     val context = LocalContext.current
     val auth = FirebaseAuth.getInstance()
+    val db = FirebaseFirestore.getInstance()
+
     val otpValues = remember { List(6) { mutableStateOf("") } }
     var isLoading by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF0A0F1A)) // Nền tối
+            .background(Color(0xFF0A0F1A))
             .padding(horizontal = 24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(40.dp))
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = { navController.popBackStack() }) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Quay lại",
-                    tint = Color.White,
-                )
-            }
+        IconButton(onClick = { navController.popBackStack() }) {
+            Icon(Icons.Default.ArrowBack, contentDescription = null, tint = Color.White)
         }
 
         Spacer(modifier = Modifier.height(36.dp))
+
         Icon(
-            imageVector = Icons.Default.Lock,
+            Icons.Default.Lock,
             contentDescription = null,
             tint = Color(0xFF2A2AFC),
             modifier = Modifier.size(64.dp)
         )
+
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = "Xác minh OTP",
-            style = MaterialTheme.typography.headlineSmall.copy(
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            ),
-            textAlign = TextAlign.Center
+            "Xác minh OTP",
+            fontWeight = FontWeight.Bold,
+            fontSize = 22.sp,
+            color = Color.White
         )
 
         Text(
-            text = "Mã đã gửi đến $phoneNumber",
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = 4.dp, bottom = 24.dp)
+            "Mã đã gửi đến $phoneNumber",
+            color = Color.Gray,
+            fontSize = 13.sp,
+            modifier = Modifier.padding(top = 4.dp, bottom = 24.dp),
+            textAlign = TextAlign.Center
         )
 
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            otpValues.forEach { otpChar ->
+            otpValues.forEach { otp ->
                 TextField(
-                    value = otpChar.value,
+                    value = otp.value,
                     onValueChange = {
-                        if (it.length <= 1 && it.all { c -> c.isDigit() }) {
-                            otpChar.value = it
+                        if (it.length <= 1 && it.all(Char::isDigit)) {
+                            otp.value = it
                         }
                     },
                     modifier = Modifier
@@ -108,41 +100,69 @@ fun OtpVerificationScreen(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     shape = RoundedCornerShape(12.dp),
                     colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color(0xFF1A1F2C), // nền tối ô OTP
+                        containerColor = Color(0xFF1A1F2C),
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        cursorColor = Color(0xFF2A2AFC),
-                        focusedTextColor = Color.White,
-                    ),
-                    placeholder = { Text("", color = Color.Gray) }
+                        cursorColor = Color(0xFF2A2AFC)
+                    )
                 )
             }
         }
+
         Spacer(modifier = Modifier.height(40.dp))
 
         Button(
             onClick = {
                 val otp = otpValues.joinToString("") { it.value }
-
                 if (otp.length < 6) {
-                    Toast.makeText(context, "Vui lòng nhập đầy đủ 6 số OTP", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Nhập đủ 6 số OTP", Toast.LENGTH_SHORT).show()
                     return@Button
                 }
 
                 isLoading = true
-
                 val credential = PhoneAuthProvider.getCredential(verificationId, otp)
+
                 auth.signInWithCredential(credential)
                     .addOnCompleteListener { task ->
                         isLoading = false
-                        if (task.isSuccessful) {
-                            Toast.makeText(context, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
-                            navController.navigate("MainScreen") {
-                                popUpTo("otp_verification") { inclusive = true }
-                            }
-                        } else {
+                        if (!task.isSuccessful) {
                             Toast.makeText(context, "Sai mã OTP", Toast.LENGTH_SHORT).show()
+                            return@addOnCompleteListener
                         }
+
+                        val uid = auth.currentUser?.uid ?: return@addOnCompleteListener
+
+                        db.collection("Users").document(uid).get()
+                            .addOnSuccessListener { doc ->
+
+                                if (!doc.exists()) {
+                                    navController.navigate("UserInfoScreen") {
+                                        popUpTo("otp_verification") { inclusive = true }
+                                    }
+                                    return@addOnSuccessListener
+                                }
+
+                                val name = doc.getString("name").orEmpty()
+                                val email = doc.getString("email").orEmpty()
+                                val role = doc.getString("role") ?: "user"
+
+                                if (name.isBlank() || email.isBlank()) {
+                                    navController.navigate("UserInfoScreen") {
+                                        popUpTo("otp_verification") { inclusive = true }
+                                    }
+                                    return@addOnSuccessListener
+                                }
+
+                                if (role == "admin") {
+                                    navController.navigate("AdminMainScreen") {
+                                        popUpTo("otp_verification") { inclusive = true }
+                                    }
+                                } else {
+                                    navController.navigate("MainScreen") {
+                                        popUpTo("otp_verification") { inclusive = true }
+                                    }
+                                }
+                            }
                     }
             },
             modifier = Modifier
@@ -157,15 +177,13 @@ fun OtpVerificationScreen(
         ) {
             if (isLoading) {
                 CircularProgressIndicator(
-                    modifier = Modifier.size(24.dp),
                     color = Color.White,
-                    strokeWidth = 2.dp
+                    strokeWidth = 2.dp,
+                    modifier = Modifier.size(22.dp)
                 )
             } else {
                 Text("XÁC MINH", fontWeight = FontWeight.Bold)
             }
         }
-
-        Spacer(modifier = Modifier.height(40.dp))
     }
 }
