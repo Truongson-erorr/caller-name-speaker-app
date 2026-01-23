@@ -24,7 +24,7 @@ class NewsViewModel : ViewModel() {
     private fun fetchNewsFromFirestore() {
         viewModelScope.launch {
             db.collection("Posts")
-                .orderBy("date", com.google.firebase.firestore.Query.Direction.DESCENDING)
+                .whereEqualTo("isVisible", true)
                 .get()
                 .addOnSuccessListener { result ->
                     val posts = result.map { doc ->
@@ -48,3 +48,4 @@ class NewsViewModel : ViewModel() {
         }
     }
 }
+

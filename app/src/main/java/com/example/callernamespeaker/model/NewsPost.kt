@@ -6,5 +6,6 @@ data class NewsPost(
     val shortDescription: String = "",
     val description: String = "",
     val imageUrl: String = "",
-    val date: String = ""
+    val date: String = "",
+    val isVisible: Boolean = true
 )
