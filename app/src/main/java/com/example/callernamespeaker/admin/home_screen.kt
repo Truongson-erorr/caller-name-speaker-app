@@ -101,7 +101,6 @@ fun AdminMainScreen(
             ) {
                 when (selectedTab) {
                     "dashboard" -> AdminDashboardScreen()
-                    "blocked" -> AdminBlockedNumbersScreen()
                     "reports" -> AdminReportsScreen()
                     "posts" -> AdminPostsScreen()
                     "users" -> AdminUsersScreen()
@@ -135,12 +134,6 @@ fun AdminDrawer(
             icon = Icons.Outlined.Dashboard,
             selected = selectedTab == "dashboard"
         ) { onItemClick("dashboard") }
-
-        AdminDrawerItem(
-            label = "Số bị chặn",
-            icon = Icons.Outlined.Block,
-            selected = selectedTab == "blocked"
-        ) { onItemClick("blocked") }
 
         AdminDrawerItem(
             label = "Báo cáo số",

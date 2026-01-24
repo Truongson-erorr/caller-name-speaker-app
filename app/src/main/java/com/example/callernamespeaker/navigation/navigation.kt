@@ -12,7 +12,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.callernamespeaker.CallEntry
@@ -20,7 +19,6 @@ import com.example.callernamespeaker.ui.theme.RegisterScreen
 import com.example.callernamespeaker.ui.theme.LoginScreen
 import com.example.callernamespeaker.MainScreen
 import com.example.callernamespeaker.admin.AdminMainScreen
-import com.example.callernamespeaker.model.NewsPost
 import com.example.callernamespeaker.ui.chat.ChatScreen
 import com.example.callernamespeaker.ui.screens.BlockPhoneScreen
 import com.example.callernamespeaker.ui.screens.IntroSplashScreen
