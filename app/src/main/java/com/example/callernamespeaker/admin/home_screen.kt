@@ -130,7 +130,7 @@ fun AdminDrawer(
         )
 
         AdminDrawerItem(
-            label = "Tổng quan",
+            label = "Thống kê",
             icon = Icons.Outlined.Dashboard,
             selected = selectedTab == "dashboard"
         ) { onItemClick("dashboard") }

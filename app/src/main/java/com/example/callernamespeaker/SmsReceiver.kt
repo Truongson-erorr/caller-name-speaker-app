@@ -22,7 +22,6 @@ class SmsReceiver : BroadcastReceiver() {
                 val phoneNumber = sms.originatingAddress
                 val message = sms.messageBody
 
-                // Kiểm tra có đường link không
                 val pattern = Pattern.compile("(http|https)://[\\w\\-\\.\\?&=/]+")
                 val matcher = pattern.matcher(message)
 
