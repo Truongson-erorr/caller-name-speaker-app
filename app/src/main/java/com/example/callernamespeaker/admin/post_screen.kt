@@ -137,17 +137,17 @@ fun AdminPostItem(
                 Row {
                     Box(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(6.dp))
+                            .clip(RoundedCornerShape(24.dp))
                             .background(
                                 if (post.isVisible)
-                                    Color(0xFF1B5E20)
+                                    Color(0xFF1565C0)
                                 else
-                                    Color(0xFF37474F)
+                                    Color(0xFF263238)
                             )
                             .clickable {
                                 onToggleVisible(!post.isVisible)
                             }
-                            .padding(horizontal = 10.dp, vertical = 4.dp)
+                            .padding(horizontal = 12.dp, vertical = 6.dp)
                     ) {
                         Text(
                             text = if (post.isVisible) "Đang hiển thị" else "Đã ẩn",
@@ -160,14 +160,14 @@ fun AdminPostItem(
 
                     Box(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(6.dp))
-                            .background(Color(0x33E57373))
+                            .clip(RoundedCornerShape(24.dp))
+                            .background(Color(0xFF1E2A38))
                             .clickable { onDelete() }
-                            .padding(horizontal = 10.dp, vertical = 4.dp)
+                            .padding(horizontal = 12.dp, vertical = 6.dp)
                     ) {
                         Text(
                             text = "Xoá",
-                            color = Color(0xFFE57373),
+                            color = Color(0xFF64B5F6),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold
                         )

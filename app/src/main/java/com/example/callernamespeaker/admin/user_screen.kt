@@ -5,11 +5,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -116,15 +118,27 @@ fun UserItem(user: User) {
                 }
             }
 
-            Text(
-                text = user.role.uppercase(),
+            Surface(
                 color = if (user.role == "admin")
-                    Color(0xFF64B5F6)
+                    Color(0x3364B5F6)
                 else
-                    Color(0xFF81C784),
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold
-            )
+                    Color(0xFF1A2F2A),
+                shape = RoundedCornerShape(24.dp)
+            ) {
+                Text(
+                    text = user.role.uppercase(),
+                    color = if (user.role == "admin")
+                        Color(0xFF64B5F6)
+                    else
+                        Color(0xFF4DB6AC),
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(
+                        horizontal = 10.dp,
+                        vertical = 4.dp
+                    )
+                )
+            }
         }
     }
 }

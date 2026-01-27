@@ -104,6 +104,7 @@ fun AdminMainScreen(
                     "reports" -> AdminReportsScreen()
                     "posts" -> AdminPostsScreen()
                     "users" -> AdminUsersScreen()
+                    "call_stats" -> AdminCallStatsScreen()
                 }
             }
         }
@@ -152,6 +153,14 @@ fun AdminDrawer(
             icon = Icons.Outlined.People,
             selected = selectedTab == "users"
         ) { onItemClick("users") }
+
+        AdminDrawerItem(
+            label = "Hành vi cuộc gọi",
+            icon = Icons.Outlined.PhoneCallback,
+            selected = selectedTab == "call_stats"
+        ) {
+            onItemClick("call_stats")
+        }
 
         AdminDrawerItem(
             label = "Đăng xuất",
