@@ -44,7 +44,7 @@ fun ForgotPasswordScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF0A0F1A)) // Nền tối
+            .background(Color(0xFF0A0F1A))
             .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -143,7 +143,7 @@ fun ForgotPasswordScreen(navController: NavController) {
                 )
             )
         }
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(330.dp))
 
         Button(
             onClick = {

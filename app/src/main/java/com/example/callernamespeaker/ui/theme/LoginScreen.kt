@@ -159,8 +159,8 @@ fun LoginScreen(navController: NavController) {
             }
 
         }
+        Spacer(modifier = Modifier.height(180.dp))
 
-        Spacer(modifier = Modifier.height(10.dp))
         Button(
             onClick = {
                 if (phone.value.length < 6) {

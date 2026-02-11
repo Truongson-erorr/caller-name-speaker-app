@@ -37,10 +37,7 @@ fun RegisterScreen(
     val otp = remember { mutableStateOf("") }
 
     var isCodeSent by remember { mutableStateOf(false) }
-    var verificationId by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
-
-    val auth = FirebaseAuth.getInstance()
 
     Column(
         modifier = Modifier
@@ -152,6 +149,7 @@ fun RegisterScreen(
                     )
                 )
             }
+            Spacer(modifier = Modifier.height(160.dp))
 
             Button(
                 onClick = {
@@ -198,28 +196,4 @@ fun RegisterScreen(
             }
         }
     }
-}
-
-private fun saveUserToFirestore(
-    name: String,
-    phone: String,
-    context: Context,
-    navController: NavController
-) {
-    val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
-    val data = hashMapOf(
-        "uid" to uid,
-        "name" to name,
-        "phoneNumber" to phone,
-        "role" to "user"
-    )
-
-    FirebaseFirestore.getInstance().collection("Users").document(uid)
-        .set(data)
-        .addOnSuccessListener {
-            Toast.makeText(context, "Đăng ký thành công!", Toast.LENGTH_SHORT).show()
-            navController.navigate("main") {
-                popUpTo("register") { inclusive = true }
-            }
-        }
 }

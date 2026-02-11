@@ -1,9 +1,10 @@
 package com.example.callernamespeaker.admin
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,24 +18,30 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import java.time.LocalDate
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AdminCallStatsScreen() {
     val db = FirebaseFirestore.getInstance()
     var callStats by remember { mutableStateOf<List<CallStat>>(emptyList()) }
     var loading by remember { mutableStateOf(true) }
+    val today = LocalDate.now().toString()
 
-    LaunchedEffect(Unit) {
-        db.collection("CallStats")
-            .orderBy("lastCall", Query.Direction.DESCENDING)
+    DisposableEffect(today) {
+        val listener = db.collection("CallStats")
+            .whereEqualTo("date", today)
             .addSnapshotListener { snapshot, _ ->
+
                 if (snapshot != null) {
-                    callStats = snapshot.documents.mapNotNull { doc ->
-                        doc.toObject(CallStat::class.java)
-                    }
+                    callStats = snapshot.documents
+                        .mapNotNull { it.toObject(CallStat::class.java) }
+                        .sortedByDescending { it.lastCall }
                     loading = false
                 }
             }
+
+        onDispose { listener.remove() }
     }
 
     Column(

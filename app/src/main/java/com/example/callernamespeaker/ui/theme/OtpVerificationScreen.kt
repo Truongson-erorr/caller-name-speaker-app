@@ -47,10 +47,16 @@ fun OtpVerificationScreen(
     ) {
         Spacer(modifier = Modifier.height(40.dp))
 
-        IconButton(onClick = { navController.popBackStack() }) {
-            Icon(Icons.Default.ArrowBack, contentDescription = null, tint = Color.White)
+        IconButton(
+            onClick = { navController.popBackStack() },
+            modifier = Modifier.align(Alignment.Start)
+        ) {
+            Icon(
+                Icons.Default.ArrowBack,
+                contentDescription = null,
+                tint = Color.White
+            )
         }
-
         Spacer(modifier = Modifier.height(36.dp))
 
         Icon(
@@ -59,7 +65,6 @@ fun OtpVerificationScreen(
             tint = Color(0xFF2A2AFC),
             modifier = Modifier.size(64.dp)
         )
-
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
@@ -108,8 +113,7 @@ fun OtpVerificationScreen(
                 )
             }
         }
-
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(380.dp))
 
         Button(
             onClick = {
