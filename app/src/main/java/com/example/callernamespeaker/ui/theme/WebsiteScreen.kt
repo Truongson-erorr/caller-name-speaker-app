@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,8 +18,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.callernamespeaker.viewmodel.WebsiteViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.callernamespeaker.viewmodel.WebsiteViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,8 +71,7 @@ fun WebsiteScreen(
             }
 
             Text(
-                text = "Dán link website bạn muốn kiểm tra vào ô dưới, sau đó nhấn nút \"Kiểm tra\" để hệ thống phân tích mức độ an toàn. " +
-                        "Công cụ giúp phát hiện các trang web nguy cơ chứa mã độc, lừa đảo hoặc không đáng tin cậy.",
+                text = "Dán link website bạn muốn kiểm tra vào ô dưới, sau đó nhấn nút \"Kiểm tra\" để hệ thống phân tích mức độ an toàn.",
                 style = MaterialTheme.typography.bodySmall,
                 color = Color(0xFF9CA3AF),
                 modifier = Modifier.fillMaxWidth()
@@ -109,18 +110,38 @@ fun WebsiteScreen(
             }
             Spacer(modifier = Modifier.height(24.dp))
 
-            result?.let {
+            result?.let { resultText ->
+
+                val isSafe = resultText.contains("an toàn", ignoreCase = true) &&
+                        !resultText.contains("không an toàn", ignoreCase = true)
+
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(containerColor = Color(0xFF111827))
                 ) {
-                    Text(
-                        text = it,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = Color.White,
-                        modifier = Modifier.padding(16.dp)
-                    )
+                    Column(
+                        modifier = Modifier.padding(20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+
+                        Icon(
+                            imageVector = if (isSafe)
+                                Icons.Default.CheckCircle
+                            else
+                                Icons.Default.Cancel,
+                            contentDescription = null,
+                            tint = if (isSafe) Color(0xFF22C55E) else Color(0xFFEF4444),
+                            modifier = Modifier.size(72.dp)
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Text(
+                            text = resultText,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = Color.White
+                        )
+                    }
                 }
             }
         }
