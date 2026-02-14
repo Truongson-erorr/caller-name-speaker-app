@@ -61,6 +61,8 @@ fun AllNewsScreen(
         containerColor = Color(0xFF0A0F1A),
         topBar = {
             CenterAlignedTopAppBar(
+                modifier = Modifier
+                    .padding(horizontal = 12.dp),
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color(0xFF0A0F1A),
                     titleContentColor = Color.White,
@@ -78,18 +80,20 @@ fun AllNewsScreen(
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Back",
-                        modifier = Modifier.clickable { navController.popBackStack() }
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                            .clickable { navController.popBackStack() }
                     )
                 },
                 actions = {
-                    Box {
+                    Box(
+                        modifier = Modifier.padding(end = 8.dp)
+                    ) {
                         Icon(
                             imageVector = Icons.Default.FilterList,
                             contentDescription = "Filter",
                             tint = Color(0xFF3B82F6),
-                            modifier = Modifier
-                                .padding(end = 8.dp)
-                                .clickable { expandedMenu = true }
+                            modifier = Modifier.clickable { expandedMenu = true }
                         )
 
                         DropdownMenu(

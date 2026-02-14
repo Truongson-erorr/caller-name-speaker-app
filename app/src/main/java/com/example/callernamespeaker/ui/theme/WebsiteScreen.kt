@@ -29,7 +29,6 @@ fun WebsiteScreen(
 ) {
     val isLoading by viewModel.isLoading.collectAsState()
     val result by viewModel.result.collectAsState()
-
     var url by remember { mutableStateOf("") }
 
     Box(

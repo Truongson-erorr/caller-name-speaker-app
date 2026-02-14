@@ -85,6 +85,7 @@ fun SmsIntroScreen(
                     modifier = Modifier.padding(horizontal = 20.dp)
                 )
             }
+            Spacer(modifier = Modifier.height(110.dp))
 
             Button(
                 onClick = { navController.navigate("SmsAnalysisScreen") },
@@ -92,7 +93,7 @@ fun SmsIntroScreen(
                 shape = RoundedCornerShape(30.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(52.dp)
+                    .height(48.dp)
             ) {
                 Text(
                     text = "Bắt đầu phân tích",
@@ -100,8 +101,6 @@ fun SmsIntroScreen(
                     fontWeight = FontWeight.Bold
                 )
             }
-
-            Spacer(modifier = Modifier.height(20.dp))
         }
     }
 }
