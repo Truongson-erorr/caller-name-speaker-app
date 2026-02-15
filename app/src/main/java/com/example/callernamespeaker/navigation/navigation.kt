@@ -36,6 +36,7 @@ import com.example.callernamespeaker.ui.theme.NewsDetailScreen
 import com.example.callernamespeaker.ui.theme.OtpVerificationScreen
 import com.example.callernamespeaker.ui.theme.ProfileScreen
 import com.example.callernamespeaker.ui.theme.ReportScreen
+import com.example.callernamespeaker.ui.theme.SmsDetailScreen
 import com.example.callernamespeaker.ui.theme.UserInfoScreen
 import com.example.callernamespeaker.ui.theme.WebsiteScreen
 import com.example.callernamespeaker.viewmodel.BlacklistViewModel
@@ -192,6 +193,11 @@ fun AppNavGraph(
 
         composable("AdminMainScreen") {
             AdminMainScreen(navController)
+        }
+
+        composable("sms_detail/{threadId}") { backStackEntry ->
+            val threadId = backStackEntry.arguments?.getString("threadId") ?: ""
+            SmsDetailScreen(navController, threadId)
         }
     }
 }

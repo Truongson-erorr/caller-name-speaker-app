@@ -115,7 +115,9 @@ fun SmsAnalysisScreen(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     items(smsList) { sms ->
-                        SmsRow(sms)
+                        SmsRow(sms) {
+                            navController.navigate("sms_detail/${sms.id}")
+                        }
                     }
                 }
             }
@@ -162,12 +164,15 @@ fun getConversationList(context: Context): List<SmsItem> {
 }
 
 @Composable
-fun SmsRow(sms: SmsItem) {
+fun SmsRow(
+    sms: SmsItem,
+    onClick: () -> Unit
+) {
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable {  }
+            .clickable { onClick() }
             .padding(horizontal = 20.dp, vertical = 14.dp)
     ) {
 
@@ -191,3 +196,6 @@ fun SmsRow(sms: SmsItem) {
         )
     }
 }
+
+
+
