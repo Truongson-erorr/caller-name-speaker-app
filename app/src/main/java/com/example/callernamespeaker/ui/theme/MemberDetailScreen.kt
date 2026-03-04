@@ -65,6 +65,7 @@ fun MemberDetailScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
+        Spacer(modifier = Modifier.height(10.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
