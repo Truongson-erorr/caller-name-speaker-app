@@ -12,9 +12,12 @@ import android.os.Looper
 import android.speech.tts.TextToSpeech
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import java.util.Locale
 
 class CallTTSService : Service() {
+
     private var tts: TextToSpeech? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -63,6 +66,9 @@ class CallTTSService : Service() {
         var callCount = 1
 
         if (!isInContacts) {
+
+            sendCallAlert(phoneNumber)
+
             val keyCount = "call_count_$phoneNumber"
             val keyTime = "last_call_time_$phoneNumber"
 
@@ -117,6 +123,31 @@ class CallTTSService : Service() {
         }
 
         return START_NOT_STICKY
+    }
+
+    private fun sendCallAlert(number: String) {
+        val db = FirebaseFirestore.getInstance()
+        val currentUid = FirebaseAuth.getInstance().uid ?: return
+
+        db.collection("Users").document(currentUid).get()
+            .addOnSuccessListener { userDoc ->
+                val connections = userDoc.get("connections") as? List<String> ?: emptyList()
+
+                val timestamp = System.currentTimeMillis()
+
+                connections.forEach { uid ->
+                    val data = hashMapOf(
+                        "callerNumber" to number,
+                        "receiverId" to uid,
+                        "fromUid" to currentUid,
+                        "time" to timestamp
+                    )
+                    db.collection("call_alerts").add(data)
+                }
+            }
+            .addOnFailureListener {
+                it.printStackTrace()
+            }
     }
 
     override fun onDestroy() {

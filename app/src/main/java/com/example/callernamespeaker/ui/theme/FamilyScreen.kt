@@ -1,19 +1,22 @@
 package com.example.callernamespeaker.ui.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -21,8 +24,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.callernamespeaker.ui.theme.ConnectionRequestItem
 import com.example.callernamespeaker.ui.theme.FamilyMemberItem
+import com.example.callernamespeaker.viewmodel.CallAlertViewModel
 import com.example.callernamespeaker.viewmodel.FamilyViewModel
 
+@SuppressLint("SimpleDateFormat")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FamilyScreen(
@@ -35,6 +40,13 @@ fun FamilyScreen(
 
     var email by remember { mutableStateOf("") }
     var showDialog by remember { mutableStateOf(false) }
+
+    val callAlertViewModel: CallAlertViewModel = viewModel()
+    val alerts by callAlertViewModel.alerts.collectAsState()
+
+    LaunchedEffect(Unit) {
+        callAlertViewModel.listenCallAlerts()
+    }
 
     Column(
         modifier = Modifier
@@ -85,6 +97,78 @@ fun FamilyScreen(
         }
         Spacer(Modifier.height(24.dp))
 
+        if (alerts.isNotEmpty()) {
+            Text(
+                "Cảnh báo cuộc gọi lạ từ người thân:",
+                color = Color.Yellow,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            val groupedAlerts = alerts.groupBy { it.callerNumber }
+
+            LazyColumn {
+                items(groupedAlerts.entries.toList()) { (callerNumber, alertList) ->
+                    val alert = alertList.first()
+                    val callCount = alertList.size
+
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFF101B2D)),
+                        shape = RoundedCornerShape(16.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = "Người thân ${alert.receiverName} nhận cuộc gọi lạ từ:",
+                                    color = Color.White,
+                                    fontSize = 14.sp
+                                )
+                                Text(
+                                    text = "$callerNumber",
+                                    color = Color.White.copy(alpha = 0.8f),
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = "Thời gian: ${
+                                        java.text.SimpleDateFormat("HH:mm:ss dd/MM/yyyy").format(java.util.Date(alert.time))
+                                    }",
+                                    color = Color.White.copy(alpha = 0.5f),
+                                    fontSize = 12.sp
+                                )
+                            }
+
+                            if (callCount > 1) {
+                                Box(
+                                    modifier = Modifier
+                                        .height(28.dp)
+                                        .padding(horizontal = 6.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "$callCount lần",
+                                        color = Color(0xFFD32F2F),
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 14.sp
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        Spacer(Modifier.height(10.dp))
+
         Text(
             "Thành viên gia đình:",
             color = Color.White,
@@ -114,7 +198,7 @@ fun FamilyScreen(
             tonalElevation = 8.dp,
             title = {
                 Text(
-                    "📧 Mời thành viên qua Email",
+                    "Mời thành viên qua Email",
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
                         color = Color.White
@@ -136,10 +220,15 @@ fun FamilyScreen(
                         value = email,
                         onValueChange = { email = it },
                         shape = RoundedCornerShape(26.dp),
-                        leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
+                        leadingIcon = { Icon(Icons.Default.Email, contentDescription = null, tint = Color.White) },
                         label = { Text("Địa chỉ Email", color = Color.White.copy(alpha = 0.7f)) },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
+                        textStyle = TextStyle(
+                            color = Color.White,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 14.sp
+                        ),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             cursorColor = Color.White,
                             focusedBorderColor = Color(0xFF2A2AFC),

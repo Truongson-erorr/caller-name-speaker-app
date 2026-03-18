@@ -1,9 +1,11 @@
 package com.example.callernamespeaker.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.callernamespeaker.model.ConnectionRequest
 import com.example.callernamespeaker.model.FamilyMember
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -139,15 +141,41 @@ class FamilyViewModel : ViewModel() {
 
     fun acceptConnectionRequest(request: ConnectionRequest) {
         val me = currentUser ?: return
+        val db = FirebaseFirestore.getInstance()
+
+        val requestRef = db.collection("Family").document(me.uid)
+            .collection("requests").document(request.id)
+        requestRef.update("status", "accepted")
+            .addOnSuccessListener {
+                _connectionRequests.value = _connectionRequests.value.filter { it.id != request.id }
+            }
+            .addOnFailureListener { e ->
+                _message.value = "Không thể cập nhật request: ${e.message}"
+            }
+
+        val meRef = db.collection("Users").document(me.uid)
+        val requesterRef = db.collection("Users").document(request.fromUid)
+
+        meRef.update("connections", FieldValue.arrayUnion(request.fromUid))
+            .addOnSuccessListener {
+                Log.d("FamilyViewModel", "✅ Added requester to my connections")
+            }
+            .addOnFailureListener { e ->
+                Log.e("FamilyViewModel", "❌ Failed to add requester: ${e.message}")
+            }
+
+        requesterRef.update("connections", FieldValue.arrayUnion(me.uid))
+            .addOnSuccessListener {
+                Log.d("FamilyViewModel", "✅ Added me to requester connections")
+            }
+            .addOnFailureListener { e ->
+                Log.e("FamilyViewModel", "❌ Failed to update requester connections: ${e.message}")
+            }
 
         db.collection("Users").document(me.uid).get()
             .addOnSuccessListener { meDoc ->
                 val myName = meDoc.getString("name") ?: "Người dùng"
                 val myEmail = meDoc.getString("email") ?: me.email ?: ""
-
-                db.collection("Family").document(me.uid)
-                    .collection("requests").document(request.id)
-                    .update("status", "accepted")
 
                 val myMember = FamilyMember(
                     id = request.fromUid,
@@ -176,6 +204,11 @@ class FamilyViewModel : ViewModel() {
                 db.collection("Family").document(request.fromUid)
                     .collection("members").document(me.uid)
                     .set(theirMember)
+
+                _familyMembers.value = (_familyMembers.value + myMember).distinctBy { it.id }
+            }
+            .addOnFailureListener { e ->
+                _message.value = "Không thể lấy thông tin người dùng: ${e.message}"
             }
     }
 

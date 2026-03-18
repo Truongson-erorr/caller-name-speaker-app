@@ -69,7 +69,8 @@ class AuthViewModel : ViewModel() {
                         "uid" to user.uid,
                         "name" to (name ?: ""),
                         "phoneNumber" to phoneNumber,
-                        "role" to "user"
+                        "role" to "user",
+                        "connections" to emptyList<String>()
                     )
 
                     firestore.collection("Users")

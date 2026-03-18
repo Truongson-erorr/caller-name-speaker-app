@@ -23,16 +23,16 @@ fun HistoryTab(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF0A0F1F)) // nền xanh đen
+            .background(Color(0xFF0A0F1F))
     ) {
         TabRow(
             selectedTabIndex = selectedTabIndex,
-            containerColor = Color(0xFF101B2D), // màu card cho tab row
+            containerColor = Color(0xFF101B2D),
             contentColor = Color.White,
             indicator = { tabPositions ->
                 TabRowDefaults.Indicator(
                     Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                    color = Color(0xFF64B5F6), // màu xanh nhạt cho indicator
+                    color = Color(0xFF64B5F6),
                     height = 3.dp
                 )
             }
@@ -54,8 +54,8 @@ fun HistoryTab(
         Spacer(modifier = Modifier.height(8.dp))
 
         when (selectedTabIndex) {
-            0 -> LookupHistoryScreen() // màn tra cứu
-            1 -> CallHistoryScreen(navController, context) // màn lịch sử gọi
+            0 -> LookupHistoryScreen()
+            1 -> CallHistoryScreen(navController, context)
         }
     }
 }

@@ -5,5 +5,6 @@ data class User(
     val name: String = "",
     val email: String = "",
     val phoneNumber: String = "",
-    val role: String = "user"
+    val role: String = "user",
+    val connections: List<String> = emptyList()
 )
