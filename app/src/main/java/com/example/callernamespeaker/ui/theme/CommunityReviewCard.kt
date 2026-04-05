@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -113,7 +114,6 @@ fun CommunityReviewCard(
                     Divider(color = Color(0x22FFFFFF), thickness = 1.dp)
                 }
             }
-
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
@@ -147,6 +147,7 @@ fun CommunityReviewCard(
                 label = { Text("Viết bình luận...", color = textSecondary) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(24.dp),
+                textStyle = TextStyle(color = Color.White),
                 colors = TextFieldDefaults.textFieldColors(
                     containerColor = cardDark,
                     cursorColor = accentBlue,
@@ -154,7 +155,6 @@ fun CommunityReviewCard(
                     unfocusedIndicatorColor = Color.Transparent
                 )
             )
-
             Spacer(modifier = Modifier.height(10.dp))
 
             Button(

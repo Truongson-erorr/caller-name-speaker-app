@@ -18,7 +18,6 @@ import com.example.callernamespeaker.CallEntry
 import com.example.callernamespeaker.ui.theme.RegisterScreen
 import com.example.callernamespeaker.ui.theme.LoginScreen
 import com.example.callernamespeaker.MainScreen
-import com.example.callernamespeaker.admin.AdminMainScreen
 import com.example.callernamespeaker.ui.chat.ChatScreen
 import com.example.callernamespeaker.ui.screens.BlockPhoneScreen
 import com.example.callernamespeaker.ui.screens.IntroSplashScreen
@@ -189,10 +188,6 @@ fun AppNavGraph(
 
         composable("NotificationScreen") {
             NotificationScreen(navController)
-        }
-
-        composable("AdminMainScreen") {
-            AdminMainScreen(navController)
         }
 
         composable("sms_detail/{threadId}") { backStackEntry ->
