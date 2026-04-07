@@ -17,8 +17,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.callernamespeaker.ui.screens.FamilyScreen
-import com.example.callernamespeaker.ui.theme.*
+import com.example.callernamespeaker.ui.theme.Family.FamilyScreen
+import com.example.callernamespeaker.ui.theme.History.HistoryTab
+import com.example.callernamespeaker.ui.theme.Home.HomeTab
+import com.example.callernamespeaker.ui.theme.Profile.ProfileScreen
+import com.example.callernamespeaker.ui.theme.Report.ReportTab
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
