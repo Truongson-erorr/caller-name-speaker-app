@@ -33,7 +33,7 @@ fun NotificationScreen(
 ) {
     val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
-    val notificationViewModel: NotificationViewModel = viewModel(
+    val viewModel: NotificationViewModel = viewModel(
         factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 return NotificationViewModel(userId) as T
@@ -41,13 +41,7 @@ fun NotificationScreen(
         }
     )
 
-    val notifications by notificationViewModel.notifications.collectAsState()
-
-    LaunchedEffect(userId) {
-        if (userId.isNotBlank()) {
-            notificationViewModel.listenToNotifications(userId)
-        }
-    }
+    val notifications by viewModel.notifications.collectAsState()
 
     Column(
         modifier = Modifier
@@ -55,49 +49,53 @@ fun NotificationScreen(
             .background(Color(0xFF0A0F1A))
             .padding(16.dp)
     ) {
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(Modifier.height(30.dp))
+
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp),
+            modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
+
             Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = "Back",
+                Icons.Default.ArrowBack,
+                contentDescription = null,
                 tint = Color.White,
                 modifier = Modifier
                     .align(Alignment.CenterStart)
                     .clickable { navController.popBackStack() }
-                    .padding(start = 8.dp)
-                    .size(26.dp)
             )
+
             Text(
-                text = "Thông báo",
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.titleMedium,
-                color = Color.White
+                "Thông báo",
+                color = Color.White,
+                fontWeight = FontWeight.Bold
             )
         }
+        Spacer(Modifier.height(16.dp))
 
         if (notifications.isEmpty()) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("Không có thông báo", color = Color(0xFF9CA3AF))
+
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("Không có thông báo", color = Color.Gray)
             }
+
         } else {
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
+
+            LazyColumn {
                 itemsIndexed(notifications) { index, notification ->
+
                     NotificationItem(
-                        notification = notification,
-                        onMarkAsRead = { notificationViewModel.markAsRead(notification.id) },
-                        onDelete = { notificationViewModel.deleteNotification(notification.id) }
+                        notification,
+                        onMarkAsRead = {
+                            viewModel.markAsRead(notification.id)
+                        },
+                        onDelete = {
+                            viewModel.deleteNotification(notification.id)
+                        }
                     )
-                    if (index < notifications.lastIndex) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                    }
+
+                    if (index < notifications.lastIndex)
+                        Spacer(Modifier.height(8.dp))
                 }
             }
         }
@@ -162,6 +160,7 @@ fun NotificationItem(
                     color = textColor
                 )
                 Spacer(modifier = Modifier.height(2.dp))
+
                 Text(
                     text = notification.message,
                     fontWeight = textWeight,
@@ -169,6 +168,7 @@ fun NotificationItem(
                     color = textColor
                 )
                 Spacer(modifier = Modifier.height(4.dp))
+
                 Text(
                     text = formatTime(notification.timestamp),
                     fontWeight = textWeight,

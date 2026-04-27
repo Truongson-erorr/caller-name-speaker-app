@@ -17,6 +17,7 @@ class CallReceiver : BroadcastReceiver() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onReceive(context: Context, intent: Intent) {
+
         if (intent.action != TelephonyManager.ACTION_PHONE_STATE_CHANGED) return
 
         val state = intent.getStringExtra(TelephonyManager.EXTRA_STATE)
@@ -29,8 +30,8 @@ class CallReceiver : BroadcastReceiver() {
         CallStatsViewModel().recordIncomingCall(cleanedNumber)
 
         if (isNumberBlocked(context, cleanedNumber)) {
-            val warningText = "Cảnh báo. Số $cleanedNumber đã bị bạn chặn"
-            speakTTS(context, cleanedNumber, warningText)
+            speakTTS(context, cleanedNumber,
+                "Cảnh báo. Số $cleanedNumber đã bị bạn chặn")
             return
         }
 
@@ -51,16 +52,28 @@ class CallReceiver : BroadcastReceiver() {
                     .get()
                     .addOnSuccessListener { reportDoc ->
 
-                        val hasReport = reportDoc.exists()
+                        val reportCount =
+                            if (reportDoc.exists())
+                                reportDoc.getLong("count") ?: 1
+                            else 0
 
-                        if (callCount >= 10 && hasReport) {
+                        val contactName = getContactName(context, cleanedNumber)
+                        val isInContacts = contactName != null
+
+                        val spamScore = calculateSpamScore(
+                            callCount,
+                            reportCount,
+                            isInContacts
+                        )
+
+                        if (spamScore >= 10) {
 
                             val warningText =
-                                "Cảnh báo. Số $cleanedNumber có dấu hiệu spam. Gọi nhiều lần trong hôm nay và đã bị người dùng báo cáo."
+                                "Cảnh báo. Số $cleanedNumber có nguy cơ spam cao (Điểm spam: $spamScore)"
 
                             Toast.makeText(
                                 context,
-                                "⚠️ $warningText",
+                                "$warningText",
                                 Toast.LENGTH_LONG
                             ).show()
 
@@ -79,6 +92,27 @@ class CallReceiver : BroadcastReceiver() {
             }
     }
 
+    private fun calculateSpamScore(
+        callCount: Long,
+        reportCount: Long,
+        isInContacts: Boolean
+    ): Int {
+
+        var score = 0
+
+        // 1. Tần suất gọi
+        if (callCount >= 10) score += 5
+        else if (callCount >= 5) score += 3
+
+        // 2. Report cộng đồng
+        score += (reportCount * 3).toInt()
+
+        // 3. Không có trong danh bạ
+        if (!isInContacts) score += 2
+
+        return score
+    }
+
     private fun speakTTS(context: Context, phone: String, text: String) {
         val intent = Intent(context, CallTTSService::class.java).apply {
             putExtra("phone_number", phone)
@@ -86,19 +120,22 @@ class CallReceiver : BroadcastReceiver() {
             putExtra("is_in_contacts", true)
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             context.startForegroundService(intent)
-        } else {
+        else
             context.startService(intent)
-        }
     }
 
     private fun isNumberBlocked(context: Context, number: String): Boolean {
-        val prefs = context.getSharedPreferences("blocked_numbers", Context.MODE_PRIVATE)
+        val prefs = context.getSharedPreferences(
+            "blocked_numbers",
+            Context.MODE_PRIVATE
+        )
         return prefs.contains(number)
     }
 
     private fun speakCallerNormally(context: Context, phoneNumber: String) {
+
         val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
         if (!prefs.getBoolean("tts_enabled", true)) return
 
@@ -112,23 +149,27 @@ class CallReceiver : BroadcastReceiver() {
             putExtra("is_in_contacts", isInContacts)
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             context.startForegroundService(intent)
-        } else {
+        else
             context.startService(intent)
-        }
     }
 
     private fun getContactName(context: Context, phoneNumber: String): String? {
+
         val uri = Uri.withAppendedPath(
             ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
             Uri.encode(phoneNumber)
         )
+
         val cursor = context.contentResolver.query(
             uri,
             arrayOf(ContactsContract.PhoneLookup.DISPLAY_NAME),
-            null, null, null
+            null,
+            null,
+            null
         )
+
         cursor?.use {
             if (it.moveToFirst()) return it.getString(0)
         }

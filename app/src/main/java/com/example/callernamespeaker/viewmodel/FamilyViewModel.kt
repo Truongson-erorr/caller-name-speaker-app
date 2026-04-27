@@ -67,7 +67,7 @@ class FamilyViewModel : ViewModel() {
         }
     }
 
-    fun loadFamilyMembers() {
+    private fun loadFamilyMembers() {
         val uid = currentUser?.uid ?: return
         db.collection("Family").document(uid)
             .collection("members")
@@ -224,16 +224,6 @@ class FamilyViewModel : ViewModel() {
         db.collection("Family").document(uid)
             .collection("members").document(memberId)
             .delete()
-    }
-
-    fun updateNickname(memberId: String, nickname: String) {
-        val uid = currentUser?.uid ?: return
-
-        db.collection("Family")
-            .document(uid)
-            .collection("members")
-            .document(memberId)
-            .update("nickname", nickname)
     }
 
 }

@@ -18,33 +18,37 @@ class NotificationViewModel(
     val notifications: StateFlow<List<Notification>> = _notifications
 
     private val _unreadCount = MutableStateFlow(0)
-    val unreadCount: StateFlow<Int> = _unreadCount
 
     init {
         listenToNotifications(userId)
     }
 
-    fun listenToNotifications(userId: String) {
+    private fun listenToNotifications(userId: String) {
+
         db.collection("notifications")
             .whereEqualTo("userId", userId)
+            .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, e ->
+
                 if (e != null) {
-                    Log.w("NotificationVM", "Listen failed.", e)
+                    Log.w("NotificationVM", "Listen failed", e)
                     return@addSnapshotListener
                 }
-                if (snapshot != null) {
-                    val list = snapshot.documents.map { doc ->
-                        Notification(
-                            id = doc.id,
-                            title = doc.getString("title") ?: "",
-                            message = doc.getString("message") ?: "",
-                            timestamp = doc.getLong("timestamp") ?: 0,
-                            isRead = doc.getBoolean("isRead") ?: false
-                        )
-                    }
-                    _notifications.value = list
-                    _unreadCount.value = list.count { !it.isRead }
-                }
+
+                val list = snapshot?.documents?.map { doc ->
+                    Notification(
+                        id = doc.id,
+                        title = doc.getString("title") ?: "",
+                        message = doc.getString("message") ?: "",
+                        timestamp = doc.getLong("timestamp") ?: 0,
+                        isRead = doc.getBoolean("isRead") ?: false
+                    )
+                } ?: emptyList()
+
+                _notifications.value = list
+
+                _unreadCount.value =
+                    list.count { !it.isRead }
             }
     }
 

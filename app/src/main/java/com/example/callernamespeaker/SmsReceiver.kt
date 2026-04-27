@@ -30,15 +30,15 @@ class SmsReceiver : BroadcastReceiver() {
 
                     Toast.makeText(
                         context,
-                        "⚠️ Tin nhắn từ $phoneNumber chứa đường link đáng ngờ: $foundLink",
+                        "Tin nhắn từ $phoneNumber chứa đường link đáng ngờ: $foundLink",
                         Toast.LENGTH_LONG
                     ).show()
 
-                    // 🔹 Lấy trạng thái bật/tắt từ SharedPreferences
+                    // Lấy trạng thái bật/tắt từ SharedPreferences
                     val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
                     val isEnabled = prefs.getBoolean("sms_tts_enabled", true) // mặc định là BẬT
 
-                    // 🔹 Chỉ đọc nếu người dùng bật
+                    // Chỉ đọc nếu người dùng bật
                     if (isEnabled) {
                         tts = TextToSpeech(context.applicationContext) { status ->
                             if (status == TextToSpeech.SUCCESS) {

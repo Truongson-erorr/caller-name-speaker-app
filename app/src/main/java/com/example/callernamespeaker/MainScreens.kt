@@ -24,14 +24,29 @@ import com.example.callernamespeaker.ui.theme.Profile.ProfileScreen
 import com.example.callernamespeaker.ui.theme.Report.ReportTab
 import kotlinx.coroutines.launch
 
+data class BottomMenuItem(
+    val route: String,
+    val label: String,
+    val icon: ImageVector
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavController) {
 
     var selectedTab by remember { mutableStateOf("home") }
+
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+
+    val bottomMenus = listOf(
+        BottomMenuItem("home", "Trang chủ", Icons.Outlined.Home),
+        BottomMenuItem("post", "Gia đình", Icons.Outlined.FamilyRestroom),
+        BottomMenuItem("report", "Chặn số", Icons.Outlined.Block),
+        BottomMenuItem("history", "Lịch sử", Icons.Outlined.History),
+        BottomMenuItem("profile", "Tài khoản", Icons.Outlined.Person)
+    )
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -85,13 +100,54 @@ fun MainScreen(navController: NavController) {
                         }
                     }
                 )
+            },
+
+            bottomBar = {
+                NavigationBar(
+                    containerColor = Color(0xFF1A2030)
+                ) {
+
+                    bottomMenus.forEach { item ->
+
+                        NavigationBarItem(
+                            selected = selectedTab == item.route,
+                            onClick = {
+                                selectedTab = item.route
+                            },
+                            icon = {
+                                Icon(
+                                    imageVector = item.icon,
+                                    contentDescription = item.label,
+                                    modifier = Modifier.size(
+                                        if (selectedTab == item.route) 26.dp else 22.dp
+                                    )
+                                )
+                            },
+                            label = {
+                                Text(
+                                    item.label,
+                                    fontSize = 11.sp
+                                )
+                            },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = Color(0xFF64B5F6),
+                                selectedTextColor = Color(0xFF64B5F6),
+                                indicatorColor = Color(0xFF24304A),
+                                unselectedIconColor = Color.White,
+                                unselectedTextColor = Color.White
+                            )
+                        )
+                    }
+                }
             }
         ) { innerPadding ->
+
             Box(
                 modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()
             ) {
+
                 when (selectedTab) {
                     "home" -> HomeTab(navController)
                     "post" -> FamilyScreen(navController)
@@ -109,6 +165,7 @@ fun DrawerContent(
     selectedTab: String,
     onItemClick: (String) -> Unit
 ) {
+
     ModalDrawerSheet(
         modifier = Modifier
             .fillMaxWidth(0.6f)
@@ -125,35 +182,25 @@ fun DrawerContent(
             modifier = Modifier.padding(start = 16.dp, bottom = 16.dp)
         )
 
-        DrawerItem(
-            label = "Trang chủ",
-            icon = Icons.Outlined.Home,
-            selected = selectedTab == "home"
-        ) { onItemClick("home") }
+        DrawerItem("Trang chủ", Icons.Outlined.Home, selectedTab == "home") {
+            onItemClick("home")
+        }
 
-        DrawerItem(
-            label = "Gia đình",
-            icon = Icons.Outlined.FamilyRestroom,
-            selected = selectedTab == "post"
-        ) { onItemClick("post") }
+        DrawerItem("Gia đình", Icons.Outlined.FamilyRestroom, selectedTab == "post") {
+            onItemClick("post")
+        }
 
-        DrawerItem(
-            label = "Chặn số",
-            icon = Icons.Outlined.Block,
-            selected = selectedTab == "report"
-        ) { onItemClick("report") }
+        DrawerItem("Chặn số", Icons.Outlined.Block, selectedTab == "report") {
+            onItemClick("report")
+        }
 
-        DrawerItem(
-            label = "Lịch sử",
-            icon = Icons.Outlined.History,
-            selected = selectedTab == "history"
-        ) { onItemClick("history") }
+        DrawerItem("Lịch sử", Icons.Outlined.History, selectedTab == "history") {
+            onItemClick("history")
+        }
 
-        DrawerItem(
-            label = "Tài khoản",
-            icon = Icons.Outlined.Person,
-            selected = selectedTab == "profile"
-        ) { onItemClick("profile") }
+        DrawerItem("Tài khoản", Icons.Outlined.Person, selectedTab == "profile") {
+            onItemClick("profile")
+        }
     }
 }
 
@@ -164,6 +211,7 @@ fun DrawerItem(
     selected: Boolean,
     onClick: () -> Unit
 ) {
+
     val selectedColor = Color(0xFF64B5F6)
     val backgroundColor =
         if (selected) Color(0xFF24304A) else Color.Transparent
@@ -177,7 +225,6 @@ fun DrawerItem(
             .padding(horizontal = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-
         Box(
             modifier = Modifier
                 .width(4.dp)
@@ -202,4 +249,3 @@ fun DrawerItem(
         )
     }
 }
-
