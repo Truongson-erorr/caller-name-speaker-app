@@ -49,7 +49,7 @@ fun SearchScreen(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(15.dp))
+            Spacer(modifier = Modifier.height(35.dp))
 
             Box(
                 modifier = Modifier

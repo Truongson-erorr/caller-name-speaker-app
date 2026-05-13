@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.callernamespeaker.viewmodel.BlacklistViewModel
-import com.example.personalexpensetracker.viewmodel.NotificationViewModel
+import com.example.callernamespeaker.viewmodel.NotificationViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,11 +32,13 @@ import com.google.firebase.auth.FirebaseAuth
 fun BlockPhoneScreen(
     navController: NavController,
     blacklistViewModel: BlacklistViewModel = viewModel(),
-    notificationViewModel: NotificationViewModel
 ) {
     val context = LocalContext.current
     val prefs = context.getSharedPreferences("blocked_numbers", Context.MODE_PRIVATE)
     var blockPhoneInput by remember { mutableStateOf("") }
+
+    var showDialog by remember { mutableStateOf(false) }
+    var dialogMessage by remember { mutableStateOf("") }
 
     val cleanedPhone = blockPhoneInput.trim().replace("+84", "0").replace(" ", "")
     val isBlocked = prefs.getBoolean(cleanedPhone, false)
@@ -53,7 +55,7 @@ fun BlockPhoneScreen(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(35.dp))
 
             Box(
                 modifier = Modifier
@@ -71,6 +73,7 @@ fun BlockPhoneScreen(
                         .padding(start = 8.dp)
                         .size(26.dp)
                 )
+
                 Text(
                     text = "Chặn số điện thoại",
                     fontWeight = FontWeight.Bold,
@@ -92,10 +95,7 @@ fun BlockPhoneScreen(
                 value = blockPhoneInput,
                 onValueChange = { blockPhoneInput = it },
                 placeholder = {
-                    Text(
-                        text = "Nhập số điện thoại...",
-                        color = Color(0xFF9CA3AF)
-                    )
+                    Text("Nhập số điện thoại...", color = Color(0xFF9CA3AF))
                 },
                 textStyle = TextStyle(color = Color.White),
                 singleLine = true,
@@ -108,7 +108,6 @@ fun BlockPhoneScreen(
                     containerColor = Color(0xFF111827),
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent,
                 )
             )
 
@@ -116,9 +115,7 @@ fun BlockPhoneScreen(
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = "⚠️ Số này đã được chặn!",
-                    color = Color.Gray,
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.Medium
+                    color = Color.Gray
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))
@@ -126,23 +123,18 @@ fun BlockPhoneScreen(
             Button(
                 onClick = {
                     val phone = cleanedPhone
+
                     if (phone.isNotBlank()) {
                         blacklistViewModel.addToBlacklist(phone, type = "unknown") {
-                            Toast.makeText(context, "Đã chặn số $phone", Toast.LENGTH_SHORT).show()
 
-                            val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
-                            if (userId.isNotBlank()) {
-                                notificationViewModel.addNotification(
-                                    userId = userId,
-                                    title = "Chặn số thành công",
-                                    message = "Bạn vừa chặn số $phone"
-                                )
-                            }
+                            dialogMessage = "Đã chặn số $phone thành công"
+                            showDialog = true
+
                             blockPhoneInput = ""
-                            navController.popBackStack()
                         }
                     } else {
-                        Toast.makeText(context, "Vui lòng nhập số hợp lệ", Toast.LENGTH_SHORT).show()
+                        dialogMessage = "Vui lòng nhập số hợp lệ"
+                        showDialog = true
                     }
                 },
                 colors = ButtonDefaults.buttonColors(
@@ -154,6 +146,19 @@ fun BlockPhoneScreen(
             ) {
                 Text("Chặn số này")
             }
+        }
+
+        if (showDialog) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                title = { Text("Thông báo") },
+                text = { Text(dialogMessage) },
+                confirmButton = {
+                    TextButton(onClick = { showDialog = false }) {
+                        Text("OK")
+                    }
+                }
+            )
         }
     }
 }

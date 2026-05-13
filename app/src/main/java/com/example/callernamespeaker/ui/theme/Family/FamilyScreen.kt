@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.callernamespeaker.viewmodel.CallAlertViewModel
 import com.example.callernamespeaker.viewmodel.FamilyViewModel
 
 @SuppressLint("SimpleDateFormat")
@@ -39,13 +38,6 @@ fun FamilyScreen(
 
     var email by remember { mutableStateOf("") }
     var showDialog by remember { mutableStateOf(false) }
-
-    val callAlertViewModel: CallAlertViewModel = viewModel()
-    val alerts by callAlertViewModel.alerts.collectAsState()
-
-    LaunchedEffect(Unit) {
-        callAlertViewModel.listenCallAlerts()
-    }
 
     LazyColumn(
         modifier = Modifier
@@ -108,7 +100,6 @@ fun FamilyScreen(
         }
 
         item {
-
             if (members.isEmpty()) {
                 Text(
                     "Chưa có thành viên nào.",

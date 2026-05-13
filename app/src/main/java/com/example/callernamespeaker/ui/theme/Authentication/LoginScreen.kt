@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PhoneInTalk
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -50,7 +51,7 @@ fun LoginScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF0A0F1A)) // Nền tối
+            .background(Color(0xFF0A0F1A))
             .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
@@ -64,14 +65,14 @@ fun LoginScreen(navController: NavController) {
         ) {
             Spacer(modifier = Modifier.height(20.dp))
             Icon(
-                imageVector = Icons.Default.Security,
+                imageVector = Icons.Default.PhoneInTalk,
                 contentDescription = null,
                 tint = Color(0xFF2A2AFC),
                 modifier = Modifier.size(92.dp)
             )
 
             Text(
-                text = "Chào mừng đến BlockSon",
+                text = "Chào mừng đến Call-Name-Speaker",
                 style = MaterialTheme.typography.headlineSmall.copy(
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF2A2AFC)
@@ -81,17 +82,17 @@ fun LoginScreen(navController: NavController) {
             )
 
             Text(
-                text = "Bảo vệ bạn khỏi các cuộc gọi lừa đảo",
+                text = "Call-Name-Speaker là trợ lý thông minh giúp bạn nhận diện và cảnh báo các cuộc gọi lừa đảo, spam hoặc không an toàn.",
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = 1.dp, bottom = 20.dp)
+                textAlign = TextAlign.Start,
+                modifier = Modifier.padding(top = 6.dp, bottom = 20.dp)
             )
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
-                    .background(Color(0xFF1A1F2C), RoundedCornerShape(12.dp)) // Background tối
+                    .background(Color(0xFF1A1F2C), RoundedCornerShape(12.dp))
                     .clip(RoundedCornerShape(12.dp))
             ) {
                 Box(

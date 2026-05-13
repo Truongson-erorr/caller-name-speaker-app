@@ -20,7 +20,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.personalexpensetracker.viewmodel.NotificationViewModel
 import com.example.callernamespeaker.viewmodel.ReportViewModel
 import com.google.firebase.auth.FirebaseAuth
 
@@ -29,18 +28,20 @@ import com.google.firebase.auth.FirebaseAuth
 fun ReportScreen(
     navController: NavController,
     reportViewModel: ReportViewModel = viewModel(),
-    notificationViewModel: NotificationViewModel
 ) {
     val context = LocalContext.current
-
     var reportPhone by remember { mutableStateOf("") }
     var reportReason by remember { mutableStateOf("") }
+
+    var showDialog by remember { mutableStateOf(false) }
+    var dialogMessage by remember { mutableStateOf("") }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFF0A0F1A))
     ) {
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -49,12 +50,14 @@ fun ReportScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(35.dp))
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 24.dp),
                 contentAlignment = Alignment.Center
             ) {
+
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
@@ -65,6 +68,7 @@ fun ReportScreen(
                         .padding(start = 8.dp)
                         .size(26.dp)
                 )
+
                 Text(
                     text = "Báo cáo số điện thoại",
                     fontWeight = FontWeight.Bold,
@@ -74,9 +78,7 @@ fun ReportScreen(
             }
 
             Text(
-                text = "Nếu bạn nhận được cuộc gọi hoặc tin nhắn nghi ngờ là lừa đảo, hãy nhập số điện thoại và lý do vào bên dưới. " +
-                        "Thông tin sẽ giúp hệ thống cải thiện khả năng phát hiện số nguy hiểm. " +
-                        "Ví dụ: bạn có thể nhập số 090xxxxxxx và lý do như 'Giả mạo ngân hàng', 'Gọi quảng cáo liên tục' v.v.",
+                text = "Nếu bạn nhận được cuộc gọi hoặc tin nhắn nghi ngờ là lừa đảo, hãy nhập số điện thoại và lý do vào bên dưới.",
                 style = MaterialTheme.typography.bodySmall,
                 color = Color(0xFF9CA3AF),
                 modifier = Modifier.fillMaxWidth()
@@ -88,10 +90,7 @@ fun ReportScreen(
                 onValueChange = { reportPhone = it },
                 shape = RoundedCornerShape(30.dp),
                 placeholder = {
-                    Text(
-                        text = "Nhập số điện thoại...",
-                        color = Color(0xFF9CA3AF)
-                    )
+                    Text("Nhập số điện thoại...", color = Color(0xFF9CA3AF))
                 },
                 textStyle = TextStyle(color = Color.White),
                 modifier = Modifier
@@ -101,9 +100,7 @@ fun ReportScreen(
                     containerColor = Color(0xFF111827),
                     cursorColor = Color(0xFF3B82F6),
                     focusedBorderColor = Color(0xFF3B82F6),
-                    unfocusedBorderColor = Color(0xFF374151),
-                    focusedLabelColor = Color(0xFF3B82F6),
-                    unfocusedLabelColor = Color(0xFF9CA3AF)
+                    unfocusedBorderColor = Color(0xFF374151)
                 ),
                 singleLine = true
             )
@@ -132,30 +129,33 @@ fun ReportScreen(
             Button(
                 onClick = {
                     val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
-                    if (reportPhone.isNotBlank() && reportReason.isNotBlank() && userId.isNotBlank()) {
+
+                    if (reportPhone.isNotBlank() &&
+                        reportReason.isNotBlank() &&
+                        userId.isNotBlank()
+                    ) {
+
                         reportViewModel.reportPhoneNumber(
                             phone = reportPhone.trim(),
                             userId = userId,
                             reason = reportReason.trim(),
                             onComplete = {
-                                Toast.makeText(context, "Báo cáo thành công", Toast.LENGTH_SHORT).show()
 
-                                notificationViewModel.addNotification(
-                                    userId = userId,
-                                    title = "Báo cáo số điện thoại",
-                                    message = "Bạn vừa báo cáo số ${reportPhone.trim()} với lý do: ${reportReason.trim()}"
-                                )
+                                dialogMessage = "Báo cáo thành công"
+                                showDialog = true
 
                                 reportPhone = ""
                                 reportReason = ""
-                                navController.popBackStack()
                             },
                             onError = {
-                                Toast.makeText(context, "Lỗi: $it", Toast.LENGTH_SHORT).show()
+                                dialogMessage = "Lỗi: $it"
+                                showDialog = true
                             }
                         )
+
                     } else {
-                        Toast.makeText(context, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show()
+                        dialogMessage = "Vui lòng nhập đầy đủ thông tin"
+                        showDialog = true
                     }
                 },
                 colors = ButtonDefaults.buttonColors(
@@ -166,6 +166,21 @@ fun ReportScreen(
             ) {
                 Text("Gửi báo cáo")
             }
+        }
+
+        if (showDialog) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                title = { Text("Thông báo") },
+                text = { Text(dialogMessage) },
+                confirmButton = {
+                    TextButton(onClick = {
+                        showDialog = false
+                    }) {
+                        Text("OK")
+                    }
+                }
+            )
         }
     }
 }

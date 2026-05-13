@@ -71,8 +71,8 @@ fun ReportTab(
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Badge(
-                    containerColor = Color(0xFF2E7D32), // xanh lá đậm
-                    contentColor = Color.White
+                    containerColor = Color(0xFF00C853),
+                    contentColor =  Color.White
                 ) {
                     Text(text = "Tổng: ${list.size} số")
                 }

@@ -40,7 +40,7 @@ import com.example.callernamespeaker.ui.theme.Authentication.UserInfoScreen
 import com.example.callernamespeaker.ui.theme.Website.WebsiteScreen
 import com.example.callernamespeaker.viewmodel.BlacklistViewModel
 import com.example.callernamespeaker.viewmodel.ReportViewModel
-import com.example.personalexpensetracker.viewmodel.NotificationViewModel
+import com.example.callernamespeaker.viewmodel.NotificationViewModel
 import com.example.personalexpensetracker.viewmodel.NotificationViewModelFactory
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.firebase.auth.FirebaseAuth
@@ -141,14 +141,9 @@ fun AppNavGraph(
 
         composable("report") {
             val reportViewModel: ReportViewModel = viewModel()
-            val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
-            val notificationViewModel: NotificationViewModel = viewModel(
-                factory = NotificationViewModelFactory(userId)
-            )
             ReportScreen(
                 navController = navController,
                 reportViewModel = reportViewModel,
-                notificationViewModel = notificationViewModel
             )
         }
 
@@ -158,14 +153,9 @@ fun AppNavGraph(
 
         composable("block_phone") {
             val blacklistViewModel: BlacklistViewModel = viewModel()
-            val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
-            val notificationViewModel: NotificationViewModel = viewModel(
-                factory = NotificationViewModelFactory(userId)
-            )
             BlockPhoneScreen(
                 navController = navController,
                 blacklistViewModel = blacklistViewModel,
-                notificationViewModel = notificationViewModel
             )
         }
 

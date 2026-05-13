@@ -1,10 +1,10 @@
-package com.example.personalexpensetracker.viewmodel
+package com.example.callernamespeaker.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.callernamespeaker.model.Notification
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -18,37 +18,40 @@ class NotificationViewModel(
     val notifications: StateFlow<List<Notification>> = _notifications
 
     private val _unreadCount = MutableStateFlow(0)
+    val unreadCount: StateFlow<Int> = _unreadCount
 
     init {
-        listenToNotifications(userId)
+        listenToNotifications()
     }
 
-    private fun listenToNotifications(userId: String) {
-
+    private fun listenToNotifications() {
         db.collection("notifications")
             .whereEqualTo("userId", userId)
-            .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            .orderBy("timestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, e ->
 
                 if (e != null) {
-                    Log.w("NotificationVM", "Listen failed", e)
+                    Log.e("NotificationVM", "Listen failed", e)
                     return@addSnapshotListener
                 }
 
-                val list = snapshot?.documents?.map { doc ->
-                    Notification(
-                        id = doc.id,
-                        title = doc.getString("title") ?: "",
-                        message = doc.getString("message") ?: "",
-                        timestamp = doc.getLong("timestamp") ?: 0,
-                        isRead = doc.getBoolean("isRead") ?: false
-                    )
+                val list = snapshot?.documents?.mapNotNull { doc ->
+                    try {
+                        Notification(
+                            id = doc.id,
+                            title = doc.getString("title") ?: "",
+                            message = doc.getString("message") ?: "",
+                            timestamp = doc.getLong("timestamp") ?: 0L,
+                            isRead = doc.getBoolean("isRead") ?: false
+                        )
+                    } catch (ex: Exception) {
+                        Log.e("NotificationVM", "Parse error", ex)
+                        null
+                    }
                 } ?: emptyList()
 
                 _notifications.value = list
-
-                _unreadCount.value =
-                    list.count { !it.isRead }
+                _unreadCount.value = list.count { !it.isRead }
             }
     }
 
@@ -71,21 +74,21 @@ class NotificationViewModel(
             }
     }
 
-    fun deleteNotification(id: String) {
-        db.collection("notifications")
-            .document(id)
-            .delete()
-    }
-
     fun markAsRead(notificationId: String) {
         db.collection("notifications")
             .document(notificationId)
             .update("isRead", true)
+    }
+
+    fun deleteNotification(id: String) {
+        db.collection("notifications")
+            .document(id)
+            .delete()
             .addOnSuccessListener {
-                Log.d("NotificationVM", "Marked as read: $notificationId")
+                Log.d("NotificationVM", "Deleted: $id")
             }
             .addOnFailureListener { e ->
-                Log.e("NotificationVM", "Error marking as read", e)
+                Log.e("NotificationVM", "Delete failed", e)
             }
     }
 }

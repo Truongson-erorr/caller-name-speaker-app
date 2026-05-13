@@ -1,8 +1,10 @@
 package com.example.callernamespeaker.ui.screens
 
 import android.text.format.DateFormat
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -24,7 +26,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.callernamespeaker.model.Notification
-import com.example.personalexpensetracker.viewmodel.NotificationViewModel
+import com.example.callernamespeaker.viewmodel.NotificationViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -32,7 +34,6 @@ fun NotificationScreen(
     navController: NavController
 ) {
     val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
-
     val viewModel: NotificationViewModel = viewModel(
         factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -40,8 +41,9 @@ fun NotificationScreen(
             }
         }
     )
-
     val notifications by viewModel.notifications.collectAsState()
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var selectedNotification by remember { mutableStateOf<Notification?>(null) }
 
     Column(
         modifier = Modifier
@@ -89,8 +91,9 @@ fun NotificationScreen(
                         onMarkAsRead = {
                             viewModel.markAsRead(notification.id)
                         },
-                        onDelete = {
-                            viewModel.deleteNotification(notification.id)
+                        onLongPress = {
+                            selectedNotification = notification
+                            showDeleteDialog = true
                         }
                     )
 
@@ -100,13 +103,46 @@ fun NotificationScreen(
             }
         }
     }
+
+    if (showDeleteDialog && selectedNotification != null) {
+        AlertDialog(
+            onDismissRequest = {
+                showDeleteDialog = false
+                selectedNotification = null
+            },
+            title = { Text("Xóa thông báo") },
+            text = { Text("Bạn có chắc muốn xóa thông báo này không?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.deleteNotification(selectedNotification!!.id)
+                        showDeleteDialog = false
+                        selectedNotification = null
+                    }
+                ) {
+                    Text("Xóa", color = Color.Red)
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteDialog = false
+                        selectedNotification = null
+                    }
+                ) {
+                    Text("Hủy")
+                }
+            }
+        )
+    }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NotificationItem(
     notification: Notification,
     onMarkAsRead: () -> Unit,
-    onDelete: () -> Unit
+    onLongPress: () -> Unit
 ) {
     val backgroundColor =
         if (!notification.isRead) Color(0xFF111827) else Color(0xFF1A202C)
@@ -118,17 +154,22 @@ fun NotificationItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 4.dp)
-            .clickable { onMarkAsRead() },
+            .combinedClickable(
+                onClick = { onMarkAsRead() },
+                onLongClick = { onLongPress() }
+            ),
         colors = CardDefaults.cardColors(containerColor = backgroundColor),
         shape = RoundedCornerShape(20.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
+        Spacer(modifier = Modifier.height(30.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+
             Icon(
                 imageVector = Icons.Default.Notifications,
                 contentDescription = "Thông báo",
@@ -150,8 +191,7 @@ fun NotificationItem(
             }
 
             Column(
-                modifier = Modifier
-                    .weight(1f)
+                modifier = Modifier.weight(1f)
             ) {
                 Text(
                     text = notification.title,
@@ -159,6 +199,7 @@ fun NotificationItem(
                     fontSize = 15.sp,
                     color = textColor
                 )
+
                 Spacer(modifier = Modifier.height(2.dp))
 
                 Text(
