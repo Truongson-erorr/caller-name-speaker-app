@@ -120,12 +120,6 @@ Cơ chế này giúp phát hiện số rác / spam / lừa đảo ngay cả khi 
 - Nếu Spam Score < 10:
   - Đọc tên người gọi bình thường (TTS)
 
-# Use case
-
-<p align="left">
-  <img src="https://res.cloudinary.com/dq64aidpx/image/upload/v1778751319/z7825267209444_edb7a404fcb51c79cb37c6435995b260_xnb5kj.jpg" width="60%"/>
-</p>
-
 # Sơ đồ ERD
 
 <p align="left">
