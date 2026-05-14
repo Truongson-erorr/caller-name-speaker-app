@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -33,6 +34,7 @@ import com.example.callernamespeaker.model.EmergencyNumber
 import com.example.callernamespeaker.viewmodel.EmergencyViewModel
 import com.google.android.gms.location.LocationServices
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EmergencyTab(
     navController: NavController,
@@ -55,24 +57,18 @@ fun EmergencyTab(
     }
 
     DisposableEffect(lifecycleOwner) {
-
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME && pendingCallNumber != null) {
-
                 val callIntent = Intent(Intent.ACTION_DIAL).apply {
                     data = Uri.parse("tel:$pendingCallNumber")
                 }
-
                 context.startActivity(callIntent)
                 pendingCallNumber = null
             }
         }
 
         lifecycleOwner.lifecycle.addObserver(observer)
-
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
     val systemContacts = listOf(
@@ -81,70 +77,80 @@ fun EmergencyTab(
         EmergencyNumber("115", "Cấp cứu", true)
     )
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFF0A0F1A))
-            .padding(horizontal = 16.dp)
-    ) {
-
-        Spacer(modifier = Modifier.height(50.dp))
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier
-                    .size(26.dp)
-                    .clickable { navController.popBackStack() }
-            )
-            Spacer(modifier = Modifier.width(12.dp))
-            Text(
-                "Số khẩn cấp",
-                color = Color.White,
-                fontWeight = FontWeight.Bold
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        "Số khẩn cấp",
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            Icons.Default.ArrowBackIosNew,
+                            contentDescription = null,
+                            tint = Color.White
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color(0xFF1A2030)
+                )
             )
         }
+    ) { padding ->
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFF0A0F1A))
+                .padding(padding)
+                .padding(horizontal = 16.dp)
+        ) {
 
-        LazyColumn {
+            Spacer(modifier = Modifier.height(20.dp))
+            LazyColumn {
 
-            item { SectionTitle("Số hệ thống") }
+                item { SectionTitle("Số hệ thống") }
 
-            items(systemContacts) { contact ->
-                EmergencyCard(contact) {
-                    callNumber(context, contact.number)
+                items(systemContacts) { contact ->
+                    EmergencyCard(contact) {
+                        callNumber(context, contact.number)
+                    }
                 }
-            }
 
-            item {
-                Spacer(modifier = Modifier.height(24.dp))
-                SectionTitle("Liên hệ cá nhân")
-            }
-
-            items(viewModel.customContacts) { contact ->
-                EmergencyCard(contact) {
-                    selectedContact = contact
+                item {
+                    Spacer(modifier = Modifier.height(24.dp))
+                    SectionTitle("Liên hệ cá nhân")
                 }
-            }
 
-            item {
-                Spacer(modifier = Modifier.height(24.dp))
-                Button(
-                    onClick = { showDialog = true },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF2563EB)
-                    )
-                ) {
-                    Icon(Icons.Default.Add, null, tint = Color.White)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Thêm liên hệ khẩn cấp", color = Color.White)
+                items(viewModel.customContacts) { contact ->
+                    EmergencyCard(contact) {
+                        selectedContact = contact
+                    }
                 }
-                Spacer(modifier = Modifier.height(40.dp))
+
+                item {
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Button(
+                        onClick = { showDialog = true },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(20.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF2563EB)
+                        )
+                    ) {
+                        Icon(Icons.Default.Add, null, tint = Color.White)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Thêm liên hệ khẩn cấp", color = Color.White)
+                    }
+
+                    Spacer(modifier = Modifier.height(40.dp))
+                }
             }
         }
     }
@@ -153,9 +159,7 @@ fun EmergencyTab(
         AddEmergencyDialog(
             onDismiss = { showDialog = false },
             onSave = { name, phone ->
-                viewModel.addContact(
-                    EmergencyNumber(phone, name, false)
-                )
+                viewModel.addContact(EmergencyNumber(phone, name, false))
                 showDialog = false
             }
         )
@@ -170,10 +174,7 @@ fun EmergencyTab(
                 selectedContact = null
             },
             onSmsAndCall = {
-                sendLocationAndOpenSms(
-                    context,
-                    selectedContact!!.number
-                ) {
+                sendLocationAndOpenSms(context, selectedContact!!.number) {
                     pendingCallNumber = it
                 }
                 selectedContact = null

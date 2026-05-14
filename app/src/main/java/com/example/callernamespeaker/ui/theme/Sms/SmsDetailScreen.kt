@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -73,30 +74,29 @@ fun SmsDetailScreen(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Chi tiết tin nhắn",
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBackIosNew,
+                            contentDescription = null,
+                            tint = Color.White
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color(0xFF1A2030)
+                )
+            )
+
             Spacer(modifier = Modifier.height(20.dp))
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                contentAlignment = Alignment.Center
-            ) {
-
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier
-                        .align(Alignment.CenterStart)
-                        .clickable { navController.popBackStack() }
-                )
-
-                Text(
-                    text = "Chi tiết tin nhắn",
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold
-                )
-            }
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()

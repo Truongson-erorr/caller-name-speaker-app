@@ -9,6 +9,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -28,6 +29,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.*
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewsDetailScreen(
     postId: String,
@@ -70,52 +72,52 @@ fun NewsDetailScreen(
             }
     }
 
-    if (post == null) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0xFF0A0F1A)),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator(color = Color(0xFF3B82F6))
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Chi tiết bài viết",
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            Icons.Default.ArrowBackIosNew,
+                            contentDescription = null,
+                            tint = Color.White
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color(0xFF1A2030)
+                )
+            )
         }
-        return
-    }
+    ) { padding ->
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFF0A0F1A))
-    ) {
-        Spacer(modifier = Modifier.height(20.dp))
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = "Back",
-                tint = Color.White,
+        if (post == null) {
+            Box(
                 modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .size(26.dp)
-                    .clickable { navController.popBackStack() }
-            )
-            Text(
-                text = "Chi tiết bài viết",
-                color = Color.White,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
-            )
+                    .fillMaxSize()
+                    .background(Color(0xFF0A0F1A))
+                    .padding(padding),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = Color(0xFF3B82F6))
+            }
+            return@Scaffold
         }
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
+                .background(Color(0xFF0A0F1A))
+                .padding(padding)
                 .padding(16.dp)
+                .verticalScroll(rememberScrollState())
         ) {
 
             Text(
@@ -153,14 +155,13 @@ fun NewsDetailScreen(
                 textAlign = TextAlign.Justify
             )
             Spacer(Modifier.height(28.dp))
-
             Divider(color = Color(0xFF1F2937))
             Spacer(Modifier.height(20.dp))
-
             CommentSection(
                 postId = post!!.id,
                 userName = currentUserName
             )
+
             Spacer(Modifier.height(40.dp))
         }
     }

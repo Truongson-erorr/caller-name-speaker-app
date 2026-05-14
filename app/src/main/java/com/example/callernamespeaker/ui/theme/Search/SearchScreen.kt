@@ -3,7 +3,6 @@ package com.example.callernamespeaker.ui.screens
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,6 +10,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -37,68 +37,69 @@ fun SearchScreen(
     var phoneInput by remember { mutableStateOf("") }
     var resultMessage by remember { mutableStateOf("") }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFF0A0F1A))
-    ) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Tra cứu số điện thoại",
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBackIosNew,
+                            contentDescription = "Back",
+                            tint = Color.White
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color(0xFF1A2030),
+                    titleContentColor = Color.White,
+                    navigationIconContentColor = Color.White
+                )
+            )
+        }
+    ) { padding ->
+
         Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
+                .background(Color(0xFF0A0F1A))
+                .padding(padding)
                 .padding(20.dp)
                 .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.Start
         ) {
-            Spacer(modifier = Modifier.height(35.dp))
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 24.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color.White,
-                    modifier = Modifier
-                        .align(Alignment.CenterStart)
-                        .clickable { navController.popBackStack() }
-                        .padding(start = 8.dp)
-                        .size(26.dp)
-                )
-                Text(
-                    text = "Tra cứu số điện thoại",
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color.White
-                )
-            }
 
             Text(
-                text = "Nhập số điện thoại bạn muốn kiểm tra để xem có nằm trong danh sách chặn hay không. " +
-                        "Ví dụ: 090xxxxxxx hoặc +8490xxxxxxx.",
+                text = "Nhập số điện thoại bạn muốn kiểm tra để xem có nằm trong danh sách chặn hay không. Ví dụ: 090xxxxxxx hoặc +8490xxxxxxx.",
                 style = MaterialTheme.typography.bodySmall,
-                color = Color(0xFF9CA3AF),
-                modifier = Modifier.fillMaxWidth()
+                color = Color(0xFF9CA3AF)
             )
             Spacer(modifier = Modifier.height(16.dp))
 
             TextField(
                 value = phoneInput,
                 onValueChange = { phoneInput = it },
-                placeholder = { Text("Nhập số điện thoại...", color = Color(0xFF9CA3AF)) },
+                placeholder = {
+                    Text("Nhập số điện thoại...", color = Color(0xFF9CA3AF))
+                },
                 shape = RoundedCornerShape(30.dp),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color(0xFF111827),
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent,
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color(0xFF111827),
+                    unfocusedContainerColor = Color(0xFF111827),
+                    disabledContainerColor = Color(0xFF111827),
                     cursorColor = Color(0xFF3B82F6),
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -108,17 +109,26 @@ fun SearchScreen(
 
             Button(
                 onClick = {
-                    val cleaned = phoneInput.trim().replace("+84", "0").replace(" ", "")
+                    val cleaned = phoneInput.trim()
+                        .replace("+84", "0")
+                        .replace(" ", "")
+
                     if (cleaned.isNotBlank()) {
                         val isBlocked = prefs.contains(cleaned)
                         val type = classifyPhoneNumber(cleaned)
 
                         viewModel.saveLookup(cleaned, type, isBlocked)
+
                         resultMessage =
-                            "Số $cleaned (${type}) ${if (isBlocked) "đã bị chặn" else "chưa bị chặn"}"
+                            "Số $cleaned ($type) ${if (isBlocked) "đã bị chặn" else "chưa bị chặn"}"
+
                         Toast.makeText(context, resultMessage, Toast.LENGTH_SHORT).show()
                     } else {
-                        Toast.makeText(context, "Vui lòng nhập số điện thoại hợp lệ", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            "Vui lòng nhập số điện thoại hợp lệ",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 },
                 colors = ButtonDefaults.buttonColors(
@@ -133,8 +143,11 @@ fun SearchScreen(
 
             if (resultMessage.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(24.dp))
+
                 Card(
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFF111827)),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFF111827)
+                    ),
                     shape = RoundedCornerShape(20.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {

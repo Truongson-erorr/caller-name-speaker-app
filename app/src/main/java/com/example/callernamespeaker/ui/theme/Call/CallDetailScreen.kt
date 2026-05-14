@@ -52,25 +52,30 @@ fun CallDetailScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "Chi tiết cuộc gọi",
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = textLight
-                        )
+                        text = "Chi tiết cuộc gọi",
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
-                            Icons.Default.ArrowBack,
-                            contentDescription = "Quay lại",
-                            tint = cyanAccent
+                            Icons.Default.ArrowBackIosNew,
+                            contentDescription = null,
+                            tint = Color.White
                         )
                     }
                 },
+                actions = {
+                    Icon(
+                        Icons.Default.SupportAgent,
+                        contentDescription = null,
+                        tint = Color(0xFF3B82F6),
+                        modifier = Modifier.padding(end = 12.dp)
+                    )
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = backgroundDark,
-                    titleContentColor = textLight
+                    containerColor = Color(0xFF1A2030)
                 )
             )
         },

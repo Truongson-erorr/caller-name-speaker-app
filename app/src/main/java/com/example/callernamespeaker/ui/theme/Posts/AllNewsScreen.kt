@@ -9,23 +9,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.FilterList
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -45,7 +32,6 @@ fun AllNewsScreen(
 ) {
     var expandedMenu by remember { mutableStateOf(false) }
     var sortDescending by remember { mutableStateOf(true) }
-
     val newsList by viewModel.newsPosts.collectAsState()
     val filteredNews = if (sortDescending)
         newsList.sortedByDescending { it.date }
@@ -54,42 +40,34 @@ fun AllNewsScreen(
 
     Scaffold(
         containerColor = Color(0xFF0A0F1A),
+
         topBar = {
-            CenterAlignedTopAppBar(
-                modifier = Modifier
-                    .padding(horizontal = 12.dp),
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = Color(0xFF0A0F1A),
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White,
-                    actionIconContentColor = Color(0xFF3B82F6)
-                ),
+            TopAppBar(
                 title = {
                     Text(
                         text = "Tin tức trong ngày",
                         fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
+                        color = Color.White
                     )
                 },
                 navigationIcon = {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        modifier = Modifier
-                            .padding(start = 8.dp)
-                            .clickable { navController.popBackStack() }
-                    )
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            Icons.Default.ArrowBackIosNew,
+                            contentDescription = null,
+                            tint = Color.White
+                        )
+                    }
                 },
                 actions = {
-                    Box(
-                        modifier = Modifier.padding(end = 8.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.FilterList,
-                            contentDescription = "Filter",
-                            tint = Color(0xFF3B82F6),
-                            modifier = Modifier.clickable { expandedMenu = true }
-                        )
+                    Box {
+                        IconButton(onClick = { expandedMenu = true }) {
+                            Icon(
+                                Icons.Default.FilterList,
+                                contentDescription = null,
+                                tint = Color(0xFF3B82F6)
+                            )
+                        }
 
                         DropdownMenu(
                             expanded = expandedMenu,
@@ -111,16 +89,23 @@ fun AllNewsScreen(
                             )
                         }
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color(0xFF1A2030)
+                )
             )
         }
     ) { innerPadding ->
+
         LazyColumn(
-            contentPadding = innerPadding,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
+            contentPadding = PaddingValues(
+                top = innerPadding.calculateTopPadding() + 16.dp,
+                bottom = 16.dp,
+                start = 16.dp,
+                end = 16.dp
+            ),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
+            modifier = Modifier.fillMaxSize()
         ) {
             items(filteredNews) { post ->
                 NewsCardItem2(post) {

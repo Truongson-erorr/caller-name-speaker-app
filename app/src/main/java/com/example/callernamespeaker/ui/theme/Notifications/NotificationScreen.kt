@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.NotificationsNone
@@ -57,8 +58,6 @@ fun NotificationScreen(
             .fillMaxSize()
             .background(Color(0xFF0A0F1A))
     ) {
-
-        // TOP BAR
         TopAppBar(
             title = {
                 Text(
@@ -70,14 +69,14 @@ fun NotificationScreen(
             navigationIcon = {
                 IconButton(onClick = { navController.popBackStack() }) {
                     Icon(
-                        imageVector = Icons.Default.ArrowBack,
+                        imageVector = Icons.Default.ArrowBackIosNew,
                         contentDescription = null,
                         tint = Color.White
                     )
                 }
             },
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = Color(0xFF0A0F1A)
+                containerColor = Color(0xFF1A2030)
             )
         )
 
@@ -95,7 +94,7 @@ fun NotificationScreen(
             }
 
         } else {
-
+            Spacer(Modifier.height(20.dp))
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -134,7 +133,6 @@ fun NotificationScreen(
                             verticalAlignment = Alignment.Top
                         ) {
 
-                            // ICON LEFT
                             Icon(
                                 imageVector = Icons.Default.NotificationsNone,
                                 contentDescription = null,
@@ -143,7 +141,6 @@ fun NotificationScreen(
                                     .size(26.dp)
                                     .padding(top = 2.dp)
                             )
-
                             Spacer(Modifier.width(12.dp))
 
                             Column(
@@ -162,7 +159,6 @@ fun NotificationScreen(
                                             fontSize = 15.sp,
                                             fontWeight = FontWeight.Bold
                                         )
-
                                         Spacer(Modifier.height(4.dp))
 
                                         Text(
@@ -182,7 +178,6 @@ fun NotificationScreen(
                                 }
 
                                 if (isExpanded) {
-
                                     Spacer(Modifier.height(10.dp))
 
                                     Box(
@@ -208,7 +203,6 @@ fun NotificationScreen(
                                                 fontSize = 14.sp,
                                                 fontWeight = FontWeight.Medium
                                             )
-
                                             Spacer(Modifier.height(8.dp))
 
                                             Text(

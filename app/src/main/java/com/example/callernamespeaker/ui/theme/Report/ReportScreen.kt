@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -36,151 +37,156 @@ fun ReportScreen(
     var showDialog by remember { mutableStateOf(false) }
     var dialogMessage by remember { mutableStateOf("") }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFF0A0F1A))
-    ) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Báo cáo số điện thoại",
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            Icons.Default.ArrowBackIosNew,
+                            contentDescription = null,
+                            tint = Color.White
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color(0xFF1A2030)
+                )
+            )
+        }
+    ) { padding ->
 
-        Column(
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp)
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxSize()
+                .background(Color(0xFF0A0F1A))
+                .padding(padding)
         ) {
-            Spacer(modifier = Modifier.height(35.dp))
 
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 24.dp),
-                contentAlignment = Alignment.Center
+                    .padding(20.dp)
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color.White,
-                    modifier = Modifier
-                        .align(Alignment.CenterStart)
-                        .clickable { navController.popBackStack() }
-                        .padding(start = 8.dp)
-                        .size(26.dp)
-                )
 
                 Text(
-                    text = "Báo cáo số điện thoại",
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color.White
+                    text = "Nếu bạn nhận được cuộc gọi hoặc tin nhắn nghi ngờ là lừa đảo, hãy nhập số điện thoại và lý do vào bên dưới.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color(0xFF9CA3AF),
+                    modifier = Modifier.fillMaxWidth()
                 )
-            }
+                Spacer(modifier = Modifier.height(16.dp))
 
-            Text(
-                text = "Nếu bạn nhận được cuộc gọi hoặc tin nhắn nghi ngờ là lừa đảo, hãy nhập số điện thoại và lý do vào bên dưới.",
-                style = MaterialTheme.typography.bodySmall,
-                color = Color(0xFF9CA3AF),
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            TextField(
-                value = reportPhone,
-                onValueChange = { reportPhone = it },
-                shape = RoundedCornerShape(30.dp),
-                placeholder = {
-                    Text("Nhập số điện thoại...", color = Color(0xFF9CA3AF))
-                },
-                textStyle = TextStyle(color = Color.White),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(60.dp),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    containerColor = Color(0xFF111827),
-                    cursorColor = Color(0xFF3B82F6),
-                    focusedBorderColor = Color(0xFF3B82F6),
-                    unfocusedBorderColor = Color(0xFF374151)
-                ),
-                singleLine = true
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            TextField(
-                value = reportReason,
-                onValueChange = { reportReason = it },
-                shape = RoundedCornerShape(16.dp),
-                placeholder = {
-                    Text("Nhập lý do báo cáo...", color = Color(0xFF9CA3AF))
-                },
-                textStyle = TextStyle(color = Color.White),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 260.dp),
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color(0xFF1A202C),
-                    cursorColor = Color(0xFF3B82F6),
-                    focusedIndicatorColor = Color(0xFF3B82F6),
-                    unfocusedIndicatorColor = Color(0xFF374151)
+                TextField(
+                    value = reportPhone,
+                    onValueChange = { reportPhone = it },
+                    shape = RoundedCornerShape(16.dp),
+                    placeholder = {
+                        Text("Nhập số điện thoại...", color = Color(0xFF9CA3AF))
+                    },
+                    textStyle = TextStyle(color = Color.White),
+                    singleLine = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color(0xFF111827),
+                        unfocusedContainerColor = Color(0xFF111827),
+                        disabledContainerColor = Color(0xFF111827),
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        cursorColor = Color(0xFF3B82F6),
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White
+                    )
                 )
-            )
-            Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-            Button(
-                onClick = {
-                    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+                TextField(
+                    value = reportReason,
+                    onValueChange = { reportReason = it },
+                    shape = RoundedCornerShape(16.dp),
+                    placeholder = {
+                        Text("Nhập lý do báo cáo...", color = Color(0xFF9CA3AF))
+                    },
+                    textStyle = TextStyle(color = Color.White),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 200.dp),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color(0xFF111827),
+                        unfocusedContainerColor = Color(0xFF111827),
+                        disabledContainerColor = Color(0xFF111827),
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        cursorColor = Color(0xFF3B82F6),
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White
+                    )
+                )
+                Spacer(modifier = Modifier.height(24.dp))
 
-                    if (reportPhone.isNotBlank() &&
-                        reportReason.isNotBlank() &&
-                        userId.isNotBlank()
-                    ) {
+                Button(
+                    onClick = {
+                        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
-                        reportViewModel.reportPhoneNumber(
-                            phone = reportPhone.trim(),
-                            userId = userId,
-                            reason = reportReason.trim(),
-                            onComplete = {
+                        if (reportPhone.isNotBlank() &&
+                            reportReason.isNotBlank() &&
+                            userId.isNotBlank()
+                        ) {
 
-                                dialogMessage = "Báo cáo thành công"
-                                showDialog = true
+                            reportViewModel.reportPhoneNumber(
+                                phone = reportPhone.trim(),
+                                userId = userId,
+                                reason = reportReason.trim(),
+                                onComplete = {
+                                    dialogMessage = "Báo cáo thành công"
+                                    showDialog = true
+                                    reportPhone = ""
+                                    reportReason = ""
+                                },
+                                onError = {
+                                    dialogMessage = "Lỗi: $it"
+                                    showDialog = true
+                                }
+                            )
 
-                                reportPhone = ""
-                                reportReason = ""
-                            },
-                            onError = {
-                                dialogMessage = "Lỗi: $it"
-                                showDialog = true
-                            }
-                        )
-
-                    } else {
-                        dialogMessage = "Vui lòng nhập đầy đủ thông tin"
-                        showDialog = true
-                    }
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF2A2AFC),
-                    contentColor = Color.White
-                ),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Gửi báo cáo")
-            }
-        }
-
-        if (showDialog) {
-            AlertDialog(
-                onDismissRequest = { showDialog = false },
-                title = { Text("Thông báo") },
-                text = { Text(dialogMessage) },
-                confirmButton = {
-                    TextButton(onClick = {
-                        showDialog = false
-                    }) {
-                        Text("OK")
-                    }
+                        } else {
+                            dialogMessage = "Vui lòng nhập đầy đủ thông tin"
+                            showDialog = true
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF2A2AFC),
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Gửi báo cáo")
                 }
-            )
+            }
+
+            if (showDialog) {
+                AlertDialog(
+                    onDismissRequest = { showDialog = false },
+                    title = { Text("Thông báo") },
+                    text = { Text(dialogMessage) },
+                    confirmButton = {
+                        TextButton(onClick = { showDialog = false }) {
+                            Text("OK")
+                        }
+                    }
+                )
+            }
         }
     }
 }
