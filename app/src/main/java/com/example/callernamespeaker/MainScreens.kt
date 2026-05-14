@@ -95,7 +95,7 @@ fun MainScreen(navController: NavController) {
                             Icon(
                                 Icons.Default.Menu,
                                 contentDescription = "Menu",
-                                tint = Color.White
+                                tint = Color(0xFF64B5F6)
                             )
                         }
                     }

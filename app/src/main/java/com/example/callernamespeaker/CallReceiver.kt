@@ -10,6 +10,7 @@ import android.telephony.TelephonyManager
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.example.callernamespeaker.viewmodel.CallStatsViewModel
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.time.LocalDate
 
@@ -26,6 +27,17 @@ class CallReceiver : BroadcastReceiver() {
         if (state != TelephonyManager.EXTRA_STATE_RINGING || number.isNullOrEmpty()) return
 
         val cleanedNumber = number.replace("+84", "0").replace(" ", "")
+
+        val contactName = getContactName(context, cleanedNumber)
+        val isInContacts = contactName != null
+
+        if (!isInContacts) {
+            sendFamilyAlert(
+                context,
+                cleanedNumber,
+                "UNKNOWN_CALL"
+            )
+        }
 
         CallStatsViewModel().recordIncomingCall(cleanedNumber)
 
@@ -174,5 +186,45 @@ class CallReceiver : BroadcastReceiver() {
             if (it.moveToFirst()) return it.getString(0)
         }
         return null
+    }
+
+    private fun sendFamilyAlert(
+        context: Context,
+        phoneNumber: String,
+        type: String
+    ) {
+        val user = FirebaseAuth.getInstance().currentUser
+
+        if (user == null) {
+            android.util.Log.e("FAMILY_ALERT", "❌ User not logged in")
+            return
+        }
+
+        val familyId = user.uid
+        val memberId = user.uid
+
+        val alert = hashMapOf(
+            "familyId" to familyId,
+            "memberId" to memberId,
+            "phoneNumber" to phoneNumber,
+            "type" to type,
+            "time" to System.currentTimeMillis(),
+            "read" to false
+        )
+
+        android.util.Log.d(
+            "FAMILY_ALERT",
+            "🚀 Sending alert: $alert"
+        )
+
+        FirebaseFirestore.getInstance()
+            .collection("FamilyAlerts")
+            .add(alert)
+            .addOnSuccessListener {
+                android.util.Log.d("FAMILY_ALERT", "✅ SAVED SUCCESS")
+            }
+            .addOnFailureListener {
+                android.util.Log.e("FAMILY_ALERT", "🔥 SAVE FAILED", it)
+            }
     }
 }

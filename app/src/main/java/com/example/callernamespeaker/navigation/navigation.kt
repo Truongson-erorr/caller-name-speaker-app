@@ -7,6 +7,8 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -21,7 +23,7 @@ import com.example.callernamespeaker.MainScreen
 import com.example.callernamespeaker.ui.theme.Chat.ChatScreen
 import com.example.callernamespeaker.ui.screens.BlockPhoneScreen
 import com.example.callernamespeaker.ui.screens.IntroSplashScreen
-import com.example.callernamespeaker.ui.screens.NotificationScreen
+import com.example.callernamespeaker.ui.theme.Notifications.NotificationScreen
 import com.example.callernamespeaker.ui.screens.SearchScreen
 import com.example.callernamespeaker.ui.theme.Sms.SmsAnalysisScreen
 import com.example.callernamespeaker.ui.theme.Sms.SmsIntroScreen
@@ -39,9 +41,8 @@ import com.example.callernamespeaker.ui.theme.Sms.SmsDetailScreen
 import com.example.callernamespeaker.ui.theme.Authentication.UserInfoScreen
 import com.example.callernamespeaker.ui.theme.Website.WebsiteScreen
 import com.example.callernamespeaker.viewmodel.BlacklistViewModel
+import com.example.callernamespeaker.viewmodel.FamilyViewModel
 import com.example.callernamespeaker.viewmodel.ReportViewModel
-import com.example.callernamespeaker.viewmodel.NotificationViewModel
-import com.example.personalexpensetracker.viewmodel.NotificationViewModelFactory
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.firebase.auth.FirebaseAuth
 
@@ -177,7 +178,13 @@ fun AppNavGraph(
         }
 
         composable("NotificationScreen") {
-            NotificationScreen(navController)
+            val familyViewModel: FamilyViewModel = viewModel()
+            val members by familyViewModel.familyMembers.collectAsState()
+
+            NotificationScreen(
+                navController = navController,
+                members = members
+            )
         }
 
         composable("sms_detail/{threadId}") { backStackEntry ->
