@@ -183,7 +183,7 @@ fun NotificationScreen(
                                     Box(
                                         modifier = Modifier
                                             .background(
-                                                Color(0xFF0F172A),
+                                                Color.Transparent,
                                                 RoundedCornerShape(12.dp)
                                             )
                                             .padding(10.dp)
